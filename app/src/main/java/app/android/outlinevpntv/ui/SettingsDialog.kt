@@ -2,7 +2,6 @@ package app.android.outlinevpntv.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,11 +51,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.net.toUri
 import app.android.outlinevpntv.R
 import app.android.outlinevpntv.data.preferences.PreferencesManager
 import app.android.outlinevpntv.viewmodel.AutoConnectViewModel
 import app.android.outlinevpntv.viewmodel.ThemeViewModel
-import androidx.core.net.toUri
 
 @Composable
 fun SettingsDialog(
@@ -342,7 +341,8 @@ fun SettingsDialog(
                         val appName = try {
                             val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
                             packageManager.getApplicationLabel(applicationInfo).toString()
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
+                            // todo log e
                             packageName
                         }
 

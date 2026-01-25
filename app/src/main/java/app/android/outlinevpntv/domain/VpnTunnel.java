@@ -188,6 +188,7 @@ public class VpnTunnel {
      *
      * @return boolean indicating whether UDP is supported.
      */
+    // todo fix unused
     public synchronized boolean updateUDPSupport() {
         if (!isTunnelConnected()) {
             return false;
