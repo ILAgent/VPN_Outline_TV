@@ -14,7 +14,6 @@
 
 package app.android.outlinevpntv.domain;
 
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -24,7 +23,6 @@ import android.os.ParcelFileDescriptor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
@@ -53,7 +51,6 @@ public class VpnTunnel {
     //private static final String PRIVATE_LAN_BYPASS_SUBNETS_ID = "reserved_bypass_subnets";
 
     private final OutlineVpnService vpnService;
-    private String dnsResolverAddress;
     private ParcelFileDescriptor tunFd;
     private Tunnel tunnel;
     private final PreferencesManager preferencesManager;
@@ -81,7 +78,7 @@ public class VpnTunnel {
     public synchronized boolean establishVpn() {
         LOG.info("Establishing the VPN.");
         try {
-            dnsResolverAddress = preferencesManager.getSelectedDns() != null ?
+            var dnsResolverAddress = preferencesManager.getSelectedDns() != null ?
                     preferencesManager.getSelectedDns() :
                     selectDnsResolverAddress();
 
@@ -95,32 +92,30 @@ public class VpnTunnel {
                             .setBlocking(true);
 
             Set<String> selectedApps = preferencesManager.getSelectedApps();
-            if (selectedApps != null && !selectedApps.isEmpty()) {
-                if (selectedApps.contains("all_apps")) {
-                    builder.addDisallowedApplication(vpnService.getPackageName());
-                } else {
-                    for (String appPackage : selectedApps) {
-                        try {
-                            builder.addAllowedApplication(appPackage);
-                        } catch (PackageManager.NameNotFoundException e) {
-                            // Обработка исключения
-                        }
+            String vpnPackage = vpnService.getPackageName();
+            // addDisallowed и addAllowed нельзя смешивать — только один из методов.
+            // "all_apps" или null/пусто — VPN для всех, кроме нашего: только addDisallowed.
+            // Белый список — только выбранные через VPN: только addAllowed (нашего не добавляем).
+            if (selectedApps != null && !selectedApps.contains("all_apps")) {
+                for (String appPackage : selectedApps) {
+                    if ("all_apps".equals(appPackage) || appPackage.equals(vpnPackage)) continue;
+                    try {
+                        builder.addAllowedApplication(appPackage);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        // приложение удалено — пропускаем
                     }
                 }
             } else {
-                // Если приложения не выбраны, применяем VPN ко всем приложениям, кроме самого VPN приложения
                 try {
-                    builder.addDisallowedApplication(vpnService.getPackageName());
+                    builder.addDisallowedApplication(vpnPackage);
                 } catch (PackageManager.NameNotFoundException e) {
-                    // Обработка исключения
+                    // игнорируем
                 }
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                final Network activeNetwork =
-                        vpnService.getSystemService(ConnectivityManager.class).getActiveNetwork();
-                builder.setUnderlyingNetworks(new Network[]{activeNetwork});
-            }
+            final Network activeNetwork =
+                    vpnService.getSystemService(ConnectivityManager.class).getActiveNetwork();
+            builder.setUnderlyingNetworks(new Network[]{activeNetwork});
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 builder.setMetered(false);
             }

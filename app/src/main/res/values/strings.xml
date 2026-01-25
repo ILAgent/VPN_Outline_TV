@@ -187,12 +187,16 @@
     <string name="settings">Settings</string>
     <string name="DNS">Server DNS</string>
     <string name="license">License</string>
-    <string name="services">Services</string>
-    <string name="services_description">Select apps to use with VPN</string>
-    <string name="all_applications">All applications</string>
+    <string name="services">Apps via VPN</string>
+    <string name="services_description">All applications: VPN for everyone. Or use whitelist: only selected apps use VPN, others work without VPN.</string>
+    <string name="all_applications">All applications (VPN for all)</string>
+    <string name="for_all_apps">For all applications</string>
+    <string name="whitelist_mode">Whitelist</string>
+    <string name="remove">Remove</string>
     <string name="thank_you_message">Thanks for helping develop khoben</string>
-    <string name="add_an_application">Add an application</string>
-    <string name="select_applications">Select applications</string>
+    <string name="add_an_application">Add</string>
+    <string name="select_applications">Select apps that will use VPN (whitelist). Others work without VPN.</string>
+    <string name="whitelist_empty_hint">Whitelist is empty — no app uses VPN. Add apps or choose «All applications».</string>
     <string name="search_apps">Search for applications</string>
     <string name="saved_vpn_keys">Saved VPN Keys</string>
     <string name="add_new_key">Add new Key</string>
@@ -217,8 +221,9 @@
     Supported file formats for key upload: .txt, .json, .xml\n\n
     Changing DNS\n\n
     When changing DNS in the settings, you can remove ads; however, this does not work on all DNS servers.\n\n
-    Adding Applications for VPN Operation:\n\n
-    You can select the applications in which the VPN will operate.
+    Apps via VPN (whitelist):\n\n
+    • All applications — VPN for every app.\n
+    • Whitelist — tap \"Add to whitelist\" and choose apps. Only those use VPN; all others work without VPN.
     </string>
     <string name="theme">Theme</string>
     <string name="dark_mode">Dark Mode</string>

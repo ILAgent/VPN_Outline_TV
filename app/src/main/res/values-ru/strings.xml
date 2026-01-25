@@ -187,12 +187,16 @@
     <string name="settings">Настройки</string>
     <string name="DNS">Сервер DNS</string>
     <string name="license">Лицензия</string>
-    <string name="services">Сервисы</string>
-    <string name="services_description">Выберите приложения для использования в VPN</string>
-    <string name="all_applications">Все приложения</string>
+    <string name="services">Приложения через VPN</string>
+    <string name="services_description">Все приложения — VPN для всех. Или белый список: только выбранные работают через VPN, остальные — без VPN.</string>
+    <string name="all_applications">Все приложения (VPN для всех)</string>
+    <string name="for_all_apps">Для всех приложений</string>
+    <string name="whitelist_mode">Белый список</string>
+    <string name="remove">Удалить</string>
     <string name="thank_you_message">Спасибо за помощь в разработке khoben</string>
-    <string name="add_an_application">Добавить приложение</string>
-    <string name="select_applications">Выберите приложения</string>
+    <string name="add_an_application">Добавить</string>
+    <string name="select_applications">Выберите приложения, которые будут работать через VPN (белый список). Остальные — без VPN.</string>
+    <string name="whitelist_empty_hint">Белый список пуст — ни одно приложение не использует VPN. Добавьте приложения или выберите «Все приложения».</string>
     <string name="search_apps">Поиск приложений</string>
     <string name="saved_vpn_keys">Сохраненные VPN ключи</string>
     <string name="add_new_key">Добавить новый ключ</string>
@@ -217,8 +221,9 @@
     Поддерживаемые форматы файлов для загрузки ключа: .txt, .json, .xml\n\n
     Изменение DNS\n\n
     При изменении DNS в настройках вы можете убрать рекламу, однако это работает не на всех DNS-серверах.\n\n
-    Добавление приложений для работы VPN:\n\n
-    Вы можете выбрать приложения, в которых будет работать VPN
+    Приложения через VPN (белый список):\n\n
+    • Все приложения — VPN для каждого.\n
+    • Белый список — нажмите «Добавить в белый список» и выберите приложения. Только они работают через VPN, остальные — без VPN.
     </string>
     <string name="theme">Тема</string>
     <string name="dark_mode">Темная тема</string>

@@ -58,7 +58,6 @@ class MainViewModel(
             runCatching { parseUrlOutline.parse(configString) }
                 .onSuccess { config -> vpnManager.start(config) }
                 .onFailure { errorVpnEvent() }
-            vpnManager.establishVpn()
         }
     }
 

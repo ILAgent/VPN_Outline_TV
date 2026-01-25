@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
         MainViewModel.Factory(
             preferencesManager = PreferencesManager(context = applicationContext),
-            vpnManager = OutlineVpnManager(context = applicationContext, preferencesManager = PreferencesManager(context = applicationContext)),
+            vpnManager = OutlineVpnManager(context = applicationContext),
             parseUrlOutline = ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch()),
             updateManager = UpdateManager.Github(context = applicationContext),
         )

@@ -19,23 +19,32 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SystemSecurityUpdateWarning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
@@ -45,11 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import app.android.outlinevpntv.R
 import app.android.outlinevpntv.data.preferences.PreferencesManager
-import androidx.compose.runtime.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import app.android.outlinevpntv.viewmodel.AutoConnectViewModel
 import app.android.outlinevpntv.viewmodel.ThemeViewModel
+import androidx.core.net.toUri
 
 @Composable
 fun SettingsDialog(
@@ -67,6 +74,7 @@ fun SettingsDialog(
     val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
 
     val selectedApps = remember { mutableStateListOf<String>() }
+    val whitelistApps = remember { mutableStateListOf<String>() }
     var isAppSelectionDialogOpen by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val packageManager = context.packageManager
@@ -87,23 +95,31 @@ fun SettingsDialog(
         } else {
             selectedApps.clear()
             selectedApps.addAll(savedApps)
+            // Инициализируем whitelistApps из сохраненных данных
+            if (!savedApps.contains("all_apps")) {
+                whitelistApps.clear()
+                whitelistApps.addAll(savedApps.filter { it != "all_apps" })
+            }
         }
     }
 
     if (isAppSelectionDialogOpen) {
         AppSelectionDialog(
             onDismiss = { isAppSelectionDialogOpen = false },
-            initialSelectedApps = selectedApps.toList(),
+            initialSelectedApps = whitelistApps.toList(),
             onAppsSelected = { apps ->
-                selectedApps.remove("all_apps")
+                whitelistApps.clear()
+                whitelistApps.addAll(apps)
                 selectedApps.clear()
                 selectedApps.addAll(apps)
-
                 preferencesManager.saveSelectedApps(selectedApps.toList())
             }
         )
     }
 
+    val isWhitelistMode = remember {
+        mutableStateOf(!selectedApps.contains("all_apps"))
+    }
 
     AlertDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -185,7 +201,7 @@ fun SettingsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                SettingsDialogSectionTitle(text = stringResource(id = R.string.theme),)
+                SettingsDialogSectionTitle(text = stringResource(id = R.string.theme))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -215,7 +231,7 @@ fun SettingsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                SettingsDialogSectionTitle(text = stringResource(id = R.string.system),)
+                SettingsDialogSectionTitle(text = stringResource(id = R.string.system))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -252,43 +268,109 @@ fun SettingsDialog(
                     text = stringResource(id = R.string.services_description),
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
                 )
-                Column {
 
+
+                // Синхронизируем whitelistApps с selectedApps при изменении режима
+                LaunchedEffect(selectedApps) {
+                    if (selectedApps.contains("all_apps")) {
+                        isWhitelistMode.value = false
+                    } else {
+                        isWhitelistMode.value = true
+                        // Обновляем whitelistApps из selectedApps
+                        val currentWhitelist = selectedApps.filter { it != "all_apps" }
+                        whitelistApps.clear()
+                        whitelistApps.addAll(currentWhitelist)
+                    }
+                }
+
+                Column(Modifier.selectableGroup()) {
+                    // Выбор режима: для всех или белый список
+                    SettingsDialogThemeChooserRow(
+                        text = stringResource(id = R.string.for_all_apps),
+                        selected = !isWhitelistMode.value,
+                        onClick = {
+                            isWhitelistMode.value = false
+                            // Сохраняем текущий список в whitelistApps перед переключением
+                            val currentWhitelist = selectedApps.filter { it != "all_apps" }
+                            whitelistApps.clear()
+                            whitelistApps.addAll(currentWhitelist)
+                            // Переключаемся на режим "для всех"
+                            selectedApps.clear()
+                            selectedApps.add("all_apps")
+                            preferencesManager.saveSelectedApps(selectedApps.toList())
+                        }
+                    )
+
+                    SettingsDialogThemeChooserRow(
+                        text = stringResource(id = R.string.whitelist_mode),
+                        selected = isWhitelistMode.value,
+                        onClick = {
+                            isWhitelistMode.value = true
+                            // Восстанавливаем сохраненный список при переключении на белый список
+                            selectedApps.clear()
+                            selectedApps.addAll(whitelistApps)
+                            preferencesManager.saveSelectedApps(selectedApps.toList())
+                        }
+                    )
+                }
+
+                // Показываем список и кнопки только в режиме белого списка
+                if (isWhitelistMode.value) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Кнопка "Добавить"
                     Button(
                         onClick = { isAppSelectionDialogOpen = true },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text( stringResource(id = R.string.add_an_application))
+                        Text(stringResource(id = R.string.add_an_application))
                     }
 
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    SettingsDialogThemeChooserRow(
-                        text = stringResource(id = R.string.all_applications),
-                        selected = selectedApps.contains("all_apps"),
-                        onClick = {
-                            if (selectedApps.contains("all_apps")) {
-                                selectedApps.remove("all_apps")
-                            } else {
-                                selectedApps.clear()
-                                selectedApps.add("all_apps")
-                            }
-                        }
-                    )
+                    // Подсказка, когда белый список пуст
+                    if (whitelistApps.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.whitelist_empty_hint),
+                            style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
+                            modifier = Modifier.padding(start = 12.dp, top = 4.dp)
+                        )
+                    }
 
-                    selectedApps.filter { it != "all_apps" }.forEach { packageName ->
+                    // Список приложений в белом списке
+                    whitelistApps.forEach { packageName ->
                         val appName = try {
                             val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
                             packageManager.getApplicationLabel(applicationInfo).toString()
                         } catch (e: Exception) {
                             packageName
                         }
-                        SettingsDialogThemeChooserRow(
-                            text = appName,
-                            selected = true,
-                            onClick = {
-                                selectedApps.remove(packageName)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = appName,
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            IconButton(
+                                onClick = {
+                                    whitelistApps.remove(packageName)
+                                    selectedApps.remove(packageName)
+                                    preferencesManager.saveSelectedApps(selectedApps.toList())
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = stringResource(id = R.string.remove),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
                             }
-                        )
+                        }
                     }
                 }
 
@@ -304,6 +386,16 @@ fun SettingsDialog(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .clickable {
+                        // Убеждаемся, что selectedApps синхронизирован с текущим режимом
+                        if (isWhitelistMode.value) {
+                            selectedApps.clear()
+                            selectedApps.addAll(whitelistApps)
+                        } else {
+                            if (!selectedApps.contains("all_apps")) {
+                                selectedApps.clear()
+                                selectedApps.add("all_apps")
+                            }
+                        }
                         preferencesManager.saveSelectedApps(selectedApps.toList())
                         onDismiss()
                     },
@@ -311,7 +403,6 @@ fun SettingsDialog(
         }
     )
 }
-
 
 
 @Composable
@@ -347,10 +438,12 @@ fun LinksPanel() {
                             try {
                                 val intent = Intent(
                                     Intent.ACTION_VIEW,
-                                    Uri.parse("https://t.me/vpntv_group")
+                                    // todo
+                                    "https://t.me/vpntv_group".toUri()
                                 )
                                 context.startActivity(intent)
-                            } catch (_: ActivityNotFoundException) {}
+                            } catch (_: ActivityNotFoundException) {
+                            }
                         }
                     )
                 }
@@ -398,10 +491,11 @@ fun LinksPanel() {
                         try {
                             val intent = Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(context.getString(R.string.github_link))
+                                context.getString(R.string.github_link).toUri()
                             )
                             context.startActivity(intent)
-                        } catch (_: ActivityNotFoundException) {}
+                        } catch (_: ActivityNotFoundException) {
+                        }
                     }
                     .padding(8.dp)
             ) {
@@ -486,7 +580,7 @@ private fun PreviewCustomSettingsDialog() {
     SettingsDialog(
         onDismiss = {},
         preferencesManager = preferencesManager,
-        onDnsSelected = { dns ->},
+        onDnsSelected = { },
         themeViewModel = ThemeViewModel(preferencesManager),
         autoConnectViewModel = AutoConnectViewModel(preferencesManager)
     )
