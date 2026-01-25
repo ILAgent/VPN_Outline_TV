@@ -7,17 +7,16 @@ plugins {
 }
 
 android {
-    namespace = "app.android.outlinevpntv"
+    namespace = "com.ilagent.nativeoutline"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "app.android.outlinevpntv"
+        applicationId = "com.ilagent.nativeoutline"
         minSdk = 24
         targetSdk = 34
         versionCode = 102000
         versionName = "1.2"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -70,9 +69,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.coil.kt)
