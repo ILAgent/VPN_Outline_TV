@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -49,9 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -161,65 +158,38 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .border(
-                        width = 3.dp,
-                        color = if (isTopAppBarFocused)
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        else
-                            Color.Transparent,
-                        shape = MaterialTheme.shapes.large
-                    )
-                    .padding(4.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .focusable(interactionSource = topAppBarInteractionSource)
-            ) {
-                TopAppBar(
-                    title = {
-                        Column(
-                            horizontalAlignment = Alignment.Start,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = context.getString(R.string.version, versionName(context)),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { isHelpDialogOpen = true }) {
-                            Icon(
-                                imageVector = Icons.Filled.Quiz,
-                                contentDescription = "Open Question",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        IconButton(onClick = { isSettingsDialogOpen = true }) {
-                            Icon(
-                                imageVector = Icons.Filled.Settings,
-                                contentDescription = "Open Settings",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
-                    )
-                )
-            }
 
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .size(130.dp)
-                    .padding(top = 10.dp),
-                contentScale = ContentScale.Fit
+            TopAppBar(
+                title = {
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = context.getString(R.string.version, versionName(context)),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { isHelpDialogOpen = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Quiz,
+                            contentDescription = "Open Question",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    IconButton(onClick = { isSettingsDialogOpen = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Open Settings",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                )
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -272,10 +242,12 @@ fun MainScreen(
 
             if (isConnectionLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(120.dp).padding(20.dp)
+                    modifier = Modifier
+                        .size(120.dp)
+                        .padding(20.dp)
                 )
             } else {
-               Box(
+                Box(
                     modifier = Modifier
                         .size(120.dp)
                         .border(

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OutlineVPNtv</string>
+    <string name="app_name">Native Outline</string>
     <string-array name="reserved_bypass_subnets" translatable="false">
         <item>1.0.0.0/8</item>
         <item>2.0.0.0/7</item>
@@ -156,7 +156,7 @@
     <string name="on">Подключиться</string>
     <string name="elapsed_time">Время подключения</string>
     <string name="invalid_decoded_info_format">Недействительный формат переключателя</string>
-    <string name="version">Версия %1$s</string>
+    <string name="version">Native Outline %1$s</string>
     <string name="edit_server_info">Информация о сервере</string>
     <string name="server_name">Имя Сервера</string>
     <string name="outline_key">Outline Ключ</string>

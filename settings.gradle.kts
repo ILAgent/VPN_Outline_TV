@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OutlineVPNtv"
+rootProject.name = "Native Outline"
 include(":app")
  

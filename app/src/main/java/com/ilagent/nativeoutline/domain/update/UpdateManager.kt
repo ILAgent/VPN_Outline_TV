@@ -10,6 +10,7 @@ import okhttp3.Request
 import org.json.JSONObject
 import java.io.File
 
+// todo remove
 interface UpdateManager {
     suspend fun checkForAppUpdates(currentVersion: String): UpdateStatus
     suspend fun downloadAndInstallLatestApk(

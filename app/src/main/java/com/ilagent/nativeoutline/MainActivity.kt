@@ -31,7 +31,7 @@ import com.ilagent.nativeoutline.domain.OutlineVpnManager
 import com.ilagent.nativeoutline.domain.update.UpdateManager
 import com.ilagent.nativeoutline.ui.MainScreen
 import com.ilagent.nativeoutline.ui.UpdateDialog
-import com.ilagent.nativeoutline.ui.theme.OutlineVPNtvTheme
+import com.ilagent.nativeoutline.ui.theme.NativeOutlineTheme
 import com.ilagent.nativeoutline.utils.activityresult.VPNPermissionLauncher
 import com.ilagent.nativeoutline.utils.activityresult.base.launch
 import com.ilagent.nativeoutline.utils.versionName
@@ -121,65 +121,63 @@ class MainActivity : ComponentActivity() {
             var isDownloadingActive by remember { mutableStateOf(false) }
             var latestVersion by remember { mutableStateOf("") }
 
-            OutlineVPNtvTheme(
+            NativeOutlineTheme(
                 darkTheme = isDarkTheme,
                 dynamicColor = false
-            )
-            {
-            if (showUpdateDialog) {
-            UpdateDialog(
-                onUpdate = {
-                    isDownloadingActive = true
-                    viewModel.updateAppToLatest(
-                        onProgress = { downloadProgress = it },
-                        onFinished = { showUpdateDialog = false },
-                        onError = { _ ->
-                            Toast.makeText(
-                                context,
-                                R.string.update_error,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+            ) {
+                if (showUpdateDialog) {
+                    UpdateDialog(
+                        onUpdate = {
+                            isDownloadingActive = true
+                            viewModel.updateAppToLatest(
+                                onProgress = { downloadProgress = it },
+                                onFinished = { showUpdateDialog = false },
+                                onError = { _ ->
+                                    Toast.makeText(
+                                        context,
+                                        R.string.update_error,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            )
+                        },
+                        onDismiss = {
+                            showUpdateDialog = false
+                            updateDialogCancelled = true
+                        },
+                        isDownloading = isDownloadingActive,
+                        downloadProgress = downloadProgress,
+                        currentVersion = currentVersion,
+                        latestVersion = latestVersion
                     )
-                },
-                onDismiss = {
-                    showUpdateDialog = false
-                    updateDialogCancelled = true
-                },
-                isDownloading = isDownloadingActive,
-                downloadProgress = downloadProgress,
-                currentVersion = currentVersion,
-                latestVersion = latestVersion
-            )
-        }
+                }
 
-            MainScreen(
-                isConnected = connectionState,
-                errorEvent = viewModel.errorEvent,
-                vpnServerState = vpnServerState,
-                onConnectClick = ::startVpn,
-                onDisconnectClick = viewModel::stopVpn,
-                onSaveServer = viewModel::saveVpnServer,
-                themeViewModel = themeViewModel,
-                autoConnectViewModel = autoConnectViewModel,
-            )
+                MainScreen(
+                    isConnected = connectionState,
+                    errorEvent = viewModel.errorEvent,
+                    vpnServerState = vpnServerState,
+                    onConnectClick = ::startVpn,
+                    onDisconnectClick = viewModel::stopVpn,
+                    onSaveServer = viewModel::saveVpnServer,
+                    themeViewModel = themeViewModel,
+                    autoConnectViewModel = autoConnectViewModel,
+                )
 
-            errorMessage.value?.let {
-                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-            }
+                errorMessage.value?.let {
+                    Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                }
 
-            if (!updateDialogCancelled) {
-                LaunchedEffect(Unit) {
-                    viewModel.checkForAppUpdates(currentVersion) { newVersion ->
-                        latestVersion = newVersion
-                        showUpdateDialog = true
+                if (!updateDialogCancelled) {
+                    LaunchedEffect(Unit) {
+                        viewModel.checkForAppUpdates(currentVersion) { newVersion ->
+                            latestVersion = newVersion
+                            showUpdateDialog = true
+                        }
                     }
                 }
             }
         }
-
     }
-}
 
     override fun onResume() {
         super.onResume()
