@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Native Outline</string>
     <string-array name="reserved_bypass_subnets" translatable="false">
         <item>1.0.0.0/8</item>
         <item>2.0.0.0/7</item>
