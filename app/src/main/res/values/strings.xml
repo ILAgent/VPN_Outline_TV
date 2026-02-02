@@ -1,5 +1,5 @@
 <resources>
-<string name="app_name" translatable="false">Native Outline</string>
+<string name="app_name" translatable="false">Native Outline VPN</string>
 <string-array name="reserved_bypass_subnets" translatable="false">
     <item>1.0.0.0/8</item>
     <item>2.0.0.0/7</item>
