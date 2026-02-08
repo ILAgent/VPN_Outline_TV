@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -85,10 +85,8 @@ fun MainScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val topAppBarInteractionSource = remember { MutableInteractionSource() }
     val connectButtonInteractionSource = remember { MutableInteractionSource() }
 
-    val isTopAppBarFocused by topAppBarInteractionSource.collectIsFocusedAsState()
     val isConnectButtonFocused by connectButtonInteractionSource.collectIsFocusedAsState()
 
     LaunchedEffect(Unit) {
@@ -212,76 +210,81 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(15.dp))
-
-            if (isConnectionLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .padding(20.dp)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .border(
-                            width = 3.dp,
-                            color = if (isConnectButtonFocused)
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                            else
-                                Color.Transparent,
-                            shape = RoundedCornerShape(34.dp)
-                        )
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(30.dp))
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = if (isConnected) {
-                                    listOf(
-                                        Color(0xFF5EFFB5),
-                                        Color(0xFF2C7151)
-                                    )
-                                } else {
-                                    listOf(
-                                        Color(0xFFE57373),
-                                        Color(0xFFFF8A65)
-                                    )
-                                }
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight(0.3f),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                if (isConnectionLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .padding(20.dp)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .border(
+                                width = 3.dp,
+                                color = if (isConnectButtonFocused)
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                                else
+                                    Color.Transparent,
+                                shape = RoundedCornerShape(34.dp)
                             )
-                        )
-                        .focusable(interactionSource = connectButtonInteractionSource)
-                        .clickable(
-                            interactionSource = connectButtonInteractionSource,
-                            indication = ripple(true)
-                        ) {
-                            if (!isEditing) {
-                                isConnectionLoading = true
-                                if (isConnected) {
-                                    onDisconnectClick()
-                                } else {
-                                    onConnectClick(vpnServerState.url)
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = if (isConnected) {
+                                        listOf(
+                                            Color(0xFF5EFFB5),
+                                            Color(0xFF2C7151)
+                                        )
+                                    } else {
+                                        listOf(
+                                            Color(0xFFE57373),
+                                            Color(0xFFFF8A65)
+                                        )
+                                    }
+                                )
+                            )
+                            .focusable(interactionSource = connectButtonInteractionSource)
+                            .clickable(
+                                interactionSource = connectButtonInteractionSource,
+                                indication = ripple(true)
+                            ) {
+                                if (!isEditing) {
+                                    isConnectionLoading = true
+                                    if (isConnected) {
+                                        onDisconnectClick()
+                                    } else {
+                                        onConnectClick(vpnServerState.url)
+                                    }
                                 }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Crossfade(
+                                targetState = isConnected,
+                                animationSpec = tween(600),
+                                label = "ConnectionStatusCrossfade"
+                            ) { connected ->
+                                Icon(
+                                    imageVector = if (connected) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(60.dp)
+                                )
                             }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Crossfade(
-                            targetState = isConnected,
-                            animationSpec = tween(600),
-                            label = "ConnectionStatusCrossfade"
-                        ) { connected ->
-                            Icon(
-                                imageVector = if (connected) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(60.dp)
+                            Text(
+                                text = context.getString(if (isConnected) R.string.off else R.string.on),
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
-                        Text(
-                            text = context.getString(if (isConnected) R.string.off else R.string.on),
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
                 }
             }
@@ -322,7 +325,7 @@ fun MainScreen(
 }
 
 @Preview(name = "Default", showBackground = true)
-@Preview(name = "TV", device = Devices.TV_1080p, showBackground = true)
+@Preview(name = "TV", widthDp = 1920, heightDp = 1080)
 @Composable
 fun DefaultPreview() {
     MainScreen(
