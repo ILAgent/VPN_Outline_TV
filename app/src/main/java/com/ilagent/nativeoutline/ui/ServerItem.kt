@@ -1,6 +1,5 @@
 package com.ilagent.nativeoutline.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,8 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterAlt
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,21 +32,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.FixedScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.IpCountryCodeProvider
 import com.ilagent.nativeoutline.data.remote.RemoteJSONFetch
 import com.ilagent.nativeoutline.data.remote.ServerIconProvider
 import com.ilagent.nativeoutline.viewmodel.ServerItemViewModel
-import coil.compose.AsyncImage
 
 @Composable
 fun ServerItem(
@@ -108,19 +104,10 @@ fun ServerItem(
                 AsyncImage(
                     model = serverIconState,
                     contentDescription = "Server icon",
-                    modifier = Modifier.size(36.dp).clip(CircleShape),
-                    contentScale = FixedScale(3f),
-                    placeholder = painterResource(id = R.drawable.flag),
-                    error = painterResource(id = R.drawable.flag)
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.flag),
-                    contentDescription = "Server icon placeholder",
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                    contentScale = FixedScale(3f),
                 )
             }
 
@@ -130,28 +117,29 @@ fun ServerItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = serverName.ifEmpty { context.getString(R.string.default_server_name) },
+                    text = serverName.ifEmpty { context.getString(R.string.server_not_specified) },
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface, // Текст по умолчанию на фоне
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = serverHost.ifEmpty { context.getString(R.string.default_host_name) },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (serverHost.isNotBlank()) {
+                    Text(
+                        text = serverHost,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(onClick = { onForwardIconClick() }) {
                 Icon(
-                    imageVector = Icons.Filled.FilterAlt,
+                    imageVector = Icons.Filled.ArrowDropDown,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface // Убираем Color.Black
                 )
             }
         }
@@ -164,6 +152,16 @@ fun ServerItemPreview() {
     ServerItem(
         serverName = "Server",
         serverHost = "0.0.0.0",
+        onForwardIconClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun ServerEmptyItemPreview() {
+    ServerItem(
+        serverName = "",
+        serverHost = "",
         onForwardIconClick = {}
     )
 }
