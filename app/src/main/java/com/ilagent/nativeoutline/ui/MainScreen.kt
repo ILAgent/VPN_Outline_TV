@@ -3,7 +3,6 @@ package com.ilagent.nativeoutline.ui
 import android.widget.Toast
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -126,31 +124,6 @@ fun MainScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val width = size.width
-            val height = size.height
-
-            val waveHeight = height * 0.6f
-            val wavePath = Path().apply {
-                moveTo(0f, waveHeight)
-                cubicTo(
-                    width * 0.25f, waveHeight - 100f,
-                    width * 0.75f, waveHeight + 100f,
-                    width, waveHeight
-                )
-                lineTo(width, height)
-                lineTo(0f, height)
-                close()
-            }
-
-            drawPath(
-                path = wavePath,
-                brush = Brush.horizontalGradient(
-                    colors = waveColors
-                )
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
