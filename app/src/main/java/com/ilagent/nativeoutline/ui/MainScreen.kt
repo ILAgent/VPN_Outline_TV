@@ -215,6 +215,10 @@ fun MainScreen(
                     .fillMaxHeight(0.3f),
                 contentAlignment = Alignment.BottomCenter
             ) {
+                var requestPermission by remember { mutableStateOf(false) }
+                NotificationPermission(requestPermission) {
+                    onConnectClick(vpnServerState.url)
+                }
                 if (isConnectionLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -258,9 +262,10 @@ fun MainScreen(
                                 if (!isEditing) {
                                     isConnectionLoading = true
                                     if (isConnected) {
+                                        requestPermission = false
                                         onDisconnectClick()
                                     } else {
-                                        onConnectClick(vpnServerState.url)
+                                        requestPermission = true
                                     }
                                 }
                             },
