@@ -13,6 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: google services
+      env:
+        GOOGLE_SERVICES: ${{ secrets.NATIVE_OUTLINE_GOOGLE_SERVICES }}
+      run: |
+        mkdir -p app
+        echo "$GOOGLE_SERVICES" > app/google-services.json
     - name: set up JDK 17
       uses: actions/setup-java@v4
       with:
