@@ -32,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -73,7 +74,6 @@ fun SettingsDialog(
     val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
 
     val selectedApps = remember { mutableStateListOf<String>() }
-    val whitelistApps = remember { mutableStateListOf<String>() }
     var isAppSelectionDialogOpen by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val packageManager = context.packageManager
@@ -94,21 +94,14 @@ fun SettingsDialog(
         } else {
             selectedApps.clear()
             selectedApps.addAll(savedApps)
-            // Инициализируем whitelistApps из сохраненных данных
-            if (!savedApps.contains("all_apps")) {
-                whitelistApps.clear()
-                whitelistApps.addAll(savedApps.filter { it != "all_apps" })
-            }
         }
     }
 
     if (isAppSelectionDialogOpen) {
         AppSelectionDialog(
             onDismiss = { isAppSelectionDialogOpen = false },
-            initialSelectedApps = whitelistApps.toList(),
+            initialSelectedApps = selectedApps.filter { it != "all_apps" }.toList(),
             onAppsSelected = { apps ->
-                whitelistApps.clear()
-                whitelistApps.addAll(apps)
                 selectedApps.clear()
                 selectedApps.addAll(apps)
                 preferencesManager.saveSelectedApps(selectedApps.toList())
@@ -117,7 +110,7 @@ fun SettingsDialog(
     }
 
     val isWhitelistMode = remember {
-        mutableStateOf(!selectedApps.contains("all_apps"))
+        derivedStateOf { !selectedApps.contains("all_apps")}
     }
 
     AlertDialog(
@@ -268,33 +261,12 @@ fun SettingsDialog(
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
                 )
 
-
-                // Синхронизируем whitelistApps с selectedApps при изменении режима
-                LaunchedEffect(selectedApps) {
-                    if (selectedApps.contains("all_apps")) {
-                        isWhitelistMode.value = false
-                    } else {
-                        isWhitelistMode.value = true
-                        // Обновляем whitelistApps из selectedApps
-                        val currentWhitelist = selectedApps.filter { it != "all_apps" }
-                        whitelistApps.clear()
-                        whitelistApps.addAll(currentWhitelist)
-                    }
-                }
-
                 Column(Modifier.selectableGroup()) {
                     // Выбор режима: для всех или белый список
                     SettingsDialogThemeChooserRow(
                         text = stringResource(id = R.string.for_all_apps),
                         selected = !isWhitelistMode.value,
                         onClick = {
-                            isWhitelistMode.value = false
-                            // Сохраняем текущий список в whitelistApps перед переключением
-                            val currentWhitelist = selectedApps.filter { it != "all_apps" }
-                            whitelistApps.clear()
-                            whitelistApps.addAll(currentWhitelist)
-                            // Переключаемся на режим "для всех"
-                            selectedApps.clear()
                             selectedApps.add("all_apps")
                             preferencesManager.saveSelectedApps(selectedApps.toList())
                         }
@@ -304,10 +276,7 @@ fun SettingsDialog(
                         text = stringResource(id = R.string.whitelist_mode),
                         selected = isWhitelistMode.value,
                         onClick = {
-                            isWhitelistMode.value = true
-                            // Восстанавливаем сохраненный список при переключении на белый список
-                            selectedApps.clear()
-                            selectedApps.addAll(whitelistApps)
+                            selectedApps.remove("all_apps")
                             preferencesManager.saveSelectedApps(selectedApps.toList())
                         }
                     )
@@ -328,7 +297,7 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Подсказка, когда белый список пуст
-                    if (whitelistApps.isEmpty()) {
+                    if (selectedApps.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.whitelist_empty_hint),
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
@@ -337,7 +306,7 @@ fun SettingsDialog(
                     }
 
                     // Список приложений в белом списке
-                    whitelistApps.forEach { packageName ->
+                    selectedApps.filter { it != "all_apps" }.forEach { packageName ->
                         val appName = try {
                             val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
                             packageManager.getApplicationLabel(applicationInfo).toString()
@@ -359,7 +328,6 @@ fun SettingsDialog(
                             )
                             IconButton(
                                 onClick = {
-                                    whitelistApps.remove(packageName)
                                     selectedApps.remove(packageName)
                                     preferencesManager.saveSelectedApps(selectedApps.toList())
                                 }
@@ -386,16 +354,6 @@ fun SettingsDialog(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .clickable {
-                        // Убеждаемся, что selectedApps синхронизирован с текущим режимом
-                        if (isWhitelistMode.value) {
-                            selectedApps.clear()
-                            selectedApps.addAll(whitelistApps)
-                        } else {
-                            if (!selectedApps.contains("all_apps")) {
-                                selectedApps.clear()
-                                selectedApps.add("all_apps")
-                            }
-                        }
                         preferencesManager.saveSelectedApps(selectedApps.toList())
                         onDismiss()
                     },
