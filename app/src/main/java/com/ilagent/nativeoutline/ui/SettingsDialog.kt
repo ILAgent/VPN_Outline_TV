@@ -413,26 +413,27 @@ fun LinksPanel() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clickable { showDialog = true }
-                .padding(8.dp)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_telegram),
-                contentDescription = "Open Telegram",
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = stringResource(id = R.string.community),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
+        // todo
+//        Row(
+//            verticalAlignment = Alignment.CenterVertically,
+//            modifier = Modifier
+//                .clickable { showDialog = true }
+//                .padding(8.dp)
+//        ) {
+//            Icon(
+//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_telegram),
+//                contentDescription = "Open Telegram",
+//                tint = MaterialTheme.colorScheme.primary
+//            )
+//            Spacer(modifier = Modifier.width(4.dp))
+//            Text(
+//                text = stringResource(id = R.string.community),
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.onSurface,
+//            )
+//        }
+//
+//        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(
