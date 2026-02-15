@@ -2,15 +2,17 @@ package com.ilagent.nativeoutline.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.ilagent.nativeoutline.data.model.VpnServerInfo
+import androidx.compose.runtime.Stable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ilagent.nativeoutline.data.model.VpnServerInfo
 
-
+@Stable
 class PreferencesManager(context: Context) {
 
     private val gson = Gson()
-    private val preferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val preferences: SharedPreferences =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     fun saveVpnKeys(keys: List<VpnServerInfo>) {
         val json = gson.toJson(keys)

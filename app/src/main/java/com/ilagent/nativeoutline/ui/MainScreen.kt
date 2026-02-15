@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -87,6 +86,7 @@ fun MainScreen(
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val preferencesManager = remember { PreferencesManager(context) }
 
     val connectButtonInteractionSource = remember { MutableInteractionSource() }
 
@@ -192,7 +192,7 @@ fun MainScreen(
             if (isSettingsDialogOpen) {
                 SettingsDialog(
                     onDismiss = { isSettingsDialogOpen = false },
-                    preferencesManager = PreferencesManager(context),
+                    preferencesManager = preferencesManager,
                     onDnsSelected = {},
                     themeViewModel = themeViewModel,
                     autoConnectViewModel = autoConnectViewModel
@@ -206,11 +206,7 @@ fun MainScreen(
             }
 
             Spacer(modifier = Modifier.height(15.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight(0.3f),
-                contentAlignment = Alignment.BottomCenter
-            ) {
+            Box {
                 var requestPermission by remember { mutableStateOf(false) }
                 NotificationPermission(requestPermission) {
                     onConnectClick(vpnServerState.url)
@@ -320,6 +316,9 @@ fun MainScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Red
                 )
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                WhiteList(preferencesManager)
             }
         }
 

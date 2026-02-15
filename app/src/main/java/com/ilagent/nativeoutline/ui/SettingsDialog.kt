@@ -18,12 +18,9 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SystemSecurityUpdateWarning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -32,9 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,10 +68,6 @@ fun SettingsDialog(
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
     val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
 
-    val selectedApps = remember { mutableStateListOf<String>() }
-    var isAppSelectionDialogOpen by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val packageManager = context.packageManager
 
     LaunchedEffect(Unit) {
         if (preferencesManager.getSelectedDns().isNullOrEmpty()) {
@@ -85,32 +76,6 @@ fun SettingsDialog(
         } else {
             selectedDns = preferencesManager.getSelectedDns() ?: "8.8.8.8"
         }
-
-        val savedApps = preferencesManager.getSelectedApps()
-        if (savedApps.isNullOrEmpty()) {
-            selectedApps.clear()
-            selectedApps.add("all_apps")
-            preferencesManager.saveSelectedApps(selectedApps.toList())
-        } else {
-            selectedApps.clear()
-            selectedApps.addAll(savedApps)
-        }
-    }
-
-    if (isAppSelectionDialogOpen) {
-        AppSelectionDialog(
-            onDismiss = { isAppSelectionDialogOpen = false },
-            initialSelectedApps = selectedApps.filter { it != "all_apps" }.toList(),
-            onAppsSelected = { apps ->
-                selectedApps.clear()
-                selectedApps.addAll(apps)
-                preferencesManager.saveSelectedApps(selectedApps.toList())
-            }
-        )
-    }
-
-    val isWhitelistMode = remember {
-        derivedStateOf { !selectedApps.contains("all_apps")}
     }
 
     AlertDialog(
@@ -261,86 +226,7 @@ fun SettingsDialog(
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
                 )
 
-                Column(Modifier.selectableGroup()) {
-                    // Выбор режима: для всех или белый список
-                    SettingsDialogThemeChooserRow(
-                        text = stringResource(id = R.string.for_all_apps),
-                        selected = !isWhitelistMode.value,
-                        onClick = {
-                            selectedApps.add("all_apps")
-                            preferencesManager.saveSelectedApps(selectedApps.toList())
-                        }
-                    )
-
-                    SettingsDialogThemeChooserRow(
-                        text = stringResource(id = R.string.whitelist_mode),
-                        selected = isWhitelistMode.value,
-                        onClick = {
-                            selectedApps.remove("all_apps")
-                            preferencesManager.saveSelectedApps(selectedApps.toList())
-                        }
-                    )
-                }
-
-                // Показываем список и кнопки только в режиме белого списка
-                if (isWhitelistMode.value) {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Кнопка "Добавить"
-                    Button(
-                        onClick = { isAppSelectionDialogOpen = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(stringResource(id = R.string.add_an_application))
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Подсказка, когда белый список пуст
-                    if (selectedApps.isEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.whitelist_empty_hint),
-                            style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray),
-                            modifier = Modifier.padding(start = 12.dp, top = 4.dp)
-                        )
-                    }
-
-                    // Список приложений в белом списке
-                    selectedApps.filter { it != "all_apps" }.forEach { packageName ->
-                        val appName = try {
-                            val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
-                            packageManager.getApplicationLabel(applicationInfo).toString()
-                        } catch (_: Exception) {
-                            // todo log e
-                            packageName
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = appName,
-                                modifier = Modifier.weight(1f),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            IconButton(
-                                onClick = {
-                                    selectedApps.remove(packageName)
-                                    preferencesManager.saveSelectedApps(selectedApps.toList())
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Delete,
-                                    contentDescription = stringResource(id = R.string.remove),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        }
-                    }
-                }
+                WhiteList(preferencesManager)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 LinksPanel()
@@ -354,7 +240,6 @@ fun SettingsDialog(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .clickable {
-                        preferencesManager.saveSelectedApps(selectedApps.toList())
                         onDismiss()
                     },
             )
