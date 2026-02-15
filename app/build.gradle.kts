@@ -78,22 +78,23 @@ fun getCommitHash(): String {
         }
         stdout.toString().trim()
     } catch (e: Exception) {
+        println(e)
         "unknown"
     }
 }
 
 fun getCommitTime(): String {
     val stdout = ByteArrayOutputStream()
-    //return try {
-    exec {
-        commandLine("git", "log", "-1", "--format=%ci")
-        isIgnoreExitValue = true
+    return try {
+        exec {
+            commandLine("git", "show", "-s", "--format=%ci", "HEAD")
+            isIgnoreExitValue = true
+        }
+        stdout.toString().trim()
+    } catch (e: Exception) {
+        println(e)
+        "unknown"
     }
-    return stdout.toString().trim()
-//    } catch (e: Exception) {
-//        println(e)
-//        OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-//    }
 }
 
 fun getGitBranch(): String {
@@ -106,6 +107,7 @@ fun getGitBranch(): String {
         }
         stdout.toString().trim().takeIf { it.isNotEmpty() } ?: "unknown"
     } catch (e: Exception) {
+        println(e)
         "unknown"
     }
 }
