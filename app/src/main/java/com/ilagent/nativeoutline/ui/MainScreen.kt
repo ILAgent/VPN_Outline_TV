@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ilagent.nativeoutline.BuildConfig
-import com.ilagent.nativeoutline.BuildConfig.COMMIT_TIME
 import com.ilagent.nativeoutline.BuildConfig.VERSION_NAME
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
@@ -325,7 +324,7 @@ fun MainScreen(
             val appInfo = """
     🔧 Версия: ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
     📝 Коммит: ${BuildConfig.COMMIT_HASH}
-    ⏱️ Время коммита: ${COMMIT_TIME}
+    ⏱️ Время коммита: ${BuildConfig.COMMIT_TIME}
     🏗️ Собрано: ${BuildConfig.BUILD_TIME}
     🌿 Ветка: ${BuildConfig.BRANCH}
 """.trimIndent()

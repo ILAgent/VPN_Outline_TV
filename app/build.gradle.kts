@@ -1,6 +1,9 @@
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 plugins {
     alias(libs.plugins.android.application)
@@ -83,18 +86,40 @@ fun getCommitHash(): String {
     }
 }
 
+// Специальная функция для получения времени коммита
 fun getCommitTime(): String {
-    val stdout = ByteArrayOutputStream()
-    return try {
-        exec {
-            commandLine("git", "show", "-s", "--format=%ci", "HEAD")
-            isIgnoreExitValue = true
+    // Пробуем разные варианты получения времени
+    val timeFormats = listOf(
+        // Вариант 1: через log (самый надежный)
+        runGitCommand("git", "log", "-1", "--format=%cd", "--date=iso"),
+        // Вариант 2: через show
+        runGitCommand("git", "show", "-s", "--format=%ci", "HEAD"),
+        // Вариант 3: через log с другой датой
+        runGitCommand("git", "log", "-1", "--format=%cI"),  // ISO 8601
+        // Вариант 4: через log с timestamp
+        runGitCommand("git", "log", "-1", "--format=%ct")?.let { timestamp ->
+            // Конвертируем timestamp в дату
+            try {
+                val date = Date(timestamp.toLong() * 1000)
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.getDefault()).format(date)
+            } catch (e: Exception) {
+                println(e)
+                "unknown"
+            }
         }
-        stdout.toString().trim()
-    } catch (e: Exception) {
-        println(e)
-        "unknown"
+    )
+
+    // Берем первый непустой результат
+    for (time in timeFormats) {
+        if (time != null && time.isNotEmpty()) {
+            println("✅ Commit time found: $time")
+            return time
+        }
     }
+
+    // Если ничего не нашли, возвращаем текущее время
+    println("⚠️ No commit time found, using current time")
+    return "unknown"
 }
 
 fun getGitBranch(): String {
@@ -109,6 +134,28 @@ fun getGitBranch(): String {
     } catch (e: Exception) {
         println(e)
         "unknown"
+    }
+}
+
+// Функция для git команд (работает для хэша и ветки)
+fun runGitCommand(vararg command: String): String? {
+    return try {
+        val stdout = ByteArrayOutputStream()
+        exec {
+            commandLine(command.toList())
+            standardOutput = stdout
+            workingDir = rootDir
+            isIgnoreExitValue = true
+        }.let { result ->
+            if (result.exitValue == 0) {
+                stdout.toString().trim().takeIf { it.isNotEmpty() }
+            } else {
+                null
+            }
+        }
+    } catch (e: Exception) {
+        println(e)
+        null
     }
 }
 
