@@ -6,6 +6,7 @@ import androidx.compose.runtime.Stable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ilagent.nativeoutline.data.model.VpnServerInfo
+import androidx.core.content.edit
 
 @Stable
 class PreferencesManager(context: Context) {
@@ -16,7 +17,7 @@ class PreferencesManager(context: Context) {
 
     fun saveVpnKeys(keys: List<VpnServerInfo>) {
         val json = gson.toJson(keys)
-        preferences.edit().putString(KEY_VPN_LIST, json).apply()
+        preferences.edit { putString(KEY_VPN_LIST, json) }
     }
 
     fun getVpnKeys(): List<VpnServerInfo> {
@@ -30,7 +31,7 @@ class PreferencesManager(context: Context) {
     }
 
     fun saveSelectedTheme(isDark: Boolean) {
-        preferences.edit().putBoolean(KEY_SELECTED_THEME, isDark).apply()
+        preferences.edit { putBoolean(KEY_SELECTED_THEME, isDark) }
     }
 
     fun getSelectedTheme(): Boolean {
@@ -61,7 +62,7 @@ class PreferencesManager(context: Context) {
 
 
     fun saveVpnStartTime(startTime: Long) {
-        preferences.edit().putLong(KEY_VPN_START_TIME, startTime).apply()
+        preferences.edit { putLong(KEY_VPN_START_TIME, startTime) }
     }
 
     fun getVpnStartTime(): Long {
@@ -69,16 +70,16 @@ class PreferencesManager(context: Context) {
     }
 
     fun clearVpnStartTime() {
-        preferences.edit().remove(KEY_VPN_START_TIME).apply()
+        preferences.edit { remove(KEY_VPN_START_TIME) }
     }
 
     fun saveServerName(name: String) {
-        preferences.edit().putString(KEY_SERVER_NAME, name).apply()
+        preferences.edit { putString(KEY_SERVER_NAME, name) }
     }
 
 
     fun saveFlagUrl(ip: String, flagUrl: String) {
-        preferences.edit().putString("flag_$ip", flagUrl).apply()
+        preferences.edit { putString("flag_$ip", flagUrl) }
     }
 
     fun getFlagUrl(ip: String): String? {
@@ -87,7 +88,7 @@ class PreferencesManager(context: Context) {
 
 
     fun saveSelectedDns(dns: String) {
-        preferences.edit().putString(KEY_SELECTED_DNS, dns).apply()
+        preferences.edit { putString(KEY_SELECTED_DNS, dns) }
     }
 
     fun getSelectedDns(): String? {
@@ -95,7 +96,7 @@ class PreferencesManager(context: Context) {
     }
 
     fun saveSelectedApps(apps: List<String>) {
-        preferences.edit().putStringSet(KEY_SELECTED_APPS, apps.toSet()).apply()
+        preferences.edit { putStringSet(KEY_SELECTED_APPS, apps.toSet()) }
     }
 
     fun getSelectedApps(): Set<String>? {
@@ -103,7 +104,7 @@ class PreferencesManager(context: Context) {
     }
 
     fun setAutoConnectionEnabled(enabled: Boolean) {
-        preferences.edit().putBoolean(KEY_AUTO_CONNECTION, enabled).apply()
+        preferences.edit { putBoolean(KEY_AUTO_CONNECTION, enabled) }
     }
 
     fun isAutoConnectionEnabled(): Boolean {
