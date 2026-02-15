@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ilagent.nativeoutline.BuildConfig
@@ -320,18 +321,20 @@ fun MainScreen(
                     color = Color.Red
                 )
             }
-
-            val appInfo = """
-    🔧 Версия: ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
-    📝 Коммит: ${BuildConfig.COMMIT_HASH}
-    ⏱️ Время коммита: ${BuildConfig.COMMIT_TIME}
-    🏗️ Собрано: ${BuildConfig.BUILD_TIME}
-    🌿 Ветка: ${BuildConfig.BRANCH}
-""".trimIndent()
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomCenter) {
-                Text(appInfo, textAlign = TextAlign.Start)
-            }
         }
+
+        val appInfo = """
+    🔧 ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
+    📝 ${BuildConfig.COMMIT_HASH}
+    ⏱️ ${BuildConfig.COMMIT_TIME}
+    🏗️ ${BuildConfig.BUILD_TIME}
+    🌿 ${BuildConfig.BRANCH}
+""".trimIndent()
+        Text(
+            appInfo,
+            modifier = Modifier.align(Alignment.BottomStart),
+            textAlign = TextAlign.Start, fontSize = 8.sp
+        )
     }
 }
 
