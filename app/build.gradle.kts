@@ -1,3 +1,7 @@
+import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -20,6 +24,15 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "COMMIT_HASH", "\"${getCommitHash()}\"")
+        buildConfigField("String", "COMMIT_TIME", "\"${getCommitTime()}\"")
+        buildConfigField(
+            "String",
+            "BUILD_TIME",
+            "\"${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}\""
+        )
+        buildConfigField("String", "BRANCH", "\"${getGitBranch()}\"")
     }
 
     buildTypes {
@@ -43,6 +56,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -51,6 +65,48 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+fun getCommitHash(): String {
+
+    return try {
+        val stdout = ByteArrayOutputStream()
+        exec {
+            commandLine("git", "rev-parse", "--short", "HEAD")
+            standardOutput = stdout
+        }
+        stdout.toString().trim()
+    } catch (e: Exception) {
+        "unknown"
+    }
+}
+
+fun getCommitTime(): String {
+    val stdout = ByteArrayOutputStream()
+    //return try {
+    exec {
+        commandLine("git", "log", "-1", "--format=%ci")
+        isIgnoreExitValue = true
+    }
+    return stdout.toString().trim()
+//    } catch (e: Exception) {
+//        println(e)
+//        OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+//    }
+}
+
+fun getGitBranch(): String {
+    return try {
+        val stdout = ByteArrayOutputStream()
+        exec {
+            commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+            standardOutput = stdout
+            isIgnoreExitValue = true
+        }
+        stdout.toString().trim().takeIf { it.isNotEmpty() } ?: "unknown"
+    } catch (e: Exception) {
+        "unknown"
     }
 }
 
@@ -84,7 +140,7 @@ dependencies {
     implementation(libs.firebase.perf)
     implementation(libs.firebase.config)
 
-    implementation (libs.gson)
+    implementation(libs.gson)
 
     implementation(libs.nanohttpd)
     implementation(libs.core)

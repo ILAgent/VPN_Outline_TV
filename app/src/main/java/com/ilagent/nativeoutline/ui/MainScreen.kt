@@ -36,7 +36,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,10 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.ilagent.nativeoutline.BuildConfig
+import com.ilagent.nativeoutline.BuildConfig.COMMIT_TIME
+import com.ilagent.nativeoutline.BuildConfig.VERSION_NAME
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.versionName
@@ -108,13 +111,6 @@ fun MainScreen(
             elapsedTime = ((System.currentTimeMillis() - vpnServerState.startTime) / 1000).toInt()
         }
         elapsedTime = 0
-    }
-
-    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
-    val waveColors = if (isDarkTheme) {
-        listOf(Color(0xFF055A76), Color(0xFF002D46))
-    } else {
-        listOf(Color(0xFFA0DEFF), Color(0xFFFFF9D0))
     }
 
     Box(
@@ -324,6 +320,17 @@ fun MainScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Red
                 )
+            }
+
+            val appInfo = """
+    🔧 Версия: ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
+    📝 Коммит: ${BuildConfig.COMMIT_HASH}
+    ⏱️ Время коммита: ${COMMIT_TIME}
+    🏗️ Собрано: ${BuildConfig.BUILD_TIME}
+    🌿 Ветка: ${BuildConfig.BRANCH}
+""".trimIndent()
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomCenter) {
+                Text(appInfo, textAlign = TextAlign.Start)
             }
         }
     }
