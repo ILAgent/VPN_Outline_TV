@@ -39,7 +39,7 @@ android {
         applicationId = "com.ilagent.nativeoutline"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1000
+        versionCode = 100
         versionName = "0.1"
 
         vectorDrawables {
