@@ -156,7 +156,7 @@
     <string name="on">ON</string>
     <string name="elapsed_time">Connection time</string>
     <string name="invalid_decoded_info_format">Invalid switch format</string>
-    <string name="version">Native Outline %1$s</string>
+    <string name="version" translatable="false">Native Outline %1$s</string>
     <string name="edit_server_info">Server Info</string>
     <string name="server_name">Server Name</string>
     <string name="outline_key">Outline Key</string>
@@ -173,7 +173,7 @@
     <string name="vpn_start_failed">VPN Starting failed</string>
     <string name="disconnect_before_settings">Disconnect from the VPN first</string>
     <string name="wrong_outline_key_format">Wrong Outline key format</string>
-    <string name="github_link">https://github.com/ILAgent/VPN_Outline_TV</string>
+    <string name="github_link" translatable="false">https://github.com/ILAgent/VPN_Outline_TV</string>
     <string name="by_author">by IL_Agent</string>
     <string name="app_update_available">Update Outline?</string>
     <string name="loading_progress">Loading: %1$s%%</string>
@@ -183,7 +183,7 @@
     <string name="failed_to_get_latest_version">Failed to get latest version</string>
     <string name="update_error">Update error</string>
     <string name="app_update_downloading">Downloading update…</string>
-    <string name="LICENSE">https://github.com/ILAgent/VPN_Outline_TV/blob/main/LICENSE.md</string>
+    <string name="LICENSE" translatable="false">https://github.com/ILAgent/VPN_Outline_TV/blob/main/LICENSE.md</string>
     <string name="settings">Settings</string>
     <string name="DNS">Server DNS</string>
     <string name="license">License</string>
@@ -243,5 +243,5 @@
     <string name="pair_enter_key_alert">Enter the key</string>
     <string name="pair_key_sent_msg">Key sent. You can return to TV.</string>
     <string name="pair_error_prefix">Error:</string>
-    <string name="pair_not_found">Not found</string>
+    <string name="pair_not_found" translatable="false">Not found</string>
 </resources>
