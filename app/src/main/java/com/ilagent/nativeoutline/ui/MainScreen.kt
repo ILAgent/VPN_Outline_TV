@@ -252,12 +252,16 @@ fun MainScreen(
                                 indication = ripple(true)
                             ) {
                                 if (!isEditing) {
-                                    isConnectionLoading = true
-                                    if (isConnected) {
-                                        requestPermission = false
-                                        onDisconnectClick()
+                                    if (vpnServerState == VpnServerStateUi.DEFAULT) {
+                                        isDialogOpen = true
                                     } else {
-                                        requestPermission = true
+                                        isConnectionLoading = true
+                                        if (isConnected) {
+                                            requestPermission = false
+                                            onDisconnectClick()
+                                        } else {
+                                            requestPermission = true
+                                        }
                                     }
                                 }
                             },
