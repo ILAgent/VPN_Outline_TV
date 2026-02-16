@@ -322,18 +322,20 @@ fun MainScreen(
             }
         }
 
-        val appInfo = """
+        if (BuildConfig.DEBUG) {
+            val appInfo = """
     🔧 ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
     📝 ${BuildConfig.COMMIT_HASH}
     ⏱️ ${BuildConfig.COMMIT_TIME}
     🏗️ ${BuildConfig.BUILD_TIME}
     🌿 ${BuildConfig.BRANCH}
 """.trimIndent()
-        Text(
-            appInfo,
-            modifier = Modifier.align(Alignment.BottomStart),
-            textAlign = TextAlign.Start, fontSize = 8.sp
-        )
+            Text(
+                appInfo,
+                modifier = Modifier.align(Alignment.BottomStart),
+                textAlign = TextAlign.Start, fontSize = 8.sp
+            )
+        }
     }
 }
 
