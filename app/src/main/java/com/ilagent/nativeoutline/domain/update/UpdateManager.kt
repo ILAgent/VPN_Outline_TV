@@ -10,7 +10,6 @@ import okhttp3.Request
 import org.json.JSONObject
 import java.io.File
 
-// todo remove
 interface UpdateManager {
     suspend fun checkForAppUpdates(currentVersion: String): UpdateStatus
     suspend fun downloadAndInstallLatestApk(
@@ -139,11 +138,11 @@ interface UpdateManager {
         }
 
         companion object {
-            private const val REPO_OWNER = "agolyud"
+            private const val REPO_OWNER = "ILAgent"
             private const val REPO_NAME = "VPN_Outline_TV"
             private const val LATEST_VERSION_ENDPOINT =
                 "https://api.github.com/repos/%s/%s/releases/latest"
-            private const val APK_FILE_NAME = "OutlineVPNtv.apk"
+            private const val APK_FILE_NAME = "nativeoutline.apk"
             private const val APK_FILE_ENDPOINT =
                 "https://github.com/%s/%s/releases/latest/download/%s"
         }
