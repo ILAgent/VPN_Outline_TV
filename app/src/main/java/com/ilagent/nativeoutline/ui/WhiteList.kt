@@ -108,29 +108,9 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                         packageName
                     }
                     item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = appName,
-                                modifier = Modifier.weight(1f),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            IconButton(
-                                onClick = {
-                                    selectedApps.remove(packageName)
-                                    preferencesManager.saveSelectedApps(selectedApps.toList())
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Delete,
-                                    contentDescription = stringResource(id = R.string.remove),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
+                        WhiteListItem(appName) {
+                            selectedApps.remove(packageName)
+                            preferencesManager.saveSelectedApps(selectedApps.toList())
                         }
                     }
                 }
@@ -149,6 +129,35 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
             }
         )
     }
+}
+
+@Composable
+private fun WhiteListItem(appName: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = appName,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = stringResource(id = R.string.remove),
+                tint = MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun WhiteListItemPreview() {
+    WhiteListItem("Youtube") { }
 }
 
 @Preview
