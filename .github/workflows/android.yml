@@ -151,6 +151,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            app-release-*.apk
+            nativeoutline*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
