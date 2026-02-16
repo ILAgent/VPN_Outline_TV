@@ -2,23 +2,28 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
-
+    # Для всех веток собираем debug, но не создаем релиз
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/main')
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: google services
         env:
           GOOGLE_SERVICES: ${{ secrets.NATIVE_OUTLINE_GOOGLE_SERVICES }}
         run: |
           mkdir -p app
           echo "$GOOGLE_SERVICES" > app/google-services.json
+
       - name: set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -28,10 +33,124 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
+
+      # Всегда собираем debug для проверки
+      - name: Build Debug APK
         run: ./gradlew assembleDebug
-      - name: Upload APK
+
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+
+  release:
+    name: Build Release and Create Release
+    runs-on: ubuntu-latest
+    # Запускается ТОЛЬКО release ветки
+    if: startsWith(github.ref, 'refs/heads/release/')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: google services
+        env:
+          GOOGLE_SERVICES: ${{ secrets.NATIVE_OUTLINE_GOOGLE_SERVICES }}
+        run: |
+          mkdir -p app
+          echo "$GOOGLE_SERVICES" > app/google-services.json
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Release APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          # Декодируем keystore из secrets
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 --decode > keystore.jks
+          
+            # Создаем файл с свойствами для подписи
+            echo "storeFile=$(pwd)/keystore.jks" > keystore.properties
+            echo "storePassword=$KEYSTORE_PASSWORD" >> keystore.properties
+            echo "keyAlias=$KEY_ALIAS" >> keystore.properties
+            echo "keyPassword=$KEY_PASSWORD" >> keystore.properties
+          else
+            echo "Warning: KEYSTORE_BASE64 not found, building unsigned APK"
+          fi
+          
+          # Собираем release APK
+          ./gradlew assembleRelease
+
+      - name: Extract version from branch name
+        id: extract_version
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/release/}
+          echo "version=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "Branch version: $BRANCH_NAME"
+
+      - name: Get previous release tag
+        id: previous_release
+        run: |
+          # Получаем последний тег для генерации changelog
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          if [ -n "${{ steps.previous_release.outputs.previous_tag }}" ]; then
+            NOTES=$(git log --pretty=format:"- %s" ${{ steps.previous_release.outputs.previous_tag }}..HEAD)
+          else
+            NOTES="Initial release"
+          fi
+          # Экранируем для использования в JSON
+          NOTES="${NOTES//'%'/'%25'}"
+          NOTES="${NOTES//$'\n'/'%0A'}"
+          NOTES="${NOTES//$'\r'/'%0D'}"
+          echo "notes=$NOTES" >> $GITHUB_OUTPUT
+
+      - name: Rename APK with version
+        run: |
+          VERSION=${{ steps.extract_version.outputs.version }}
+          if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
+            mv "app/build/outputs/apk/release/app-release.apk" "nativeoutline.apk"
+          elif [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+            mv "app/build/outputs/apk/release/app-release-unsigned.apk" "nativeoutline-unsigned.apk"
+          fi
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.extract_version.outputs.version }}
+          name: Release v${{ steps.extract_version.outputs.version }}
+          body: |
+            ## Автоматический релиз из ветки ${{ github.ref_name }}
+            
+            ### Что нового:
+            ${{ steps.release_notes.outputs.notes }}
+            
+            ### Инструкция по установке:
+            1. Скачайте APK файл
+            2. Разрешите установку из неизвестных источников в настройках Android
+            3. Откройте скачанный файл для установки
+          draft: false
+          prerelease: false
+          files: |
+            app-release-*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
