@@ -136,8 +136,8 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.extract_version.outputs.version }}
-          name: Release v${{ steps.extract_version.outputs.version }}
+          tag_name: ${{ steps.extract_version.outputs.version }}
+          name: Release ${{ steps.extract_version.outputs.version }}
           body: |
             ## Автоматический релиз из ветки ${{ github.ref_name }}
             
