@@ -139,7 +139,7 @@ jobs:
         with:
           tag_name: ${{ steps.extract_version.outputs.version }}
           name: Release ${{ steps.extract_version.outputs.version }}
-          body: release_notes.txt
+          body_path: release_notes.txt
           draft: false
           prerelease: false
           files: |
