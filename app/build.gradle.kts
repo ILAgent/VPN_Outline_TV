@@ -10,6 +10,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "1.9.0"
 
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
@@ -208,9 +209,10 @@ dependencies {
     implementation(libs.firebase.perf)
     implementation(libs.firebase.config)
 
-    implementation(libs.gson)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.nanohttpd)
     implementation(libs.core)
     implementation(libs.zxing.android.embedded)
+
 }

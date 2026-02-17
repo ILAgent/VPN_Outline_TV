@@ -3,30 +3,38 @@ package com.ilagent.nativeoutline.data.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.runtime.Stable
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.ilagent.nativeoutline.data.model.VpnServerInfo
 import androidx.core.content.edit
+import com.ilagent.nativeoutline.data.model.VpnServerInfo
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Stable
 class PreferencesManager(context: Context) {
 
-    private val gson = Gson()
+    private val json = Json {
+        ignoreUnknownKeys = true // Полезно для обратной совместимости
+        encodeDefaults = true // Сохранять значения по умолчанию
+    }
+
     private val preferences: SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     fun saveVpnKeys(keys: List<VpnServerInfo>) {
-        val json = gson.toJson(keys)
-        preferences.edit { putString(KEY_VPN_LIST, json) }
+        val jsonString = json.encodeToString(keys)
+        preferences.edit { putString(KEY_VPN_LIST, jsonString) }
     }
 
     fun getVpnKeys(): List<VpnServerInfo> {
-        val json = preferences.getString(KEY_VPN_LIST, null)
-        return if (json.isNullOrEmpty()) {
+        val jsonString = preferences.getString(KEY_VPN_LIST, null)
+        return if (jsonString.isNullOrEmpty()) {
             emptyList()
         } else {
-            val type = object : TypeToken<List<VpnServerInfo>>() {}.type
-            gson.fromJson(json, type)
+            try {
+                json.decodeFromString<List<VpnServerInfo>>(jsonString)
+            } catch (e: Exception) {
+                // todo log error
+                emptyList()
+            }
         }
     }
 
@@ -37,7 +45,6 @@ class PreferencesManager(context: Context) {
     fun getSelectedTheme(): Boolean {
         return preferences.getBoolean(KEY_SELECTED_THEME, false)
     }
-
 
     fun addOrUpdateVpnKey(serverName: String, key: String) {
         val existingList = getVpnKeys().toMutableList()
@@ -50,7 +57,6 @@ class PreferencesManager(context: Context) {
         saveVpnKeys(existingList)
     }
 
-
     fun deleteVpnKey(serverName: String) {
         val existingList = getVpnKeys().toMutableList()
         val index = existingList.indexOfFirst { it.name == serverName }
@@ -59,7 +65,6 @@ class PreferencesManager(context: Context) {
             saveVpnKeys(existingList)
         }
     }
-
 
     fun saveVpnStartTime(startTime: Long) {
         preferences.edit { putLong(KEY_VPN_START_TIME, startTime) }
@@ -77,7 +82,6 @@ class PreferencesManager(context: Context) {
         preferences.edit { putString(KEY_SERVER_NAME, name) }
     }
 
-
     fun saveFlagUrl(ip: String, flagUrl: String) {
         preferences.edit { putString("flag_$ip", flagUrl) }
     }
@@ -85,7 +89,6 @@ class PreferencesManager(context: Context) {
     fun getFlagUrl(ip: String): String? {
         return preferences.getString("flag_$ip", null)
     }
-
 
     fun saveSelectedDns(dns: String) {
         preferences.edit { putString(KEY_SELECTED_DNS, dns) }
