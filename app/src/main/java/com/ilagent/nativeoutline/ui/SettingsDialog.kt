@@ -156,35 +156,36 @@ fun SettingsDialog(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                // tode support dark theme
+//                Spacer(modifier = Modifier.height(16.dp))
 
-                SettingsDialogSectionTitle(text = stringResource(id = R.string.theme))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
-                        contentDescription = "Dark Mode",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(id = R.string.dark_mode),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Switch(
-                        checked = selectedTheme,
-                        onCheckedChange = { isChecked ->
-                            themeViewModel.setTheme(isChecked)
-                        }
-                    )
-                }
+//                SettingsDialogSectionTitle(text = stringResource(id = R.string.theme))
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(12.dp)
+//                ) {
+//                    Icon(
+//                        imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
+//                        contentDescription = "Dark Mode",
+//                        tint = MaterialTheme.colorScheme.onSurface
+//                    )
+//
+//                    Spacer(modifier = Modifier.width(8.dp))
+//
+//                    Text(
+//                        text = stringResource(id = R.string.dark_mode),
+//                        modifier = Modifier.weight(1f)
+//                    )
+//
+//                    Switch(
+//                        checked = selectedTheme,
+//                        onCheckedChange = { isChecked ->
+//                            themeViewModel.setTheme(isChecked)
+//                        }
+//                    )
+//                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
