@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -107,6 +108,8 @@ class MainActivity : ComponentActivity() {
         } else {
             registerReceiver(receiver, intentFilter)
         }
+
+        enableEdgeToEdge()
 
         setContent {
             val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
