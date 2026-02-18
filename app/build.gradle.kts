@@ -18,7 +18,7 @@ plugins {
 
 android {
     namespace = "com.ilagent.nativeoutline"
-    compileSdk = 34
+    compileSdk = 36
 
     signingConfigs {
         create("release") {
@@ -39,7 +39,7 @@ android {
     defaultConfig {
         applicationId = "com.ilagent.nativeoutline"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 300
         versionName = "0.3"
 
