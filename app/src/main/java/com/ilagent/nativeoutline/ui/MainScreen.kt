@@ -121,7 +121,7 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -158,8 +158,6 @@ fun MainScreen(
                     containerColor = Color.Transparent
                 )
             )
-
-            Spacer(modifier = Modifier.height(15.dp))
 
             ServerItem(
                 serverName = vpnServerState.name,
