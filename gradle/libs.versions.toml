@@ -1,8 +1,7 @@
 [versions]
-agp = "8.6.1"
+agp = "9.0.0"
 core = "3.5.3"
-gson = "2.10.1"
-kotlin = "1.9.0"
+kotlin = "2.2.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -23,7 +22,6 @@ zxingAndroidEmbedded = "4.3.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -57,3 +55,4 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 com-google-gms-google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
 com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.6" }
 com-google-firebase-firebase-pref = { id = "com.google.firebase.firebase-perf", version = "2.0.1" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

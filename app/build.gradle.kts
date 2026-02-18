@@ -6,10 +6,12 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.Properties
+import com.android.build.api.dsl.ApplicationExtension
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "1.9.0"
 
     id("com.google.gms.google-services")
@@ -81,9 +83,6 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -95,7 +94,7 @@ fun getCommitHash(): String {
 
     return try {
         val stdout = ByteArrayOutputStream()
-        exec {
+        providers.exec {
             commandLine("git", "rev-parse", "--short", "HEAD")
             standardOutput = stdout
         }
@@ -145,7 +144,7 @@ fun getCommitTime(): String {
 fun getGitBranch(): String {
     return try {
         val stdout = ByteArrayOutputStream()
-        exec {
+        providers.exec {
             commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
             standardOutput = stdout
             isIgnoreExitValue = true
@@ -160,21 +159,14 @@ fun getGitBranch(): String {
 // Функция для git команд (работает для хэша и ветки)
 fun runGitCommand(vararg command: String): String? {
     return try {
-        val stdout = ByteArrayOutputStream()
-        exec {
+        val output = providers.exec {
             commandLine(command.toList())
-            standardOutput = stdout
-            workingDir = rootDir
             isIgnoreExitValue = true
-        }.let { result ->
-            if (result.exitValue == 0) {
-                stdout.toString().trim().takeIf { it.isNotEmpty() }
-            } else {
-                null
-            }
-        }
+        }.standardOutput.asText.get()
+
+        output.trim().takeIf { it.isNotEmpty() }
     } catch (e: Exception) {
-        println(e)
+        println("Git command error: ${e.message}")
         null
     }
 }
