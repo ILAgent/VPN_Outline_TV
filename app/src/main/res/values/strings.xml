@@ -187,8 +187,6 @@
     <string name="settings">Settings</string>
     <string name="DNS">Server DNS</string>
     <string name="license">License</string>
-    <string name="services">Apps via VPN</string>
-    <string name="services_description">All applications: VPN for everyone. Or use whitelist: only selected apps use VPN, others work without VPN.</string>
     <string name="all_applications">All applications (VPN for all)</string>
     <string name="for_all_apps">For all applications</string>
     <string name="whitelist_mode">Whitelist</string>

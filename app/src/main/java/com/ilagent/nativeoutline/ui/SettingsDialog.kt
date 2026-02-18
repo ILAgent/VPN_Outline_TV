@@ -217,18 +217,6 @@ fun SettingsDialog(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-                SettingsDialogSectionTitle(
-                    text = stringResource(id = R.string.services)
-                )
-                Text(
-                    text = stringResource(id = R.string.services_description),
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-                )
-
-                WhiteList(preferencesManager)
-
-                Spacer(modifier = Modifier.height(16.dp))
                 LinksPanel()
             }
         },

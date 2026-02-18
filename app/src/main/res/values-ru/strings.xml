@@ -33,8 +33,6 @@
     <string name="settings">Настройки</string>
     <string name="DNS">Сервер DNS</string>
     <string name="license">Лицензия</string>
-    <string name="services">Приложения через VPN</string>
-    <string name="services_description">Все приложения — VPN для всех. Или белый список: только выбранные работают через VPN, остальные — без VPN.</string>
     <string name="all_applications">Все приложения (VPN для всех)</string>
     <string name="for_all_apps">Для всех приложений</string>
     <string name="whitelist_mode">Белый список</string>
