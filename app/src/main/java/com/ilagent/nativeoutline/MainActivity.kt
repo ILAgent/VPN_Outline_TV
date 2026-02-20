@@ -5,13 +5,16 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.ilagent.nativeoutline.data.broadcast.BroadcastVpnServiceAction
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
@@ -41,6 +45,7 @@ import com.ilagent.nativeoutline.viewmodel.MainViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.VpnEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnServerStateUi
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -91,6 +96,18 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            themeViewModel.isDarkTheme.collect { isDarkMode ->
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
+                        isDarkMode
+                    },
+                    navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
+                        isDarkMode
+                    }
+                )
+            }
+        }
         super.onCreate(savedInstanceState)
         preferencesManager = PreferencesManager(applicationContext)
 
@@ -108,8 +125,6 @@ class MainActivity : ComponentActivity() {
         } else {
             registerReceiver(receiver, intentFilter)
         }
-
-        enableEdgeToEdge()
 
         setContent {
             val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
@@ -155,16 +170,18 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                MainScreen(
-                    isConnected = connectionState,
-                    errorEvent = viewModel.errorEvent,
-                    vpnServerState = vpnServerState,
-                    onConnectClick = ::startVpn,
-                    onDisconnectClick = viewModel::stopVpn,
-                    onSaveServer = viewModel::saveVpnServer,
-                    themeViewModel = themeViewModel,
-                    autoConnectViewModel = autoConnectViewModel,
-                )
+                Surface {
+                    MainScreen(
+                        isConnected = connectionState,
+                        errorEvent = viewModel.errorEvent,
+                        vpnServerState = vpnServerState,
+                        onConnectClick = ::startVpn,
+                        onDisconnectClick = viewModel::stopVpn,
+                        onSaveServer = viewModel::saveVpnServer,
+                        themeViewModel = themeViewModel,
+                        autoConnectViewModel = autoConnectViewModel,
+                    )
+                }
 
                 errorMessage.value?.let {
                     Toast.makeText(context, it, Toast.LENGTH_LONG).show()
