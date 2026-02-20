@@ -14,6 +14,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -169,16 +170,18 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                MainScreen(
-                    isConnected = connectionState,
-                    errorEvent = viewModel.errorEvent,
-                    vpnServerState = vpnServerState,
-                    onConnectClick = ::startVpn,
-                    onDisconnectClick = viewModel::stopVpn,
-                    onSaveServer = viewModel::saveVpnServer,
-                    themeViewModel = themeViewModel,
-                    autoConnectViewModel = autoConnectViewModel,
-                )
+                Surface {
+                    MainScreen(
+                        isConnected = connectionState,
+                        errorEvent = viewModel.errorEvent,
+                        vpnServerState = vpnServerState,
+                        onConnectClick = ::startVpn,
+                        onDisconnectClick = viewModel::stopVpn,
+                        onSaveServer = viewModel::saveVpnServer,
+                        themeViewModel = themeViewModel,
+                        autoConnectViewModel = autoConnectViewModel,
+                    )
+                }
 
                 errorMessage.value?.let {
                     Toast.makeText(context, it, Toast.LENGTH_LONG).show()
