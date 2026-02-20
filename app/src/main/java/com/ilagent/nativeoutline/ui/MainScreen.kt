@@ -175,33 +175,7 @@ fun MainScreen(
                 },
             )
 
-            if (isDialogOpen) {
-                ServerDialog(
-                    currentName = vpnServerState.name,
-                    currentKey = vpnServerState.url,
-                    onDismiss = { isDialogOpen = false },
-                    onSave = { name, key ->
-                        onSaveServer(name, key)
-                        isDialogOpen = false
-                    },
-                )
-            }
 
-            if (isSettingsDialogOpen) {
-                SettingsDialog(
-                    onDismiss = { isSettingsDialogOpen = false },
-                    preferencesManager = preferencesManager,
-                    onDnsSelected = {},
-                    themeViewModel = themeViewModel,
-                    autoConnectViewModel = autoConnectViewModel
-                )
-            }
-
-            if (isHelpDialogOpen) {
-                HelpDialog(
-                    onDismiss = { isHelpDialogOpen = false }
-                )
-            }
 
             Spacer(modifier = Modifier.height(15.dp))
             Box {
@@ -336,6 +310,33 @@ fun MainScreen(
                 appInfo,
                 modifier = Modifier.align(Alignment.BottomStart),
                 textAlign = TextAlign.Start, fontSize = 8.sp
+            )
+        }
+        if (isDialogOpen) {
+            ServerDialog(
+                currentName = vpnServerState.name,
+                currentKey = vpnServerState.url,
+                onDismiss = { isDialogOpen = false },
+                onSave = { name, key ->
+                    onSaveServer(name, key)
+                    isDialogOpen = false
+                },
+            )
+        }
+
+        if (isSettingsDialogOpen) {
+            SettingsDialog(
+                onDismiss = { isSettingsDialogOpen = false },
+                preferencesManager = preferencesManager,
+                onDnsSelected = {},
+                themeViewModel = themeViewModel,
+                autoConnectViewModel = autoConnectViewModel
+            )
+        }
+
+        if (isHelpDialogOpen) {
+            HelpDialog(
+                onDismiss = { isHelpDialogOpen = false }
             )
         }
     }
