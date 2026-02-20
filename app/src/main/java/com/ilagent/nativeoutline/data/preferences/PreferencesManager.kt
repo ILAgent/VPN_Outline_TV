@@ -82,6 +82,10 @@ class PreferencesManager(context: Context) {
         preferences.edit { putString(KEY_SERVER_NAME, name) }
     }
 
+    var serverName: String?
+        set(name) = preferences.edit { putString(KEY_SERVER_NAME, name) }
+        get() = preferences.getString(KEY_SERVER_NAME, null)
+
     fun saveFlagUrl(ip: String, flagUrl: String) {
         preferences.edit { putString("flag_$ip", flagUrl) }
     }
