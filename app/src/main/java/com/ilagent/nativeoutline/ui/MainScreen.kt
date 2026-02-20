@@ -88,10 +88,6 @@ fun MainScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val preferencesManager = remember { PreferencesManager(context) }
 
-    val connectButtonInteractionSource = remember { MutableInteractionSource() }
-
-    val isConnectButtonFocused by connectButtonInteractionSource.collectIsFocusedAsState()
-
     LaunchedEffect(Unit) {
         errorEvent.observe(lifecycleOwner) {
             isConnectionLoading = false
@@ -118,186 +114,21 @@ fun MainScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-
-            TopAppBar(
-                title = {
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = context.getString(R.string.version, versionName(context)),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { isHelpDialogOpen = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.Quiz,
-                            contentDescription = "Open Question",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    IconButton(onClick = { isSettingsDialogOpen = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Open Settings",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
-            )
-
-            ServerItem(
-                serverName = vpnServerState.name,
-                serverHost = vpnServerState.host,
-                onForwardIconClick = {
-                    if (!isConnected && !isConnectionLoading) {
-                        isDialogOpen = true
-                    } else {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.disconnect_before_settings),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                },
-            )
-
-
-
-            Spacer(modifier = Modifier.height(15.dp))
-            Box {
-                var requestPermission by remember { mutableStateOf(false) }
-                NotificationPermission(requestPermission) {
-                    onConnectClick(vpnServerState.url)
-                }
-                if (isConnectionLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(20.dp)
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .size(120.dp)
-                            .border(
-                                width = 3.dp,
-                                color = if (isConnectButtonFocused)
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                                else
-                                    Color.Transparent,
-                                shape = RoundedCornerShape(34.dp)
-                            )
-                            .padding(4.dp)
-                            .clip(RoundedCornerShape(30.dp))
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = if (isConnected) {
-                                        listOf(
-                                            Color(0xFF5EFFB5),
-                                            Color(0xFF2C7151)
-                                        )
-                                    } else {
-                                        listOf(
-                                            Color(0xFFE57373),
-                                            Color(0xFFFF8A65)
-                                        )
-                                    }
-                                )
-                            )
-                            .focusable(interactionSource = connectButtonInteractionSource)
-                            .clickable(
-                                interactionSource = connectButtonInteractionSource,
-                                indication = ripple(true)
-                            ) {
-                                if (!isEditing) {
-                                    if (vpnServerState == VpnServerStateUi.DEFAULT) {
-                                        isDialogOpen = true
-                                    } else {
-                                        isConnectionLoading = true
-                                        if (isConnected) {
-                                            requestPermission = false
-                                            onDisconnectClick()
-                                        } else {
-                                            requestPermission = true
-                                        }
-                                    }
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Crossfade(
-                                targetState = isConnected,
-                                animationSpec = tween(600),
-                                label = "ConnectionStatusCrossfade"
-                            ) { connected ->
-                                Icon(
-                                    imageVector = if (connected) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(60.dp)
-                                )
-                            }
-                            Text(
-                                text = context.getString(if (isConnected) R.string.off else R.string.on),
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (isConnected) {
-                Text(
-                    text = context.getString(R.string.elapsed_time),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = String.format(
-                        Locale.getDefault(),
-                        "%02d:%02d:%02d",
-                        elapsedTime / 3600,
-                        (elapsedTime % 3600) / 60,
-                        elapsedTime % 60
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
-                )
-            }
-
-            errorMessage?.let { _message ->
-                Text(
-                    text = _message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Red
-                )
-            }
-            Box(modifier = Modifier.fillMaxSize()) {
-                WhiteList(preferencesManager)
-            }
-        }
-
+        MainScreenContent(
+            onHelpClick = { isHelpDialogOpen = true },
+            onSettingsClick = { isSettingsDialogOpen = true },
+            vpnServerState = vpnServerState,
+            onConnectClick = onConnectClick,
+            onDisconnectClick = onDisconnectClick,
+            onOpenServerDialog = { isDialogOpen = true },
+            isConnected = isConnected,
+            isConnectionLoading = isConnectionLoading,
+            isEditing = isEditing,
+            elapsedTime = elapsedTime,
+            errorMessage = errorMessage,
+            preferencesManager = preferencesManager,
+            onConnectionLoading = { isConnectionLoading = true }
+        )
         if (BuildConfig.DEBUG) {
             val appInfo = """
     🔧 ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
@@ -340,6 +171,208 @@ fun MainScreen(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreenContent(
+    onHelpClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    vpnServerState: VpnServerStateUi,
+    onConnectClick: (String) -> Unit,
+    onDisconnectClick: () -> Unit,
+    onOpenServerDialog: () -> Unit,
+    isConnected: Boolean,
+    isConnectionLoading: Boolean,
+    isEditing: Boolean,
+    elapsedTime: Int,
+    errorMessage: String?,
+    preferencesManager: PreferencesManager,
+    onConnectionLoading: () -> Unit,
+) {
+    val context = LocalContext.current
+    val connectButtonInteractionSource = remember { MutableInteractionSource() }
+    val isConnectButtonFocused by connectButtonInteractionSource.collectIsFocusedAsState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+
+        TopAppBar(
+            title = {
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = context.getString(R.string.version, versionName(context)),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = onHelpClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Quiz,
+                        contentDescription = "Open Question",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                IconButton(onClick = onSettingsClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "Open Settings",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent
+            )
+        )
+
+        ServerItem(
+            serverName = vpnServerState.name,
+            serverHost = vpnServerState.host,
+            onForwardIconClick = {
+                if (!isConnected && !isConnectionLoading) {
+                    onOpenServerDialog()
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.disconnect_before_settings),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            },
+        )
+
+
+
+        Spacer(modifier = Modifier.height(15.dp))
+        Box {
+            var requestPermission by remember { mutableStateOf(false) }
+            NotificationPermission(requestPermission) {
+                onConnectClick(vpnServerState.url)
+            }
+            if (isConnectionLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .padding(20.dp)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .border(
+                            width = 3.dp,
+                            color = if (isConnectButtonFocused)
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                            else
+                                Color.Transparent,
+                            shape = RoundedCornerShape(34.dp)
+                        )
+                        .padding(4.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = if (isConnected) {
+                                    listOf(
+                                        Color(0xFF5EFFB5),
+                                        Color(0xFF2C7151)
+                                    )
+                                } else {
+                                    listOf(
+                                        Color(0xFFE57373),
+                                        Color(0xFFFF8A65)
+                                    )
+                                }
+                            )
+                        )
+                        .focusable(interactionSource = connectButtonInteractionSource)
+                        .clickable(
+                            interactionSource = connectButtonInteractionSource,
+                            indication = ripple(true)
+                        ) {
+                            if (!isEditing) {
+                                if (vpnServerState == VpnServerStateUi.DEFAULT) {
+                                    onOpenServerDialog()
+                                } else {
+                                    onConnectionLoading()
+                                    if (isConnected) {
+                                        requestPermission = false
+                                        onDisconnectClick()
+                                    } else {
+                                        requestPermission = true
+                                    }
+                                }
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Crossfade(
+                            targetState = isConnected,
+                            animationSpec = tween(600),
+                            label = "ConnectionStatusCrossfade"
+                        ) { connected ->
+                            Icon(
+                                imageVector = if (connected) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
+                        Text(
+                            text = context.getString(if (isConnected) R.string.off else R.string.on),
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (isConnected) {
+            Text(
+                text = context.getString(R.string.elapsed_time),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d:%02d",
+                    elapsedTime / 3600,
+                    (elapsedTime % 3600) / 60,
+                    elapsedTime % 60
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black
+            )
+        }
+
+        errorMessage?.let { _message ->
+            Text(
+                text = _message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Red
+            )
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            WhiteList(preferencesManager)
+        }
+    }
+
 }
 
 @Preview(name = "Default", showBackground = true)
