@@ -4,13 +4,15 @@ on:
   push:
     branches: [ "main", "release/*" ]
   pull_request:
-    branches: [ "main", "release/*" ]
+    branches: [ "feature/*", "bugfix/*" ]
 
 jobs:
   build:
     # Для всех веток собираем debug, но не создаем релиз
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/main')
+    if: |
+      github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') ||
+      github.event_name == 'pull_request'
 
     steps:
       - uses: actions/checkout@v4
