@@ -73,9 +73,9 @@ class MainViewModel(
 
     fun loadLastVpnServerState() {
         val keys = preferencesManager.getVpnKeys()
-        val lastServer = keys.lastOrNull()
+        val selectedServer = keys.find { it.name == preferencesManager.selectedServerName }
 
-        if (lastServer == null) {
+        if (selectedServer == null) {
             _vpnServerState.value = VpnServerStateUi(
                 name = "",
                 host = "",
@@ -85,12 +85,12 @@ class MainViewModel(
             return
         }
 
-        val url = lastServer.key
+        val url = selectedServer.key
         val host = runCatching { parseUrlOutline.extractServerHost(url) ?: "" }.getOrDefault("")
         val startTime = preferencesManager.getVpnStartTime()
 
         _vpnServerState.value = VpnServerStateUi(
-            name = lastServer.name,
+            name = selectedServer.name,
             host = host,
             url = url,
             startTime = startTime
@@ -100,7 +100,7 @@ class MainViewModel(
     fun saveVpnServer(name: String, url: String) {
         preferencesManager.addOrUpdateVpnKey(name, url)
         preferencesManager.clearVpnStartTime()
-        preferencesManager.saveServerName(name)
+        preferencesManager.selectedServerName = name
 
         val host = runCatching { parseUrlOutline.extractServerHost(url) ?: "" }.getOrDefault("")
         _vpnServerState.value = VpnServerStateUi(name = name, host = host, url = url)
