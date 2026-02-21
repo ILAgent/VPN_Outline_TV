@@ -157,13 +157,15 @@ fun AppListItem(appInfo: AppInfo, onAppSelected: (AppInfo, Boolean) -> Unit) {
             .clickable {
                 onAppSelected(appInfo, !appInfo.isSelected)
             }
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
     ) {
         val appIconBitmap = appInfo.icon.toBitmap()
         Image(
             bitmap = appIconBitmap.asImageBitmap(),
             contentDescription = null,
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier
+                .size(48.dp)
+                .padding(all = 4.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = appInfo.appName, modifier = Modifier.weight(1f))
