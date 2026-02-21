@@ -86,9 +86,12 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
             // Кнопка "Добавить"
             Button(
                 onClick = { isAppSelectionDialogOpen = true },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.padding(start = 12.dp),
             ) {
-                Text(stringResource(id = R.string.add_an_application))
+                Text(
+                    modifier = Modifier.padding(horizontal = 48.dp),
+                    text = stringResource(id = R.string.add_an_application)
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -149,7 +152,9 @@ private fun WhiteListItem(appName: String, icon: Drawable?, onClick: () -> Unit)
             Image(
                 bitmap = icon,
                 contentDescription = null,
-                modifier = Modifier.size(48.dp).padding(all = 4.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(all = 4.dp)
             )
         }
         Text(

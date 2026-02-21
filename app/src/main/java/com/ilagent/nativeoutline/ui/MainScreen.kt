@@ -616,6 +616,7 @@ fun TvScreenContent(
 
 @Preview(name = "Default")
 @Preview(name = "tv", device = "id:tv_1080p")
+@Preview(name = "tablet", device = "id:7in WSVGA (Tablet)")
 @Composable
 fun DefaultPreview() {
     MainScreen(
