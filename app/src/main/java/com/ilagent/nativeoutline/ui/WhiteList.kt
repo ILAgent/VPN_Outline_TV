@@ -62,7 +62,7 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
     Column(modifier.selectableGroup()) {
         Column() {
             // Выбор режима: для всех или белый список
-            SettingsDialogThemeChooserRow(
+            SettingsDialogRadioItem(
                 text = stringResource(id = R.string.for_all_apps),
                 selected = !isWhitelistMode.value,
                 onClick = {
@@ -71,7 +71,7 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                 }
             )
 
-            SettingsDialogThemeChooserRow(
+            SettingsDialogRadioItem(
                 text = stringResource(id = R.string.whitelist_mode),
                 selected = isWhitelistMode.value,
                 onClick = {

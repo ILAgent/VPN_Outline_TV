@@ -90,7 +90,7 @@ fun SettingsDialog(
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 SettingsDialogSectionTitle(text = "Server DNS")
                 Column(Modifier.selectableGroup()) {
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "Google DNS",
                         selected = selectedDns == "8.8.8.8",
                         onClick = {
@@ -99,7 +99,7 @@ fun SettingsDialog(
                             onDnsSelected("8.8.8.8")
                         }
                     )
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "Cloudflare DNS",
                         selected = selectedDns == "1.1.1.1",
                         onClick = {
@@ -108,7 +108,7 @@ fun SettingsDialog(
                             onDnsSelected("1.1.1.1")
                         }
                     )
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "Yandex DNS",
                         selected = selectedDns == "77.88.8.8",
                         onClick = {
@@ -117,7 +117,7 @@ fun SettingsDialog(
                             onDnsSelected("77.88.8.8")
                         }
                     )
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "AdGuard DNS",
                         selected = selectedDns == "94.140.14.14",
                         onClick = {
@@ -126,7 +126,7 @@ fun SettingsDialog(
                             onDnsSelected("94.140.14.14")
                         }
                     )
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "OpenDNS",
                         selected = selectedDns == "208.67.222.222",
                         onClick = {
@@ -135,7 +135,7 @@ fun SettingsDialog(
                             onDnsSelected("208.67.222.222")
                         }
                     )
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "Quad9 DNS",
                         selected = selectedDns == "9.9.9.9",
                         onClick = {
@@ -144,7 +144,7 @@ fun SettingsDialog(
                             onDnsSelected("9.9.9.9")
                         }
                     )
-                    SettingsDialogThemeChooserRow(
+                    SettingsDialogRadioItem(
                         text = "Comodo Secure DNS",
                         selected = selectedDns == "8.26.56.26",
                         onClick = {
@@ -367,7 +367,7 @@ fun SettingsDialogSectionTitle(text: String) {
 }
 
 @Composable
-fun SettingsDialogThemeChooserRow(
+fun SettingsDialogRadioItem(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
@@ -380,7 +380,7 @@ fun SettingsDialogThemeChooserRow(
                 role = Role.RadioButton,
                 onClick = onClick,
             )
-            .padding(12.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(

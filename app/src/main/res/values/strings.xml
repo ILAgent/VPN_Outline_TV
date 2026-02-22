@@ -154,7 +154,7 @@
     <string name="enter_the_key">Enter the key</string>
     <string name="off">OFF</string>
     <string name="on">ON</string>
-    <string name="elapsed_time">Connection time</string>
+    <string name="elapsed_time">Connection time %s</string>
     <string name="invalid_decoded_info_format">Invalid switch format</string>
     <string name="version" translatable="false">Native Outline %1$s</string>
     <string name="edit_server_info">Server Info</string>

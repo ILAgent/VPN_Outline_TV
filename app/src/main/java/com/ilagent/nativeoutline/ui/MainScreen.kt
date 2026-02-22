@@ -272,10 +272,6 @@ fun MainScreenContent(
                 }
             },
         )
-
-
-
-        Spacer(modifier = Modifier.height(15.dp))
         Box {
             var requestPermission by remember { mutableStateOf(false) }
             NotificationPermission(requestPermission) {
@@ -360,30 +356,21 @@ fun MainScreenContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         if (isConnected) {
-            Text(
-                text = context.getString(R.string.elapsed_time),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Black
+            val time = String.format(
+                Locale.getDefault(),
+                "%02d:%02d:%02d",
+                elapsedTime / 3600,
+                (elapsedTime % 3600) / 60,
+                elapsedTime % 60
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             Text(
-                text = String.format(
-                    Locale.getDefault(),
-                    "%02d:%02d:%02d",
-                    elapsedTime / 3600,
-                    (elapsedTime % 3600) / 60,
-                    elapsedTime % 60
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black
+                text = context.getString(R.string.elapsed_time).format(time),
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
-
         errorMessage?.let { _message ->
             Text(
                 text = _message,
@@ -391,6 +378,7 @@ fun MainScreenContent(
                 color = Color.Red
             )
         }
+        Spacer(modifier = Modifier.height(8.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             WhiteList(preferencesManager)
         }
@@ -574,24 +562,16 @@ fun TvScreenContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (isConnected) {
-                    Text(
-                        text = context.getString(R.string.elapsed_time),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Black
+                    val time = String.format(
+                        Locale.getDefault(),
+                        "%02d:%02d:%02d",
+                        elapsedTime / 3600,
+                        (elapsedTime % 3600) / 60,
+                        elapsedTime % 60
                     )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     Text(
-                        text = String.format(
-                            Locale.getDefault(),
-                            "%02d:%02d:%02d",
-                            elapsedTime / 3600,
-                            (elapsedTime % 3600) / 60,
-                            elapsedTime % 60
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black
+                        text = context.getString(R.string.elapsed_time).format(time),
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
 
