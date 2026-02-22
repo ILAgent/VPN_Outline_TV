@@ -42,8 +42,8 @@ android {
         applicationId = "com.ilagent.nativeoutline"
         minSdk = 24
         targetSdk = 36
-        versionCode = 400
-        versionName = "0.4"
+        versionCode = 500
+        versionName = "0.5"
 
         vectorDrawables {
             useSupportLibrary = true
