@@ -50,14 +50,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.ilagent.nativeoutline.BuildConfig
-import com.ilagent.nativeoutline.BuildConfig.VERSION_NAME
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.versionName
@@ -151,20 +147,6 @@ fun MainScreen(
                 onConnectionLoading = { isConnectionLoading = true }
             )
 
-        }
-        if (BuildConfig.DEBUG) {
-            val appInfo = """
-    🔧 ${VERSION_NAME} (${BuildConfig.VERSION_CODE})
-    📝 ${BuildConfig.COMMIT_HASH}
-    ⏱️ ${BuildConfig.COMMIT_TIME}
-    🏗️ ${BuildConfig.BUILD_TIME}
-    🌿 ${BuildConfig.BRANCH}
-""".trimIndent()
-            Text(
-                appInfo,
-                modifier = Modifier.align(Alignment.BottomStart),
-                textAlign = TextAlign.Start, fontSize = 8.sp
-            )
         }
         if (isDialogOpen) {
             ServerDialog(
