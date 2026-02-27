@@ -57,7 +57,6 @@ fun ServerDialog(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var isKeyError by remember { mutableStateOf(false) }
-    var showFileManagerDialog by remember { mutableStateOf(false) }
     var showQrPair by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -317,23 +316,6 @@ fun ServerDialog(
             }
         }
     )
-
-    if (showFileManagerDialog) {
-        StoragePickerDialog(
-            onFileSelected = { file ->
-                val data = file.readText().trim()
-                if (data.isNotBlank()) {
-                    val parsedName = data.substringAfterLast("#", serverName)
-                    serverName = parsedName
-                    setServerKey(data)
-                }
-                showFileManagerDialog = false
-            },
-            onDismiss = {
-                showFileManagerDialog = false
-            }
-        )
-    }
 
     if (showQrPair) {
         PairByQrDialog(
