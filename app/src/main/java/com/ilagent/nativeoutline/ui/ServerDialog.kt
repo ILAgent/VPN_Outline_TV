@@ -1,6 +1,7 @@
 package com.ilagent.nativeoutline.ui
 
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
@@ -80,6 +81,24 @@ fun ServerDialog(
     ) { uri: Uri? ->
         uri?.let {
             try {
+                // Проверяем размер файла (максимум 100 КБ для Outline ключа)
+                val fileSize = context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
+                    val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                    if (cursor.moveToFirst() && sizeIndex != -1) {
+                        cursor.getLong(sizeIndex)
+                    } else null
+                }
+
+                val maxFileSize = 10240L
+                if (fileSize != null && fileSize > maxFileSize) {
+                    Toast.makeText(
+                        context,
+                        "Файл слишком большой. Максимальный размер: 100Б",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@let
+                }
+
                 context.contentResolver.openInputStream(it)?.use { inputStream ->
                     val data = inputStream.bufferedReader().readText().trim()
                     if (data.isNotBlank()) {
