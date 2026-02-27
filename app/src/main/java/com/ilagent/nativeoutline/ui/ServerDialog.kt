@@ -137,9 +137,19 @@ fun ServerDialog(
                                 if (Environment.isExternalStorageManager()) {
                                     showFileManagerDialog = true
                                 } else {
-                                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                                    intent.data = Uri.parse("package:${context.packageName}")
-                                    activity?.startActivity(intent)
+                                    try {
+                                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                                        intent.data = Uri.parse("package:${context.packageName}")
+                                        activity?.startActivity(intent)
+                                    } catch (e: Exception) {
+                                        // Если действие не поддерживается на этом устройстве
+                                        // Показываем сообщение с альтернативными способами
+                                        Toast.makeText(
+                                            context,
+                                            "Файловый доступ недоступен. Используйте вставку из буфера обмена или QR-код.",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 }
                             } else {
                                 val permission = Manifest.permission.READ_EXTERNAL_STORAGE
