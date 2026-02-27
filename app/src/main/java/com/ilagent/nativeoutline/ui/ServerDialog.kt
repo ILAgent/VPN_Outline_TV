@@ -1,16 +1,9 @@
 package com.ilagent.nativeoutline.ui
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -68,21 +61,10 @@ fun ServerDialog(
     var showQrPair by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-    val activity = (LocalContext.current as? Activity)
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val preferencesManager = remember { PreferencesManager(context) }
     var savedVpnKeys by remember { mutableStateOf(preferencesManager.getVpnKeys()) }
     var expanded by remember { mutableStateOf(false) }
-
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            showFileManagerDialog = true
-        } else {
-            Toast.makeText(context, R.string.you_must_grant_permission, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     fun validateKey(key: String) {
         isKeyError = !viewModel.validate(key)
@@ -91,6 +73,26 @@ fun ServerDialog(
     fun setServerKey(key: String) {
         serverKey = key
         validateKey(key)
+    }
+
+    // Launcher для Storage Access Framework (SAF) - работает на всех устройствах
+    val safFilePickerLauncher = rememberLauncherForActivityResult(
+        contract = GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            try {
+                context.contentResolver.openInputStream(it)?.use { inputStream ->
+                    val data = inputStream.bufferedReader().readText().trim()
+                    if (data.isNotBlank()) {
+                        val parsedName = data.substringAfterLast("#", serverName)
+                        serverName = parsedName
+                        setServerKey(data)
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Ошибка чтения файла: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     AlertDialog(
@@ -133,35 +135,18 @@ fun ServerDialog(
 
                     IconButton(
                         onClick = {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                if (Environment.isExternalStorageManager()) {
-                                    showFileManagerDialog = true
-                                } else {
-                                    try {
-                                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                                        intent.data = Uri.parse("package:${context.packageName}")
-                                        activity?.startActivity(intent)
-                                    } catch (e: Exception) {
-                                        // Если действие не поддерживается на этом устройстве
-                                        // Показываем сообщение с альтернативными способами
-                                        Toast.makeText(
-                                            context,
-                                            "Файловый доступ недоступен. Используйте вставку из буфера обмена или QR-код.",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            } else {
-                                val permission = Manifest.permission.READ_EXTERNAL_STORAGE
-                                val hasPermission =
-                                    ContextCompat.checkSelfPermission(context, permission) ==
-                                            PackageManager.PERMISSION_GRANTED
-
-                                if (hasPermission) {
-                                    showFileManagerDialog = true
-                                } else {
-                                    requestPermissionLauncher.launch(permission)
-                                }
+                            try {
+                                // Всегда используем Storage Access Framework (SAF)
+                                // Работает на всех устройствах Android без специальных разрешений
+                                // "*/*" позволяет выбирать любые файлы, включая без расширения
+                                safFilePickerLauncher.launch("*/*")
+                            } catch (e: Exception) {
+                                // Если SAF не поддерживается, показываем сообщение
+                                Toast.makeText(
+                                    context,
+                                    "Файловый доступ недоступен. Используйте вставку из буфера обмена или QR-код.",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     ) {
