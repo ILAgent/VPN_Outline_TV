@@ -14,6 +14,7 @@ import java.io.File
 interface UpdateManager {
     suspend fun checkForAppUpdates(currentVersion: String): UpdateStatus
     suspend fun downloadAndInstallLatestApk(
+        latestVersion: String,
         onProgress: (Int) -> Unit,
         onError: (Throwable) -> Unit
     )
@@ -42,21 +43,22 @@ interface UpdateManager {
         }
 
         override suspend fun downloadAndInstallLatestApk(
+            latestVersion: String,
             onProgress: (Int) -> Unit,
             onError: (Throwable) -> Unit
         ) {
             val url = APK_FILE_ENDPOINT.format(repoOwner, repoName, apkFileName)
             val apkFile = File(context.cacheDir, apkFileName)
-
+            CrashlyticsLogger.logAppUpdate("start", latestVersion)
             try {
                 downloadApk(url, apkFile, onProgress)
                 withContext(Dispatchers.Main) {
                     installApk(context, apkFile)
-                    CrashlyticsLogger.logAppUpdate("success")
+                    CrashlyticsLogger.logAppUpdate("success", latestVersion)
                 }
             } catch (e: Exception) {
                 CrashlyticsLogger.logException(e, "Failed to download and install APK")
-                CrashlyticsLogger.logAppUpdate("failed")
+                CrashlyticsLogger.logAppUpdate("failed", latestVersion)
                 onError(e)
             }
         }

@@ -43,12 +43,13 @@ class MainViewModel(
     }
 
     fun updateAppToLatest(
+        latestVersion: String,
         onProgress: (Int) -> Unit,
         onFinished: () -> Unit,
         onError: (Throwable?) -> Unit
     ) {
         viewModelScope.launch {
-            updateManager.downloadAndInstallLatestApk(onProgress, onError)
+            updateManager.downloadAndInstallLatestApk(latestVersion, onProgress, onError)
             onFinished()
         }
     }

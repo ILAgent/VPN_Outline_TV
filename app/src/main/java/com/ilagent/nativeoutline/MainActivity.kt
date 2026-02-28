@@ -162,6 +162,7 @@ class MainActivity : ComponentActivity() {
                         onUpdate = {
                             isDownloadingActive = true
                             viewModel.updateAppToLatest(
+                                latestVersion = latestVersion,
                                 onProgress = { downloadProgress = it },
                                 onFinished = { showUpdateDialog = false },
                                 onError = { _ ->

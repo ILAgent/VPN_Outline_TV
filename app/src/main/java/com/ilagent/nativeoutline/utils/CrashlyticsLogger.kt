@@ -211,11 +211,15 @@ object CrashlyticsLogger {
 
     /**
      * Логирует событие обновления приложения
+     * @param status Статус обновления (start, success, failed)
      * @param version Новая версия
      */
-    fun logAppUpdate(version: String) {
-        Log.i(TAG, "App update to version: $version")
-        analytics.logEvent("app_updating", Bundle().apply { putString("version", version) })
+    fun logAppUpdate(status: String, version: String) {
+        Log.i(TAG, "App update $status to version: $version")
+        analytics.logEvent("app_updating", Bundle().apply {
+            putString("status", status)
+            putString("version", version)
+        })
     }
 
     /**
