@@ -103,9 +103,15 @@ fun ServerDialog(
                 context.contentResolver.openInputStream(it)?.use { inputStream ->
                     val data = inputStream.bufferedReader().readText().trim()
                     if (data.isNotBlank()) {
-                        val parsedName = data.substringAfterLast("#", serverName)
+                        // Ограничиваем длину текста из файла
+                        val trimmedData = if (data.length > 2000) {
+                            data.substring(0, 2000)
+                        } else {
+                            data
+                        }
+                        val parsedName = trimmedData.substringAfterLast("#", serverName)
                         serverName = parsedName
-                        setServerKey(data)
+                        setServerKey(trimmedData)
                         CrashlyticsLogger.logServerImportedFromFile()
                     }
                 }
@@ -140,9 +146,15 @@ fun ServerDialog(
                         onClick = {
                             val clipboardText = clipboardManager.getText()?.text
                             if (!clipboardText.isNullOrEmpty()) {
-                                val parsedName = clipboardText.substringAfterLast("#", serverName)
+                                // Ограничиваем длину текста из буфера обмена
+                                val trimmedText = if (clipboardText.length > 2000) {
+                                    clipboardText.substring(0, 2000)
+                                } else {
+                                    clipboardText
+                                }
+                                val parsedName = trimmedText.substringAfterLast("#", serverName)
                                 serverName = parsedName
-                                setServerKey(clipboardText)
+                                setServerKey(trimmedText)
                                 CrashlyticsLogger.logServerImportedFromClipboard()
                             } else {
                                 Toast.makeText(context, R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
@@ -256,7 +268,11 @@ fun ServerDialog(
 
                 OutlinedTextField(
                     value = serverName,
-                    onValueChange = { serverName = it },
+                    onValueChange = { 
+                        if (it.length <= 1000) {
+                            serverName = it
+                        }
+                    },
                     label = { Text(stringResource(id = R.string.server_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -277,12 +293,16 @@ fun ServerDialog(
                         }
                     },
                     onValueChange = {
-                        val parsedName = it.substringAfterLast("#", serverName)
-                        serverName = parsedName
-                        setServerKey(it)
+                        // Ограничиваем длину ключа до 2000 символов для предотвращения OOM
+                        if (it.length <= 2000) {
+                            val parsedName = it.substringAfterLast("#", serverName)
+                            serverName = parsedName
+                            setServerKey(it)
+                        }
                     },
                     label = { Text(stringResource(id = R.string.outline_key)) },
                     singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -346,9 +366,15 @@ fun ServerDialog(
     if (showQrPair) {
         PairByQrDialog(
             onKeyReady = { keyFromQr ->
-                val parsedName = keyFromQr.substringAfterLast("#", serverName)
+                // Ограничиваем длину ключа из QR-кода
+                val trimmedKey = if (keyFromQr.length > 2000) {
+                    keyFromQr.substring(0, 2000)
+                } else {
+                    keyFromQr
+                }
+                val parsedName = trimmedKey.substringAfterLast("#", serverName)
                 serverName = parsedName
-                setServerKey(keyFromQr)
+                setServerKey(trimmedKey)
                 CrashlyticsLogger.logServerImportedFromQr()
                 showQrPair = false
                 Toast.makeText(context, R.string.key_received, Toast.LENGTH_SHORT).show()
