@@ -1,7 +1,7 @@
 package com.ilagent.nativeoutline.data.remote
 
 import android.os.Build
-import android.util.Log
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
@@ -24,7 +24,7 @@ interface RemoteJSONFetch {
             connection.connect()
 
             if (connection.responseCode == 429) {
-                Log.e("HttpURLConnectionFetch", "Too many requests: ${connection.responseCode}")
+                CrashlyticsLogger.logError("Too many requests: ${connection.responseCode}")
                 throw Exception("Too many requests: ${connection.responseCode}")
             }
 

@@ -91,7 +91,7 @@ class OutlineVpnService : VpnService() {
 
     private fun startVpn(config: ShadowSocksInfo?) = scope.launch(Dispatchers.IO) {
         if (config == null) {
-            Log.e(TAG, "startVpn: null config")
+            CrashlyticsLogger.logError("startVpn: null config")
             sendBroadcast(
                 Intent(BroadcastVpnServiceAction.ERROR)
             )
@@ -123,8 +123,7 @@ class OutlineVpnService : VpnService() {
         val client = try {
             Client(config)
         } catch (e: Exception) {
-            Log.i(TAG, "startVpn: Invalid configuration", e)
-            CrashlyticsLogger.logException(e, "Invalid VPN configuration")
+            CrashlyticsLogger.logException(e, "startVpn: Invalid VPN configuration")
             return false
         }
 
@@ -134,13 +133,11 @@ class OutlineVpnService : VpnService() {
             try {
                 val errorCode = checkServerConnectivity(client)
                 if (errorCode != ErrorCode.NO_ERROR && errorCode != ErrorCode.UDP_RELAY_NOT_ENABLED) {
-                    Log.i(TAG, "startVpn: Server connectivity check failed with error $errorCode")
-                    CrashlyticsLogger.logError("Server connectivity check failed with error: $errorCode")
+                    CrashlyticsLogger.logError("startVpn: Server connectivity check failed with error: $errorCode")
                     return false
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "startVpn: SHADOWSOCKS_START_FAILURE", e)
-                CrashlyticsLogger.logException(e, "Shadowsocks start failure")
+                CrashlyticsLogger.logException(e, "startVpn: SHADOWSOCKS_START_FAILURE")
                 return false
             }
         }
@@ -159,8 +156,7 @@ class OutlineVpnService : VpnService() {
             Log.i(TAG, "startVpn: VPN tunnel established successfully")
             startForegroundWithNotification()
         } catch (e: Exception) {
-            Log.e(TAG, "startVpn: Failed to connect the tunnel", e)
-            CrashlyticsLogger.logException(e, "Failed to connect VPN tunnel")
+            CrashlyticsLogger.logException(e, "startVpn: Failed to connect the tunnel")
             isRunning = false
         }
 
@@ -183,8 +179,7 @@ class OutlineVpnService : VpnService() {
             Log.i(TAG, "checkServerConnectivity: Go connectivity check result: ${result.name}")
             result
         } catch (e: Exception) {
-            Log.e(TAG, "checkServerConnectivity: Connectivity checks failed", e)
-            CrashlyticsLogger.logException(e, "Server connectivity checks failed")
+            CrashlyticsLogger.logException(e, "checkServerConnectivity: Connectivity checks failed")
             ErrorCode.UNEXPECTED
         }
     }
@@ -202,11 +197,7 @@ class OutlineVpnService : VpnService() {
                 startForeground(NOTIFICATION_SERVICE_ID, notification)
             }
         } catch (e: java.lang.Exception) {
-            Log.e(
-                TAG,
-                "startForegroundWithNotification: Unable to display persistent notification",
-                e
-            )
+            CrashlyticsLogger.logException(e, "startForegroundWithNotification: Unable to display persistent notification")
         }
     }
 

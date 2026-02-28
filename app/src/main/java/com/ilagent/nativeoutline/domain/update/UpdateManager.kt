@@ -78,7 +78,7 @@ interface UpdateManager {
                         null
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                CrashlyticsLogger.logException(e, "Failed to get latest release version")
                 return@withContext null
             }
         }

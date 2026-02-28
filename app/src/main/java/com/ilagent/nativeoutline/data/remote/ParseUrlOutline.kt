@@ -77,7 +77,7 @@ interface ParseUrlOutline {
                 ssUrl.startsWith("ssconf://") -> parseShadowSocksConfUrl(ssUrl)
                 ssUrl.startsWith("ss://") -> parseShadowSocksSsUrl(ssUrl)
                 else -> {
-                    Log.e("ParseUrl", "Invalid URL format: $ssUrl")
+                    CrashlyticsLogger.logError("Invalid URL format: $ssUrl")
                     throw IllegalArgumentException("Invalid URL format")
                 }
             }
