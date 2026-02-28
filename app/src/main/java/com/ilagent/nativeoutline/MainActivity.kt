@@ -37,6 +37,7 @@ import com.ilagent.nativeoutline.domain.update.UpdateManager
 import com.ilagent.nativeoutline.ui.MainScreen
 import com.ilagent.nativeoutline.ui.UpdateDialog
 import com.ilagent.nativeoutline.ui.theme.NativeOutlineTheme
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.utils.activityresult.VPNPermissionLauncher
 import com.ilagent.nativeoutline.utils.activityresult.base.launch
 import com.ilagent.nativeoutline.utils.versionName
@@ -61,8 +62,21 @@ class MainActivity : ComponentActivity() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                BroadcastVpnServiceAction.STARTED -> viewModel.vpnEvent(VpnEvent.STARTED)
-                BroadcastVpnServiceAction.STOPPED -> viewModel.vpnEvent(VpnEvent.STOPPED)
+                BroadcastVpnServiceAction.STARTED -> {
+                    viewModel.vpnEvent(VpnEvent.STARTED)
+                    viewModel.vpnServerState.value?.let { state ->
+                        val selectedApps = preferencesManager.getSelectedApps() ?: emptyList()
+                        val isWhitelistMode = !selectedApps.contains("all_apps")
+                        val whitelistCount = if (isWhitelistMode) selectedApps.size else 0
+                        CrashlyticsLogger.logVpnConnected(state.name, isWhitelistMode, whitelistCount)
+                    }
+                }
+                BroadcastVpnServiceAction.STOPPED -> {
+                    viewModel.vpnEvent(VpnEvent.STOPPED)
+                    viewModel.vpnServerState.value?.let { state ->
+                        CrashlyticsLogger.logVpnDisconnected(state.name)
+                    }
+                }
                 BroadcastVpnServiceAction.ERROR -> viewModel.vpnEvent(VpnEvent.ERROR)
             }
         }

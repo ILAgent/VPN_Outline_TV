@@ -69,6 +69,7 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                 onClick = {
                     selectedApps.add("all_apps")
                     preferencesManager.saveSelectedApps(selectedApps.toList())
+                    CrashlyticsLogger.logWhitelistChanged("all_apps")
                 }
             )
 
@@ -78,6 +79,7 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                 onClick = {
                     selectedApps.remove("all_apps")
                     preferencesManager.saveSelectedApps(selectedApps.toList())
+                    CrashlyticsLogger.logWhitelistChanged("whitelist")
                 }
             )
         }
@@ -121,6 +123,7 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                         WhiteListItem(appName, appIcon) {
                             selectedApps.remove(packageName)
                             preferencesManager.saveSelectedApps(selectedApps.toList())
+                            CrashlyticsLogger.logWhitelistChanged("removed_app")
                         }
                     }
                 }
@@ -136,6 +139,7 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                 selectedApps.clear()
                 selectedApps.addAll(apps)
                 preferencesManager.saveSelectedApps(selectedApps.toList())
+                CrashlyticsLogger.logWhitelistChanged("added_apps")
             }
         )
     }

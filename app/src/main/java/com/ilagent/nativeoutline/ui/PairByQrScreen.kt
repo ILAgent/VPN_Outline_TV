@@ -69,6 +69,7 @@ fun PairByQrScreen(
         error = null
         url = null
         qr = null
+        CrashlyticsLogger.logQrScanStarted()
 
         if (isPreview) {
             val demoIp = "192.168.0.10"
@@ -95,6 +96,7 @@ fun PairByQrScreen(
             onKeyReceived = { key ->
                 runCatching { server?.stop() }
                 server = null
+                CrashlyticsLogger.logQrScanSuccess()
                 onKeyReady(key)
             },
             preferClientLanguage = false
@@ -116,12 +118,14 @@ fun PairByQrScreen(
             qr = makeQr(link).toImageBitmap()
         } catch (e: BindException) {
             CrashlyticsLogger.logException(e, "Port already in use for QR server")
+            CrashlyticsLogger.logQrScanFailed("port_in_use")
             runCatching { srv.stop() }
             server = null
             error = ctx.getString(R.string.error_port_in_use)
             token = genToken()
         } catch (t: Throwable) {
             CrashlyticsLogger.logException(t, "Failed to start QR server")
+            CrashlyticsLogger.logQrScanFailed("server_start_failed")
             runCatching { srv.stop() }
             server = null
             error = ctx.getString(R.string.error_server_start_failed, t.message ?: "unknown")

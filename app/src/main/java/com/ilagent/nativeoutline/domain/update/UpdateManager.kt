@@ -52,9 +52,11 @@ interface UpdateManager {
                 downloadApk(url, apkFile, onProgress)
                 withContext(Dispatchers.Main) {
                     installApk(context, apkFile)
+                    CrashlyticsLogger.logAppUpdate("success")
                 }
             } catch (e: Exception) {
                 CrashlyticsLogger.logException(e, "Failed to download and install APK")
+                CrashlyticsLogger.logAppUpdate("failed")
                 onError(e)
             }
         }

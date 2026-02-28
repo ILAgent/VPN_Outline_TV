@@ -106,6 +106,7 @@ fun ServerDialog(
                         val parsedName = data.substringAfterLast("#", serverName)
                         serverName = parsedName
                         setServerKey(data)
+                        CrashlyticsLogger.logServerImportedFromFile()
                     }
                 }
             } catch (e: Exception) {
@@ -142,6 +143,7 @@ fun ServerDialog(
                                 val parsedName = clipboardText.substringAfterLast("#", serverName)
                                 serverName = parsedName
                                 setServerKey(clipboardText)
+                                CrashlyticsLogger.logServerImportedFromClipboard()
                             } else {
                                 Toast.makeText(context, R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
                             }
@@ -228,6 +230,7 @@ fun ServerDialog(
                                 trailingIcon = {
                                     IconButton(onClick = {
                                         preferencesManager.deleteVpnKey(item.name)
+                                        CrashlyticsLogger.logServerDeleted(item.name)
                                         savedVpnKeys = preferencesManager.getVpnKeys()
                                         serverName = ""
                                         setServerKey("")
@@ -346,6 +349,7 @@ fun ServerDialog(
                 val parsedName = keyFromQr.substringAfterLast("#", serverName)
                 serverName = parsedName
                 setServerKey(keyFromQr)
+                CrashlyticsLogger.logServerImportedFromQr()
                 showQrPair = false
                 Toast.makeText(context, R.string.key_received, Toast.LENGTH_SHORT).show()
             },

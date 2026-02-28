@@ -9,6 +9,7 @@ import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
 import com.ilagent.nativeoutline.domain.OutlineVpnManager
 import com.ilagent.nativeoutline.domain.update.UpdateManager
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.state.SingleLiveEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnServerStateUi
@@ -101,6 +102,7 @@ class MainViewModel(
         preferencesManager.addOrUpdateVpnKey(name, url)
         preferencesManager.clearVpnStartTime()
         preferencesManager.selectedServerName = name
+        CrashlyticsLogger.logServerAdded(name)
 
         val host = runCatching { parseUrlOutline.extractServerHost(url) ?: "" }.getOrDefault("")
         _vpnServerState.value = VpnServerStateUi(name = name, host = host, url = url)

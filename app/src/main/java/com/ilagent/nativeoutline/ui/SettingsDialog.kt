@@ -98,6 +98,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("8.8.8.8")
                             selectedDns = "8.8.8.8"
                             onDnsSelected("8.8.8.8")
+                            CrashlyticsLogger.logDnsChanged("8.8.8.8")
                         }
                     )
                     SettingsDialogRadioItem(
@@ -107,6 +108,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("1.1.1.1")
                             selectedDns = "1.1.1.1"
                             onDnsSelected("1.1.1.1")
+                            CrashlyticsLogger.logDnsChanged("1.1.1.1")
                         }
                     )
                     SettingsDialogRadioItem(
@@ -116,6 +118,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("77.88.8.8")
                             selectedDns = "77.88.8.8"
                             onDnsSelected("77.88.8.8")
+                            CrashlyticsLogger.logDnsChanged("77.88.8.8")
                         }
                     )
                     SettingsDialogRadioItem(
@@ -125,6 +128,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("94.140.14.14")
                             selectedDns = "94.140.14.14"
                             onDnsSelected("94.140.14.14")
+                            CrashlyticsLogger.logDnsChanged("94.140.14.14")
                         }
                     )
                     SettingsDialogRadioItem(
@@ -134,6 +138,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("208.67.222.222")
                             selectedDns = "208.67.222.222"
                             onDnsSelected("208.67.222.222")
+                            CrashlyticsLogger.logDnsChanged("208.67.222.222")
                         }
                     )
                     SettingsDialogRadioItem(
@@ -143,6 +148,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("9.9.9.9")
                             selectedDns = "9.9.9.9"
                             onDnsSelected("9.9.9.9")
+                            CrashlyticsLogger.logDnsChanged("9.9.9.9")
                         }
                     )
                     SettingsDialogRadioItem(
@@ -152,6 +158,7 @@ fun SettingsDialog(
                             preferencesManager.saveSelectedDns("8.26.56.26")
                             selectedDns = "8.26.56.26"
                             onDnsSelected("8.26.56.26")
+                            CrashlyticsLogger.logDnsChanged("8.26.56.26")
                         }
                     )
                 }
@@ -182,6 +189,7 @@ fun SettingsDialog(
                         checked = selectedTheme,
                         onCheckedChange = { isChecked ->
                             themeViewModel.setTheme(isChecked)
+                            CrashlyticsLogger.logThemeChanged(if (isChecked) "dark" else "light")
                         }
                     )
                 }
@@ -212,6 +220,7 @@ fun SettingsDialog(
                         checked = isAutoConnectionEnabled,
                         onCheckedChange = { isChecked ->
                             autoConnectViewModel.setAutoConnectEnabled(isChecked)
+                            CrashlyticsLogger.logAutoConnectionChanged(isChecked)
                         }
                     )
                 }

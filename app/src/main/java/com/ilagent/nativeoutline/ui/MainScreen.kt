@@ -56,6 +56,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.utils.versionName
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
@@ -117,11 +118,17 @@ fun MainScreen(
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> MainScreenContent(
                 onHelpClick = { isHelpDialogOpen = true },
-                onSettingsClick = { isSettingsDialogOpen = true },
+                onSettingsClick = { 
+                    CrashlyticsLogger.logSettingsOpened()
+                    isSettingsDialogOpen = true 
+                },
                 vpnServerState = vpnServerState,
                 onConnectClick = onConnectClick,
                 onDisconnectClick = onDisconnectClick,
-                onOpenServerDialog = { isDialogOpen = true },
+                onOpenServerDialog = { 
+                    CrashlyticsLogger.logServerDialogOpened()
+                    isDialogOpen = true 
+                },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
                 isEditing = isEditing,
@@ -133,11 +140,17 @@ fun MainScreen(
 
             else -> TvScreenContent(
                 onHelpClick = { isHelpDialogOpen = true },
-                onSettingsClick = { isSettingsDialogOpen = true },
+                onSettingsClick = { 
+                    CrashlyticsLogger.logSettingsOpened()
+                    isSettingsDialogOpen = true 
+                },
                 vpnServerState = vpnServerState,
                 onConnectClick = onConnectClick,
                 onDisconnectClick = onDisconnectClick,
-                onOpenServerDialog = { isDialogOpen = true },
+                onOpenServerDialog = { 
+                    CrashlyticsLogger.logServerDialogOpened()
+                    isDialogOpen = true 
+                },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
                 isEditing = isEditing,
