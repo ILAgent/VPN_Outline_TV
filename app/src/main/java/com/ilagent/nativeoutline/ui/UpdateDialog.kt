@@ -45,7 +45,7 @@ fun UpdateDialog(
             Column {
                 if (isDownloading) {
                     LinearProgressIndicator(
-                        progress = downloadProgress / 100f,
+                        progress = { downloadProgress / 100f },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(

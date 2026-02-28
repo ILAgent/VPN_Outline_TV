@@ -6,6 +6,15 @@ import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
+import java.util.regex.Pattern
+
+private val IPV4_PATTERN = Pattern.compile(
+    "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+)
+
+private fun isValidIPv4(ip: String): Boolean {
+    return IPV4_PATTERN.matcher(ip).matches()
+}
 
 interface ServerIconProvider {
     suspend fun icon(serverHost: String): String?
@@ -31,7 +40,7 @@ interface ServerIconProvider {
                 }
             } else serverHost
 
-            if (serverIp == "127.0.0.1" || serverIp == "0.0.0.0" || !Patterns.IP_ADDRESS.matcher(serverIp).matches()) {
+            if (serverIp == "127.0.0.1" || serverIp == "0.0.0.0" || !isValidIPv4(serverIp)) {
                 return@withContext null
             }
 

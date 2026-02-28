@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.AlertDialog
@@ -153,7 +153,7 @@ fun FileBrowserDialog(
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
@@ -188,7 +188,7 @@ fun FileBrowserDialog(
                             val icon = if (file.isDirectory) {
                                 Icons.Default.Folder
                             } else {
-                                Icons.Default.Article
+                                Icons.AutoMirrored.Filled.Article
                             }
                             Icon(
                                 imageVector = icon,

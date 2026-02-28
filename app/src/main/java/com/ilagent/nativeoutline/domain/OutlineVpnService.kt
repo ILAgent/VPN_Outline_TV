@@ -78,13 +78,16 @@ class OutlineVpnService : VpnService() {
         val action = intent?.action
         return when {
             action == ACTION_START && !isRunning -> {
-                startVpn(intent.extras?.getParcelable<ShadowSocksInfo>(CONFIG_EXTRA))
+                @Suppress("DEPRECATION")
+                startVpn(intent.extras?.getParcelable(CONFIG_EXTRA))
                 START_STICKY
             }
+
             action == ACTION_STOP -> {
                 stopVpn()
                 START_NOT_STICKY
             }
+
             else -> START_STICKY
         }
     }

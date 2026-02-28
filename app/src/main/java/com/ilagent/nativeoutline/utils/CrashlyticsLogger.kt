@@ -1,9 +1,9 @@
 package com.ilagent.nativeoutline.utils
 
+import android.os.Bundle
 import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
@@ -98,13 +98,21 @@ object CrashlyticsLogger {
      * @param isWhitelistMode Режим белого списка (true - whitelist, false - all apps)
      * @param whitelistCount Количество приложений в белом списке
      */
-    fun logVpnConnected(serverName: String, isWhitelistMode: Boolean = false, whitelistCount: Int = 0) {
-        Log.i(TAG, "VPN connected to: $serverName, whitelist mode: $isWhitelistMode, apps count: $whitelistCount")
-        analytics.logEvent("vpn_connected") {
-            param("server_name", serverName)
-            param("whitelist_mode", if (isWhitelistMode) 1L else 0L)
-            param("whitelist_count", whitelistCount.toLong())
+    fun logVpnConnected(
+        serverName: String,
+        isWhitelistMode: Boolean = false,
+        whitelistCount: Int = 0
+    ) {
+        Log.i(
+            TAG,
+            "VPN connected to: $serverName, whitelist mode: $isWhitelistMode, apps count: $whitelistCount"
+        )
+        val params = Bundle().apply {
+            putString("server_name", serverName)
+            putLong("whitelist_mode", if (isWhitelistMode) 1L else 0L)
+            putLong("whitelist_count", whitelistCount.toLong())
         }
+        analytics.logEvent("vpn_connected", params)
     }
 
     /**
@@ -113,9 +121,9 @@ object CrashlyticsLogger {
      */
     fun logVpnDisconnected(serverName: String) {
         Log.i(TAG, "VPN disconnected from: $serverName")
-        analytics.logEvent("vpn_disconnected") {
-            param("server_name", serverName)
-        }
+        analytics.logEvent(
+            "vpn_disconnected",
+            Bundle().apply { putString("server_name", serverName) })
     }
 
     /**
@@ -124,9 +132,7 @@ object CrashlyticsLogger {
      */
     fun logServerAdded(serverName: String) {
         Log.i(TAG, "Server added: $serverName")
-        analytics.logEvent("server_added") {
-            param("server_name", serverName)
-        }
+        analytics.logEvent("server_added", Bundle().apply { putString("server_name", serverName) })
     }
 
     /**
@@ -135,9 +141,9 @@ object CrashlyticsLogger {
      */
     fun logServerDeleted(serverName: String) {
         Log.i(TAG, "Server deleted: $serverName")
-        analytics.logEvent("server_deleted") {
-            param("server_name", serverName)
-        }
+        analytics.logEvent(
+            "server_deleted",
+            Bundle().apply { putString("server_name", serverName) })
     }
 
     /**
@@ -146,9 +152,7 @@ object CrashlyticsLogger {
      */
     fun logDnsChanged(dnsServer: String) {
         Log.i(TAG, "DNS changed to: $dnsServer")
-        analytics.logEvent("dns_changed") {
-            param("dns_server", dnsServer)
-        }
+        analytics.logEvent("dns_changed", Bundle().apply { putString("dns_server", dnsServer) })
     }
 
     /**
@@ -157,9 +161,7 @@ object CrashlyticsLogger {
      */
     fun logThemeChanged(theme: String) {
         Log.i(TAG, "Theme changed to: $theme")
-        analytics.logEvent("theme_changed") {
-            param("theme", theme)
-        }
+        analytics.logEvent("theme_changed", Bundle().apply { putString("theme", theme) })
     }
 
     /**
@@ -168,9 +170,9 @@ object CrashlyticsLogger {
      */
     fun logAutoConnectionChanged(enabled: Boolean) {
         Log.i(TAG, "Auto connection changed to: $enabled")
-        analytics.logEvent("auto_connection_changed") {
-            param("enabled", if (enabled) 1L else 0L)
-        }
+        analytics.logEvent(
+            "auto_connection_changed",
+            Bundle().apply { putLong("enabled", if (enabled) 1L else 0L) })
     }
 
     /**
@@ -179,9 +181,7 @@ object CrashlyticsLogger {
      */
     fun logWhitelistChanged(action: String) {
         Log.i(TAG, "Whitelist changed: $action")
-        analytics.logEvent("whitelist_changed") {
-            param("action", action)
-        }
+        analytics.logEvent("whitelist_changed", Bundle().apply { putString("action", action) })
     }
 
     /**
@@ -189,7 +189,7 @@ object CrashlyticsLogger {
      */
     fun logQrScanStarted() {
         Log.i(TAG, "QR scan started")
-        analytics.logEvent("qr_scan_started") {}
+        analytics.logEvent("qr_scan_started", null)
     }
 
     /**
@@ -197,7 +197,7 @@ object CrashlyticsLogger {
      */
     fun logQrScanSuccess() {
         Log.i(TAG, "QR scan success")
-        analytics.logEvent("qr_scan_success") {}
+        analytics.logEvent("qr_scan_success", null)
     }
 
     /**
@@ -206,9 +206,7 @@ object CrashlyticsLogger {
      */
     fun logQrScanFailed(error: String) {
         Log.i(TAG, "QR scan failed: $error")
-        analytics.logEvent("qr_scan_failed") {
-            param("error", error)
-        }
+        analytics.logEvent("qr_scan_failed", Bundle().apply { putString("error", error) })
     }
 
     /**
@@ -217,9 +215,7 @@ object CrashlyticsLogger {
      */
     fun logAppUpdate(version: String) {
         Log.i(TAG, "App update to version: $version")
-        analytics.logEvent("app_update") {
-            param("version", version)
-        }
+        analytics.logEvent("app_updating", Bundle().apply { putString("version", version) })
     }
 
     /**
@@ -227,7 +223,7 @@ object CrashlyticsLogger {
      */
     fun logSettingsOpened() {
         Log.i(TAG, "Settings opened")
-        analytics.logEvent("settings_opened") {}
+        analytics.logEvent("settings_opened", null)
     }
 
     /**
@@ -235,7 +231,7 @@ object CrashlyticsLogger {
      */
     fun logServerDialogOpened() {
         Log.i(TAG, "Server dialog opened")
-        analytics.logEvent("server_dialog_opened") {}
+        analytics.logEvent("server_dialog_opened", null)
     }
 
     /**
@@ -243,7 +239,7 @@ object CrashlyticsLogger {
      */
     fun logServerImportedFromFile() {
         Log.i(TAG, "Server imported from file")
-        analytics.logEvent("server_imported_from_file") {}
+        analytics.logEvent("server_imported_from_file", null)
     }
 
     /**
@@ -251,7 +247,7 @@ object CrashlyticsLogger {
      */
     fun logServerImportedFromClipboard() {
         Log.i(TAG, "Server imported from clipboard")
-        analytics.logEvent("server_imported_from_clipboard") {}
+        analytics.logEvent("server_imported_from_clipboard", null)
     }
 
     /**
@@ -259,6 +255,6 @@ object CrashlyticsLogger {
      */
     fun logServerImportedFromQr() {
         Log.i(TAG, "Server imported from QR")
-        analytics.logEvent("server_imported_from_qr") {}
+        analytics.logEvent("server_imported_from_qr", null)
     }
 }

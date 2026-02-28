@@ -26,6 +26,7 @@ interface ParseUrlOutline {
 
                         true
                     }
+
                     ssUrl.startsWith("ss://") -> {
                         val ssData = ssUrl.substringAfter("ss://")
                         try {
@@ -39,6 +40,7 @@ interface ParseUrlOutline {
                             false
                         }
                     }
+
                     else -> false
                 }
             }
@@ -113,7 +115,7 @@ interface ParseUrlOutline {
             val port = jsonObject.getInt("server_port")
             val password = jsonObject.getString("password")
             val method = jsonObject.getString("method")
-            val prefix = jsonObject.optString("prefix", null)
+            val prefix = jsonObject.optString("prefix").takeIf { it.isNotBlank() }
 
             Log.d("ParseUrl", "Parsed JSON - Host: $host, Port: $port, Method: $method, Password: $password, Prefix: $prefix")
 
