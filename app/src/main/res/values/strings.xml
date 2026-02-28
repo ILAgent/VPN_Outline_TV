@@ -242,4 +242,7 @@
     <string name="pair_key_sent_msg">Key sent. You can return to TV.</string>
     <string name="pair_error_prefix">Error:</string>
     <string name="pair_not_found" translatable="false">Not found</string>
+    <string name="error_file_too_large">File too large. Maximum size: 10 KB</string>
+    <string name="error_reading_file">Error reading file: %s</string>
+    <string name="error_file_access_unavailable">File access unavailable. Use clipboard paste or QR code.</string>
 </resources>

@@ -93,7 +93,7 @@ fun ServerDialog(
                 if (fileSize != null && fileSize > maxFileSize) {
                     Toast.makeText(
                         context,
-                        "Файл слишком большой. Максимальный размер: 100Б",
+                        context.getString(R.string.error_file_too_large),
                         Toast.LENGTH_LONG
                     ).show()
                     return@let
@@ -108,7 +108,7 @@ fun ServerDialog(
                     }
                 }
             } catch (e: Exception) {
-                Toast.makeText(context, "Ошибка чтения файла: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_reading_file, e.message ?: ""), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -162,7 +162,7 @@ fun ServerDialog(
                                 // Если SAF не поддерживается, показываем сообщение
                                 Toast.makeText(
                                     context,
-                                    "Файловый доступ недоступен. Используйте вставку из буфера обмена или QR-код.",
+                                    context.getString(R.string.error_file_access_unavailable),
                                     Toast.LENGTH_LONG
                                 ).show()
                             }

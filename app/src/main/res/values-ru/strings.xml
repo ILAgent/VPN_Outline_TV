@@ -87,4 +87,7 @@
     <string name="pair_enter_key_alert">Введите ключ</string>
     <string name="pair_key_sent_msg">Ключ отправлен. Можно вернуться к ТВ.</string>
     <string name="pair_error_prefix">Ошибка:</string>
+    <string name="error_file_too_large">Файл слишком большой. Максимальный размер: 10 КБ</string>
+    <string name="error_reading_file">Ошибка чтения файла: %s</string>
+    <string name="error_file_access_unavailable">Файловый доступ недоступен. Используйте вставку из буфера обмена или QR-код.</string>
 </resources>
