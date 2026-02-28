@@ -3,6 +3,7 @@ package com.ilagent.nativeoutline.domain.update
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -53,7 +54,7 @@ interface UpdateManager {
                     installApk(context, apkFile)
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                CrashlyticsLogger.logException(e, "Failed to download and install APK")
                 onError(e)
             }
         }

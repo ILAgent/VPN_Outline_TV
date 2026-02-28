@@ -49,6 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 
@@ -272,7 +273,8 @@ fun LinksPanel() {
                                     "https://t.me/vpntv_group".toUri()
                                 )
                                 context.startActivity(intent)
-                            } catch (_: ActivityNotFoundException) {
+                            } catch (e: ActivityNotFoundException) {
+                                CrashlyticsLogger.logException(e, "Failed to open Telegram link")
                             }
                         }
                     )
@@ -325,7 +327,8 @@ fun LinksPanel() {
                                 context.getString(R.string.github_link).toUri()
                             )
                             context.startActivity(intent)
-                        } catch (_: ActivityNotFoundException) {
+                        } catch (e: ActivityNotFoundException) {
+                            CrashlyticsLogger.logException(e, "Failed to open GitHub link")
                         }
                     }
                     .padding(8.dp)

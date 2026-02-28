@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.Stable
 import androidx.core.content.edit
 import com.ilagent.nativeoutline.data.model.VpnServerInfo
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -32,7 +33,7 @@ class PreferencesManager(context: Context) {
             try {
                 json.decodeFromString<List<VpnServerInfo>>(jsonString)
             } catch (e: Exception) {
-                // todo log error
+                CrashlyticsLogger.logException(e, "Failed to decode VPN keys from preferences")
                 emptyList()
             }
         }

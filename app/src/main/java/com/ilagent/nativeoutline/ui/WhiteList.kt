@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 
 @Composable
 fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modifier) {
@@ -112,8 +113,8 @@ fun WhiteList(preferencesManager: PreferencesManager, modifier: Modifier = Modif
                         val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
                         packageManager.getApplicationLabel(applicationInfo).toString() to
                                 packageManager.getApplicationIcon(applicationInfo)
-                    } catch (_: Exception) {
-                        // todo log e
+                    } catch (e: Exception) {
+                        CrashlyticsLogger.logException(e, "Failed to get app info for package: $packageName")
                         packageName to null
                     }
                     item {

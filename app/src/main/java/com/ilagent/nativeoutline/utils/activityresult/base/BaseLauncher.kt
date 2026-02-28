@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 
 /**
  * A `ActivityResultAPI` launcher specifying that an activity can be called with an input of type [I]
@@ -26,8 +27,10 @@ abstract class BaseLauncher<I, O>(
             resultLauncher?.launch(input)
                 ?: run { resultBuilder.failed.invoke() }
         } catch (e: ActivityNotFoundException) {
+            CrashlyticsLogger.logException(e, "Activity not found in BaseLauncher")
             resultBuilder.failed.invoke()
         } catch (t: Throwable) {
+            CrashlyticsLogger.logException(t, "Failed to launch activity in BaseLauncher")
             resultBuilder.failed.invoke()
         }
     }

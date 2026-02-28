@@ -17,6 +17,7 @@ import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.broadcast.BroadcastVpnServiceAction
 import com.ilagent.nativeoutline.data.model.ShadowSocksInfo
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -123,6 +124,7 @@ class OutlineVpnService : VpnService() {
             Client(config)
         } catch (e: Exception) {
             Log.i(TAG, "startVpn: Invalid configuration", e)
+            CrashlyticsLogger.logException(e, "Invalid VPN configuration")
             return false
         }
 
@@ -133,10 +135,12 @@ class OutlineVpnService : VpnService() {
                 val errorCode = checkServerConnectivity(client)
                 if (errorCode != ErrorCode.NO_ERROR && errorCode != ErrorCode.UDP_RELAY_NOT_ENABLED) {
                     Log.i(TAG, "startVpn: Server connectivity check failed with error $errorCode")
+                    CrashlyticsLogger.logError("Server connectivity check failed with error: $errorCode")
                     return false
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "startVpn: SHADOWSOCKS_START_FAILURE", e)
+                CrashlyticsLogger.logException(e, "Shadowsocks start failure")
                 return false
             }
         }
@@ -156,6 +160,7 @@ class OutlineVpnService : VpnService() {
             startForegroundWithNotification()
         } catch (e: Exception) {
             Log.e(TAG, "startVpn: Failed to connect the tunnel", e)
+            CrashlyticsLogger.logException(e, "Failed to connect VPN tunnel")
             isRunning = false
         }
 
@@ -179,6 +184,7 @@ class OutlineVpnService : VpnService() {
             result
         } catch (e: Exception) {
             Log.e(TAG, "checkServerConnectivity: Connectivity checks failed", e)
+            CrashlyticsLogger.logException(e, "Server connectivity checks failed")
             ErrorCode.UNEXPECTED
         }
     }

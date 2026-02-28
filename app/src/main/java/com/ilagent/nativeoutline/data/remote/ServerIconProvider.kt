@@ -2,6 +2,7 @@ package com.ilagent.nativeoutline.data.remote
 
 import android.util.Patterns
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
@@ -24,7 +25,8 @@ interface ServerIconProvider {
             val serverIp = if (Patterns.DOMAIN_NAME.matcher(serverHost).matches()) {
                 try {
                     InetAddress.getByName(serverHost).hostAddress
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    CrashlyticsLogger.logException(e, "Failed to resolve server host: $serverHost")
                     return@withContext null
                 }
             } else serverHost

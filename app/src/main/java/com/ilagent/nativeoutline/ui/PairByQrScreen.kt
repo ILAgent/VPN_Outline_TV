@@ -40,6 +40,7 @@ import com.ilagent.nativeoutline.data.model.genToken
 import com.ilagent.nativeoutline.data.model.getLocalIp
 import com.ilagent.nativeoutline.data.model.makeQr
 import com.ilagent.nativeoutline.data.model.toImageBitmap
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import fi.iki.elonen.NanoHTTPD
 import java.net.BindException
 
@@ -114,11 +115,13 @@ fun PairByQrScreen(
             url = link
             qr = makeQr(link).toImageBitmap()
         } catch (e: BindException) {
+            CrashlyticsLogger.logException(e, "Port already in use for QR server")
             runCatching { srv.stop() }
             server = null
             error = ctx.getString(R.string.error_port_in_use)
             token = genToken()
         } catch (t: Throwable) {
+            CrashlyticsLogger.logException(t, "Failed to start QR server")
             runCatching { srv.stop() }
             server = null
             error = ctx.getString(R.string.error_server_start_failed, t.message ?: "unknown")

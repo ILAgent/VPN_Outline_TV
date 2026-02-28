@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.ServerDialogViewModel
 
 @Composable
@@ -108,6 +109,7 @@ fun ServerDialog(
                     }
                 }
             } catch (e: Exception) {
+                CrashlyticsLogger.logException(e, "Failed to read file from SAF")
                 Toast.makeText(context, context.getString(R.string.error_reading_file, e.message ?: ""), Toast.LENGTH_SHORT).show()
             }
         }
@@ -160,6 +162,7 @@ fun ServerDialog(
                                 safFilePickerLauncher.launch("*/*")
                             } catch (e: Exception) {
                                 // Если SAF не поддерживается, показываем сообщение
+                                CrashlyticsLogger.logException(e, "SAF file picker launch failed")
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.error_file_access_unavailable),
@@ -324,6 +327,7 @@ fun ServerDialog(
                             isLoading = false
                             onDismiss()
                         } catch (e: Exception) {
+                            CrashlyticsLogger.logException(e, "Failed to save VPN server")
                             errorMessage = e.message
                             isLoading = false
                         }

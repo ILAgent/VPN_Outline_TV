@@ -8,6 +8,7 @@ fun versionName(context: Context): String {
         val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
         packageInfo.versionName ?: "unknown"
     } catch (e: Exception) {
+        CrashlyticsLogger.logException(e, "Failed to get version name")
         "unknown"
     }
 }

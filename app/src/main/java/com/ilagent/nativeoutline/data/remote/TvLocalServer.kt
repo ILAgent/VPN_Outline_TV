@@ -3,8 +3,9 @@ package com.ilagent.nativeoutline.data.remote
 import android.content.Context
 import android.os.Build
 import android.content.res.Configuration
-import fi.iki.elonen.NanoHTTPD
 import com.ilagent.nativeoutline.R
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
+import fi.iki.elonen.NanoHTTPD
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -76,6 +77,7 @@ class TvLocalServer(
                         )
                     }
                 } catch (t: Throwable) {
+                    CrashlyticsLogger.logException(t, "Failed to parse POST body in local server")
                     newFixedLengthResponse(
                         Response.Status.INTERNAL_ERROR,
                         "application/json",

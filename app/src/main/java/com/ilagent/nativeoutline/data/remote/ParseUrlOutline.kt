@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import com.ilagent.nativeoutline.data.model.ShadowSocksInfo
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -34,6 +35,7 @@ interface ParseUrlOutline {
                                 isValidBase64(ssData)
                             }
                         } catch (e: Exception) {
+                            CrashlyticsLogger.logException(e, "Failed to validate ss URL")
                             false
                         }
                     }
