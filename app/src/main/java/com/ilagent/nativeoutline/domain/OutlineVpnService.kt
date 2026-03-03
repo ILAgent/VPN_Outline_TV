@@ -96,7 +96,7 @@ class OutlineVpnService : VpnService() {
         if (config == null) {
             CrashlyticsLogger.logError("startVpn: null config")
             sendBroadcast(
-                Intent(BroadcastVpnServiceAction.ERROR)
+                Intent(BroadcastVpnServiceAction.ERROR).setPackage(packageName)
             )
             return@launch
         }
@@ -114,7 +114,7 @@ class OutlineVpnService : VpnService() {
             Intent(
                 if (started) BroadcastVpnServiceAction.STARTED
                 else BroadcastVpnServiceAction.ERROR
-            )
+            ).setPackage(packageName)
         )
     }
 
@@ -172,7 +172,7 @@ class OutlineVpnService : VpnService() {
         stopSelf()
         isRunning = false
 
-        sendBroadcast(Intent(BroadcastVpnServiceAction.STOPPED))
+        sendBroadcast(Intent(BroadcastVpnServiceAction.STOPPED).setPackage(packageName))
     }
 
     private fun checkServerConnectivity(client: Client): ErrorCode {
