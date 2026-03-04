@@ -1,115 +1,158 @@
 package com.ilagent.nativeoutline.widget
 
-import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.RemoteViews
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.provideContent
+import androidx.glance.background
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.R
-import com.ilagent.nativeoutline.domain.OutlineVpnService
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
-class VpnWidget : AppWidgetProvider() {
+data class VpnWidgetState(
+    val isConnected: Boolean,
+    val serverName: String
+)
 
-    override fun onUpdate(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
-    ) {
-        Log.d(TAG, "onUpdate called with ${appWidgetIds.size} widget IDs")
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
-    }
-
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-        Log.d(TAG, "onReceive called with action: ${intent.action}")
-        if (intent.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                ComponentName(context, VpnWidget::class.java)
-            )
-            onUpdate(context, appWidgetManager, appWidgetIds)
-        }
-    }
+class VpnWidget : GlanceAppWidget() {
 
     companion object {
         private const val TAG = "VpnWidget"
-
-        fun updateAppWidget(
-            context: Context,
-            appWidgetManager: AppWidgetManager,
-            appWidgetId: Int
-        ) {
-            val preferencesManager = PreferencesManager(context)
-            // Use VPN start time to check if VPN is connected (more reliable than static variable)
-            val vpnStartTime = preferencesManager.getVpnStartTime()
-            val isVpnConnected = vpnStartTime > 0
-            val serverName = preferencesManager.selectedServerName ?: context.getString(R.string.no_server)
-            
-            Log.d(TAG, "updateAppWidget: vpnStartTime=$vpnStartTime, isVpnConnected=$isVpnConnected, serverName=$serverName")
-
-            val views = RemoteViews(context.packageName, R.layout.vpn_widget_layout)
-
-            // Set background color
-            val backgroundColor = if (isVpnConnected) {
-                context.getColor(R.color.vpn_connected_background)
-            } else {
-                context.getColor(R.color.vpn_disconnected_background)
+        
+        suspend fun updateAll(context: Context) {
+            try {
+                Log.d(TAG, "updateAll called")
+                val glanceAppWidgetManager = androidx.glance.appwidget.GlanceAppWidgetManager(context)
+                val glanceIds = glanceAppWidgetManager.getGlanceIds(VpnWidget::class.java)
+                Log.d(TAG, "Found ${glanceIds.size} widget(s) to update")
+                
+                if (glanceIds.isEmpty()) {
+                    Log.w(TAG, "No widgets found to update")
+                    return
+                }
+                
+                // Update all widgets
+                for (glanceId in glanceIds) {
+                    Log.d(TAG, "Updating widget: $glanceId")
+                    try {
+                        VpnWidget().update(context, glanceId)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error updating widget $glanceId", e)
+                    }
+                }
+                
+                Log.d(TAG, "All widgets updated successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating widgets", e)
             }
-            views.setInt(R.id.widget_container, "setBackgroundColor", backgroundColor)
-
-            // Set VPN icon
-            val iconText = if (isVpnConnected) "🔒" else "🔓"
-            views.setTextViewText(R.id.vpn_icon, iconText)
-
-            // Set status text
-            val statusText = if (isVpnConnected) {
-                context.getString(R.string.vpn_connected)
-            } else {
-                context.getString(R.string.vpn_disconnected)
-            }
-            views.setTextViewText(R.id.vpn_status, statusText)
-
-            // Set status text color
-            val statusColor = if (isVpnConnected) {
-                context.getColor(R.color.vpn_connected_text)
-            } else {
-                context.getColor(R.color.vpn_disconnected_text)
-            }
-            views.setTextColor(R.id.vpn_status, statusColor)
-
-            // Set server name
-            views.setTextViewText(R.id.server_name, serverName)
-
-            // Set click intent
-            val intent = Intent(context, MainActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            views.setOnClickPendingIntent(R.id.widget_container, pendingIntent)
-
-            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
+    }
 
-        fun updateAllWidgets(context: Context) {
-            Log.d(TAG, "updateAllWidgets called")
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                ComponentName(context, VpnWidget::class.java)
-            )
-            Log.d(TAG, "Found ${appWidgetIds.size} widget(s) to update")
-            for (appWidgetId in appWidgetIds) {
-                updateAppWidget(context, appWidgetManager, appWidgetId)
+    override suspend fun provideGlance(context: Context, id: GlanceId) {
+        Log.d(TAG, "provideGlance called for widget $id")
+        
+        provideContent {
+            GlanceTheme {
+                val preferencesManager = PreferencesManager(context)
+                val vpnStartTime by preferencesManager.vpnStartTimeFlow.collectAsState(initial = 0L)
+                val isConnected = vpnStartTime > 0
+                val serverName = preferencesManager.selectedServerName ?: context.getString(R.string.no_server)
+                
+                Log.d(TAG, "Widget state: vpnStartTime=$vpnStartTime, isVpnConnected=$isConnected, serverName=$serverName")
+                
+                VpnWidgetContent(
+                    isConnected = isConnected,
+                    serverName = serverName,
+                    context = context
+                )
             }
+        }
+    }
+}
+
+@androidx.compose.runtime.Composable
+private fun VpnWidgetContent(
+    isConnected: Boolean,
+    serverName: String,
+    context: Context
+) {
+    val backgroundColor = if (isConnected) {
+        ColorProvider(R.color.vpn_connected_background)
+    } else {
+        ColorProvider(R.color.vpn_disconnected_background)
+    }
+
+    val statusColor = if (isConnected) {
+        ColorProvider(R.color.vpn_connected_text)
+    } else {
+        ColorProvider(R.color.vpn_disconnected_text)
+    }
+
+    val statusText = if (isConnected) {
+        context.getString(R.string.vpn_connected)
+    } else {
+        context.getString(R.string.vpn_disconnected)
+    }
+
+    val intent = Intent(context, MainActivity::class.java)
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .background(backgroundColor)
+            .clickable(
+                actionStartActivity(intent)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // VPN Icon
+            Text(
+                text = if (isConnected) "🔒" else "🔓",
+                style = TextStyle(
+                    color = ColorProvider(R.color.white)
+                )
+            )
+
+            // Status text
+            Text(
+                text = statusText,
+                style = TextStyle(
+                    color = statusColor
+                )
+            )
+
+            // Server name
+            Text(
+                text = serverName,
+                style = TextStyle(
+                    color = ColorProvider(R.color.white)
+                )
+            )
         }
     }
 }

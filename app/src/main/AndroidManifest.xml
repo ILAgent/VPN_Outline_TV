@@ -68,7 +68,7 @@
 
         <!-- VPN Widget Receiver -->
         <receiver
-            android:name=".widget.VpnWidget"
+            android:name=".widget.VpnWidgetReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -77,18 +77,6 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/vpn_widget_info" />
-        </receiver>
-        
-        <!-- VPN Widget Update Receiver -->
-        <receiver
-            android:name=".widget.VpnWidgetUpdateReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.ilagent.nativeoutline.STARTED" />
-                <action android:name="com.ilagent.nativeoutline.STOPPED" />
-                <action android:name="com.ilagent.nativeoutline.ERROR" />
-            </intent-filter>
         </receiver>
 
     </application>
