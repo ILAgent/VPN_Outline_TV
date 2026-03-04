@@ -46,13 +46,9 @@ import com.ilagent.nativeoutline.viewmodel.MainViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.VpnEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnServerStateUi
-import com.ilagent.nativeoutline.widget.VpnWidget
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-
-    private var lastWidgetUpdateTime = 0L
-    private val WIDGET_UPDATE_DEBOUNCE_MS = 1000L // 1 second debounce
 
     private val viewModel: MainViewModel by viewModels {
         MainViewModel.Factory(
@@ -61,16 +57,6 @@ class MainActivity : ComponentActivity() {
             parseUrlOutline = ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch()),
             updateManager = UpdateManager.Github(context = applicationContext),
         )
-    }
-
-    private fun updateWidgetWithDebounce(context: Context) {
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - lastWidgetUpdateTime >= WIDGET_UPDATE_DEBOUNCE_MS) {
-            lastWidgetUpdateTime = currentTime
-            lifecycleScope.launch {
-                VpnWidget.updateAll(context)
-            }
-        }
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -84,21 +70,15 @@ class MainActivity : ComponentActivity() {
                         val whitelistCount = if (isWhitelistMode) selectedApps.size else 0
                         CrashlyticsLogger.logVpnConnected(state.name, isWhitelistMode, whitelistCount)
                     }
-                    // Update widget with debounce
-                    updateWidgetWithDebounce(context)
                 }
                 BroadcastVpnServiceAction.STOPPED -> {
                     viewModel.vpnEvent(VpnEvent.STOPPED)
                     viewModel.vpnServerState.value?.let { state ->
                         CrashlyticsLogger.logVpnDisconnected(state.name)
                     }
-                    // Update widget with debounce
-                    updateWidgetWithDebounce(context)
                 }
                 BroadcastVpnServiceAction.ERROR -> {
                     viewModel.vpnEvent(VpnEvent.ERROR)
-                    // Update widget with debounce
-                    updateWidgetWithDebounce(context)
                 }
             }
         }
