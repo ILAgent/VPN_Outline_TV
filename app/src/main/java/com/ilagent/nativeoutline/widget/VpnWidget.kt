@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -13,15 +14,14 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
+import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.ilagent.nativeoutline.MainActivity
-import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 
 class VpnWidget : GlanceAppWidget() {
@@ -39,7 +39,7 @@ class VpnWidget : GlanceAppWidget() {
                 val vpnStartTime by preferencesManager.vpnStartTimeFlow.collectAsState(initial = 0L)
                 val isConnected = vpnStartTime > 0
                 val serverName =
-                    preferencesManager.selectedServerName ?: context.getString(R.string.no_server)
+                    preferencesManager.selectedServerName ?: "No server"
 
                 Log.d(
                     TAG,
@@ -63,21 +63,17 @@ private fun VpnWidgetContent(
     context: Context
 ) {
     val backgroundColor = if (isConnected) {
-        ColorProvider(R.color.vpn_connected_background)
+        ColorProvider(day = Color(0xFF4CAF50), night = Color(0xFF4CAF50)) // Green for connected
     } else {
-        ColorProvider(R.color.vpn_disconnected_background)
+        ColorProvider(day = Color(0xFF757575), night = Color(0xFF757575)) // Gray for disconnected
     }
 
-    val statusColor = if (isConnected) {
-        ColorProvider(R.color.vpn_connected_text)
-    } else {
-        ColorProvider(R.color.vpn_disconnected_text)
-    }
+    val textColor = ColorProvider(day = Color.White, night = Color.White)
 
     val statusText = if (isConnected) {
-        context.getString(R.string.vpn_connected)
+        "VPN Connected"
     } else {
-        context.getString(R.string.vpn_disconnected)
+        "VPN Disconnected"
     }
 
     val intent = Intent(context, MainActivity::class.java)
@@ -97,25 +93,19 @@ private fun VpnWidgetContent(
             // VPN Icon
             Text(
                 text = if (isConnected) "🔒" else "🔓",
-                style = TextStyle(
-                    color = ColorProvider(R.color.white)
-                )
+                style = TextStyle(color = textColor)
             )
 
             // Status text
             Text(
                 text = statusText,
-                style = TextStyle(
-                    color = statusColor
-                )
+                style = TextStyle(color = textColor)
             )
 
             // Server name
             Text(
                 text = serverName,
-                style = TextStyle(
-                    color = ColorProvider(R.color.white)
-                )
+                style = TextStyle(color = textColor)
             )
         }
     }
