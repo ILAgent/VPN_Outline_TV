@@ -5,7 +5,6 @@
     android:targetCellWidth="1"
     android:targetCellHeight="1"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/vpn_widget_layout"
     android:description="@string/vpn_widget_description"
     android:resizeMode="none"
     android:widgetCategory="home_screen" />
