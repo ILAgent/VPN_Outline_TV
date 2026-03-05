@@ -23,6 +23,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.domain.VpnStateManager
 
 class VpnWidget : GlanceAppWidget() {
 
@@ -36,14 +37,13 @@ class VpnWidget : GlanceAppWidget() {
         provideContent {
             GlanceTheme {
                 val preferencesManager = PreferencesManager(context)
-                val vpnStartTime by preferencesManager.vpnStartTimeFlow.collectAsState(initial = 0L)
-                val isConnected = vpnStartTime > 0
+                val isConnected by VpnStateManager.isRunning.collectAsState(initial = false)
                 val serverName =
                     preferencesManager.selectedServerName ?: "No server"
 
                 Log.d(
                     TAG,
-                    "Widget state: vpnStartTime=$vpnStartTime, isVpnConnected=$isConnected, serverName=$serverName"
+                    "Widget state: isVpnConnected=$isConnected, serverName=$serverName"
                 )
 
                 VpnWidgetContent(

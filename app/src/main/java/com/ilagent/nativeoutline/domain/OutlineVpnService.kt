@@ -42,10 +42,9 @@ class OutlineVpnService : VpnService() {
         private const val NOTIFICATION_SERVICE_ID = 1
 
         private lateinit var preferencesManager: PreferencesManager
-        private var isRunning = false
 
         fun isVpnConnected(): Boolean {
-            return isRunning
+            return VpnStateManager.isVpnConnected()
         }
 
         fun start(context: Context, config: ShadowSocksInfo) {
@@ -77,7 +76,7 @@ class OutlineVpnService : VpnService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action
         return when {
-            action == ACTION_START && !isRunning -> {
+            action == ACTION_START && !VpnStateManager.isVpnConnected() -> {
                 @Suppress("DEPRECATION")
                 startVpn(intent.extras?.getParcelable(CONFIG_EXTRA))
                 START_STICKY
@@ -155,22 +154,22 @@ class OutlineVpnService : VpnService() {
         val remoteUdpForwardingEnabled = false
         try {
             vpnTunnel.connectTunnel(client, remoteUdpForwardingEnabled)
-            isRunning = true
+            VpnStateManager.setVpnRunning(true)
             Log.i(TAG, "startVpn: VPN tunnel established successfully")
             startForegroundWithNotification()
         } catch (e: Exception) {
             CrashlyticsLogger.logException(e, "startVpn: Failed to connect the tunnel")
-            isRunning = false
+            VpnStateManager.setVpnRunning(false)
         }
 
-        return isRunning
+        return VpnStateManager.isVpnConnected()
     }
 
     private fun stopVpn() {
         stopVpnTunnel()
         stopForeground()
         stopSelf()
-        isRunning = false
+        VpnStateManager.setVpnRunning(false)
 
         sendBroadcast(Intent(BroadcastVpnServiceAction.STOPPED).setPackage(packageName))
     }
@@ -279,7 +278,7 @@ class OutlineVpnService : VpnService() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(TAG, "onDestroy: ")
-        isRunning = false
+        VpnStateManager.setVpnRunning(false)
     }
 
     fun newBuilder(): Builder {
