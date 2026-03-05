@@ -6,9 +6,6 @@ import androidx.compose.runtime.Stable
 import androidx.core.content.edit
 import com.ilagent.nativeoutline.data.model.VpnServerInfo
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -82,22 +79,6 @@ class PreferencesManager(context: Context) {
         preferences.edit { remove(KEY_VPN_START_TIME) }
     }
 
-    val vpnStartTimeFlow: Flow<Long> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == KEY_VPN_START_TIME) {
-                trySend(preferences.getLong(KEY_VPN_START_TIME, 0L))
-            }
-        }
-        
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-        
-        // Send initial value
-        trySend(preferences.getLong(KEY_VPN_START_TIME, 0L))
-        
-        awaitClose {
-            preferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
     var selectedServerName: String?
         set(name) = preferences.edit { putString(KEY_SERVER_NAME, name) }
         get() = preferences.getString(KEY_SERVER_NAME, null)
