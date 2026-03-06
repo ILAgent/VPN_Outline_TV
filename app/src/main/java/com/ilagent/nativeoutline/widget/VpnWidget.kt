@@ -5,24 +5,27 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
-import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.Column
+import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.padding
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.ilagent.nativeoutline.MainActivity
-import com.ilagent.nativeoutline.data.preferences.PreferencesManager
+import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.domain.VpnStateManager
 
 class VpnWidget : GlanceAppWidget() {
@@ -36,19 +39,12 @@ class VpnWidget : GlanceAppWidget() {
 
         provideContent {
             GlanceTheme {
-                val preferencesManager = PreferencesManager(context)
                 val isConnected by VpnStateManager.isRunning.collectAsState(initial = false)
-                val serverName =
-                    preferencesManager.selectedServerName ?: "No server"
 
-                Log.d(
-                    TAG,
-                    "Widget state: isVpnConnected=$isConnected, serverName=$serverName"
-                )
+                Log.d(TAG, "Widget state: isVpnConnected=$isConnected")
 
                 VpnWidgetContent(
                     isConnected = isConnected,
-                    serverName = serverName,
                     context = context
                 )
             }
@@ -59,21 +55,16 @@ class VpnWidget : GlanceAppWidget() {
 @androidx.compose.runtime.Composable
 private fun VpnWidgetContent(
     isConnected: Boolean,
-    serverName: String,
     context: Context
 ) {
-    val backgroundColor = if (isConnected) {
-        ColorProvider(day = Color(0xFF4CAF50), night = Color(0xFF4CAF50)) // Green for connected
-    } else {
-        ColorProvider(day = Color(0xFF757575), night = Color(0xFF757575)) // Gray for disconnected
-    }
+    // Status emojis - shield icon and check/cross
+    val statusEmoji = if (isConnected) "🛡️✅" else "🛡️❌"
 
-    val textColor = ColorProvider(day = Color.White, night = Color.White)
-
-    val statusText = if (isConnected) {
-        "VPN Connected"
+    // Background color resource based on status
+    val bgColorRes = if (isConnected) {
+        R.color.vpn_connected_overlay
     } else {
-        "VPN Disconnected"
+        R.color.vpn_disconnected_overlay
     }
 
     val intent = Intent(context, MainActivity::class.java)
@@ -81,32 +72,38 @@ private fun VpnWidgetContent(
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(backgroundColor)
-            .clickable(
-                actionStartActivity(intent)
-            ),
+            .clickable(actionStartActivity(intent)),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(R.color.vpn_white_overlay)
+        ) {}
+        // Semi-transparent colored overlay
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(bgColorRes)
         ) {
-            // VPN Icon
+            // Status indicator centered in the overlay
             Text(
-                text = if (isConnected) "🔒" else "🔓",
-                style = TextStyle(color = textColor)
-            )
-
-            // Status text
-            Text(
-                text = statusText,
-                style = TextStyle(color = textColor)
-            )
-
-            // Server name
-            Text(
-                text = serverName,
-                style = TextStyle(color = textColor)
+                text = statusEmoji,
+                style = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+                modifier = GlanceModifier
+                    .fillMaxSize()
+                    .padding(4.dp)
             )
         }
+        // Background with app logo
+        Image(
+            provider = ImageProvider(R.drawable.logo),
+            contentDescription = "VPN Background",
+            modifier = GlanceModifier.fillMaxSize(),
+            contentScale = ContentScale.Fit
+        )
     }
 }
