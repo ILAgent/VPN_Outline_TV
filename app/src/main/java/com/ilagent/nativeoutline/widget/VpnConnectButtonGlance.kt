@@ -33,11 +33,11 @@ fun VpnConnectButtonGlance(
     context: Context? = null,
 ) {
     if (isConnectionLoading) {
-        // Loading state - show a simple loading indicator
+        // Loading state - show loading indicator with rounded corners
         Box(
             modifier = GlanceModifier
                 .size(120.dp)
-                .padding(20.dp)
+                .padding(4.dp)
                 .apply {
                     context?.let {
                         clickable(
@@ -52,10 +52,19 @@ fun VpnConnectButtonGlance(
                 },
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "⏳",
-                style = TextStyle(textAlign = TextAlign.Center)
-            )
+            // Inner box with background drawable and rounded corners
+            Box(
+                modifier = GlanceModifier
+                    .size(112.dp)
+                    .background(ImageProvider(R.drawable.bg_vpn_button_loading)),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    provider = ImageProvider(R.drawable.ic_loading_static),
+                    contentDescription = null,
+                    modifier = GlanceModifier.size(60.dp)
+                )
+            }
         }
     } else {
         // Connected or disconnected state - use drawable with rounded corners
