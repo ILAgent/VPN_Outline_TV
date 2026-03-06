@@ -2,12 +2,21 @@ package com.ilagent.nativeoutline.widget
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.background
+import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
@@ -23,15 +32,24 @@ fun VpnConnectButtonGlance(
     isConnectionLoading: Boolean,
     context: Context? = null,
 ) {
-    val intent = context?.let { Intent(context, MainActivity::class.java) }
-
     if (isConnectionLoading) {
         // Loading state - show a simple loading indicator
         Box(
             modifier = GlanceModifier
                 .size(120.dp)
-                //.clickable(actionStartActivity(intent))
-                .background(R.color.vpn_disconnected_overlay),
+                .padding(20.dp)
+                .apply {
+                    context?.let {
+                        clickable(
+                            actionStartActivity(
+                                Intent(
+                                    context,
+                                    MainActivity::class.java
+                                )
+                            )
+                        )
+                    }
+                },
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -40,34 +58,59 @@ fun VpnConnectButtonGlance(
             )
         }
     } else {
-        // Connected or disconnected state
-        val bgColorRes = if (isConnected) {
-            R.color.vpn_connected_overlay
+        // Connected or disconnected state - use drawable with rounded corners
+        val bgDrawableRes = if (isConnected) {
+            R.drawable.bg_vpn_button_connected
         } else {
-            R.color.vpn_disconnected_overlay
+            R.drawable.bg_vpn_button_disconnected
         }
 
-        val iconEmoji = if (isConnected) "⏸️" else "▶️"
+        val iconRes = if (isConnected) R.drawable.ic_pause else R.drawable.ic_play_arrow
         val statusText = if (isConnected) "OFF" else "ON"
 
+        // Outer box with border effect
         Box(
             modifier = GlanceModifier
                 .size(120.dp)
-                //.clickable(actionStartActivity(intent))
-                .background(bgColorRes),
+                .padding(4.dp)
+                .apply {
+                    context?.let {
+                        clickable(
+                            actionStartActivity(
+                                Intent(
+                                    context,
+                                    MainActivity::class.java
+                                )
+                            )
+                        )
+                    }
+                },
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            // Inner box with background drawable and rounded corners
+            Box(
+                modifier = GlanceModifier
+                    .size(112.dp)
+                    .background(ImageProvider(bgDrawableRes)),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = iconEmoji,
-                    style = TextStyle(textAlign = TextAlign.Center)
-                )
-                Text(
-                    text = statusText,
-                    style = TextStyle(textAlign = TextAlign.Center)
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        provider = ImageProvider(iconRes),
+                        contentDescription = null,
+                        modifier = GlanceModifier.size(60.dp)
+                    )
+                    Spacer(modifier = GlanceModifier.height(4.dp))
+                    Text(
+                        text = statusText,
+                        style = TextStyle(
+                            textAlign = TextAlign.Center,
+                            color = ColorProvider(Color.White, Color.White)
+                        )
+                    )
+                }
             }
         }
     }
