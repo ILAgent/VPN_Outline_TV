@@ -210,5 +210,7 @@ dependencies {
     // Glance for App Widgets
     implementation("androidx.glance:glance-appwidget:1.1.1")
     implementation("androidx.glance:glance-material3:1.1.1")
+    implementation("androidx.glance:glance-appwidget-preview:1.1.1")
+    implementation("androidx.glance:glance-preview:1.1.1")
     
 }
