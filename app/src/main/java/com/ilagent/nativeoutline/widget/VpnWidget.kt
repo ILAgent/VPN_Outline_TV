@@ -1,7 +1,6 @@
 package com.ilagent.nativeoutline.widget
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,9 +10,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -32,7 +29,6 @@ import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.domain.VpnStateManager
@@ -69,13 +65,10 @@ private fun VpnWidgetContent(
     val preferencesManager = PreferencesManager(context)
     val serverName = preferencesManager.selectedServerName ?: "No Server"
 
-    val intent = Intent(context, MainActivity::class.java)
-
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(R.color.vpn_white_overlay)
-            .clickable(actionStartActivity(intent))
     ) {
         Row(
             modifier = GlanceModifier

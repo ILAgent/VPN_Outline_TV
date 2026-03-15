@@ -79,6 +79,16 @@
                 android:resource="@xml/vpn_widget_info" />
         </receiver>
 
+        <!-- VPN Widget Action Receiver -->
+        <receiver
+            android:name=".widget.VpnWidgetActionReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.ilagent.nativeoutline.widget.TOGGLE_VPN" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

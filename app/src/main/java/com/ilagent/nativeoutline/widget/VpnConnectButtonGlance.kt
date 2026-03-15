@@ -8,7 +8,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
@@ -23,7 +23,6 @@ import androidx.glance.preview.Preview
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.R
 
 @androidx.compose.runtime.Composable
@@ -41,11 +40,8 @@ fun VpnConnectButtonGlance(
                 .apply {
                     context?.let {
                         clickable(
-                            actionStartActivity(
-                                Intent(
-                                    context,
-                                    MainActivity::class.java
-                                )
+                            actionSendBroadcast(
+                                Intent(VpnWidgetActionReceiver.ACTION_TOGGLE_VPN).setPackage(context.packageName)
                             )
                         )
                     }
@@ -82,18 +78,11 @@ fun VpnConnectButtonGlance(
             modifier = GlanceModifier
                 .size(100.dp)
                 .padding(4.dp)
-                .apply {
-                    context?.let {
-                        clickable(
-                            actionStartActivity(
-                                Intent(
-                                    context,
-                                    MainActivity::class.java
-                                )
-                            )
-                        )
-                    }
-                },
+                .clickable(
+                    actionSendBroadcast(
+                        Intent(VpnWidgetActionReceiver.ACTION_TOGGLE_VPN).setPackage(context!!.packageName)
+                    )
+                ),
             contentAlignment = Alignment.Center
         ) {
             // Inner box with background drawable and rounded corners
