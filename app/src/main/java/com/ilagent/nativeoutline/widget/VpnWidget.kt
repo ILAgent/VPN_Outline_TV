@@ -1,6 +1,7 @@
 package com.ilagent.nativeoutline.widget
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -10,7 +11,9 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -22,6 +25,7 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
+import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.domain.VpnStateManager
 
@@ -74,7 +78,15 @@ private fun VpnWidgetContent(
             Image(
                 provider = ImageProvider(R.drawable.logo),
                 contentDescription = "App Logo",
-                modifier = GlanceModifier.size(80.dp),
+                modifier = GlanceModifier
+                    .size(80.dp)
+                    .clickable(
+                        actionStartActivity(
+                            Intent(context, MainActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                        )
+                    ),
                 contentScale = ContentScale.Fit
             )
         }
