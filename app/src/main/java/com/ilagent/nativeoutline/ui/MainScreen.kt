@@ -254,6 +254,7 @@ fun MainScreenContent(
             var requestPermission by remember { mutableStateOf(false) }
             NotificationPermission(requestPermission) {
                 onConnectClick(vpnServerState.url)
+                requestPermission = false
             }
             VpnConnectButton(
                 isConnected = isConnected,
@@ -388,6 +389,7 @@ fun TvScreenContent(
                     var requestPermission by remember { mutableStateOf(false) }
                     NotificationPermission(requestPermission) {
                         onConnectClick(vpnServerState.url)
+                        requestPermission = false
                     }
                     VpnConnectButton(
                         isConnected = isConnected,
