@@ -41,7 +41,9 @@ fun VpnConnectButtonGlance(
                     context?.let {
                         clickable(
                             actionSendBroadcast(
-                                Intent(VpnWidgetActionReceiver.ACTION_TOGGLE_VPN).setPackage(context.packageName)
+                                Intent(context, VpnWidgetActionReceiver::class.java).apply {
+                                    action = VpnWidgetActionReceiver.ACTION_TOGGLE_VPN
+                                }
                             )
                         )
                     }
@@ -80,7 +82,9 @@ fun VpnConnectButtonGlance(
                 .padding(4.dp)
                 .clickable(
                     actionSendBroadcast(
-                        Intent(VpnWidgetActionReceiver.ACTION_TOGGLE_VPN).setPackage(context!!.packageName)
+                        Intent(context, VpnWidgetActionReceiver::class.java).apply {
+                            action = VpnWidgetActionReceiver.ACTION_TOGGLE_VPN
+                        }
                     )
                 ),
             contentAlignment = Alignment.Center
