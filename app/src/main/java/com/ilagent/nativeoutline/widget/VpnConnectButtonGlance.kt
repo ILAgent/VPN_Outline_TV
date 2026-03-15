@@ -14,6 +14,7 @@ import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
@@ -31,11 +32,15 @@ fun VpnConnectButtonGlance(
     isConnectionLoading: Boolean,
     context: Context? = null,
 ) {
+    // Fixed square size for the button
+    val buttonSize = 80.dp
+    val innerSize = buttonSize - 8.dp
+    
     if (isConnectionLoading) {
         // Loading state - show loading indicator with rounded corners
         Box(
             modifier = GlanceModifier
-                .size(100.dp)
+                .size(buttonSize)
                 .padding(4.dp)
                 .apply {
                     context?.let {
@@ -53,14 +58,15 @@ fun VpnConnectButtonGlance(
             // Inner box with background drawable and rounded corners
             Box(
                 modifier = GlanceModifier
-                    .size(92.dp)
+                    .size(innerSize)
                     .background(ImageProvider(R.drawable.bg_vpn_button_loading)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     provider = ImageProvider(R.drawable.ic_loading_static),
                     contentDescription = null,
-                    modifier = GlanceModifier.size(50.dp)
+                    modifier = GlanceModifier.size(innerSize * 0.5f),
+                    contentScale = ContentScale.Fit
                 )
             }
         }
@@ -78,7 +84,7 @@ fun VpnConnectButtonGlance(
         // Outer box with border effect
         Box(
             modifier = GlanceModifier
-                .size(100.dp)
+                .size(buttonSize)
                 .padding(4.dp)
                 .clickable(
                     actionSendBroadcast(
@@ -92,7 +98,7 @@ fun VpnConnectButtonGlance(
             // Inner box with background drawable and rounded corners
             Box(
                 modifier = GlanceModifier
-                    .size(92.dp)
+                    .size(innerSize)
                     .background(ImageProvider(bgDrawableRes)),
                 contentAlignment = Alignment.Center
             ) {
@@ -102,9 +108,10 @@ fun VpnConnectButtonGlance(
                     Image(
                         provider = ImageProvider(iconRes),
                         contentDescription = null,
-                        modifier = GlanceModifier.size(50.dp)
+                        modifier = GlanceModifier.size(innerSize * 0.5f),
+                        contentScale = ContentScale.Fit
                     )
-                    Spacer(modifier = GlanceModifier.height(4.dp))
+                    Spacer(modifier = GlanceModifier.height(2.dp))
                     Text(
                         text = statusText,
                         style = TextStyle(
@@ -120,7 +127,7 @@ fun VpnConnectButtonGlance(
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @androidx.compose.runtime.Composable
-@Preview()
+@Preview
 private fun VpnConnectButtonGlancePreview() {
     VpnConnectButtonGlance(
         isConnected = false,
@@ -130,7 +137,7 @@ private fun VpnConnectButtonGlancePreview() {
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @androidx.compose.runtime.Composable
-@Preview()
+@Preview
 private fun VpnConnectButtonGlanceConnectedPreview() {
     VpnConnectButtonGlance(
         isConnected = true,
@@ -140,7 +147,7 @@ private fun VpnConnectButtonGlanceConnectedPreview() {
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @androidx.compose.runtime.Composable
-@Preview()
+@Preview
 private fun VpnConnectButtonGlanceLoadingPreview() {
     VpnConnectButtonGlance(
         isConnected = false,
