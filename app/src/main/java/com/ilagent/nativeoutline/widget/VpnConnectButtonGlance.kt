@@ -36,7 +36,7 @@ fun VpnConnectButtonGlance(
         // Loading state - show loading indicator with rounded corners
         Box(
             modifier = GlanceModifier
-                .size(120.dp)
+                .size(100.dp)
                 .padding(4.dp)
                 .apply {
                     context?.let {
@@ -55,14 +55,14 @@ fun VpnConnectButtonGlance(
             // Inner box with background drawable and rounded corners
             Box(
                 modifier = GlanceModifier
-                    .size(112.dp)
+                    .size(92.dp)
                     .background(ImageProvider(R.drawable.bg_vpn_button_loading)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     provider = ImageProvider(R.drawable.ic_loading_static),
                     contentDescription = null,
-                    modifier = GlanceModifier.size(60.dp)
+                    modifier = GlanceModifier.size(50.dp)
                 )
             }
         }
@@ -80,7 +80,7 @@ fun VpnConnectButtonGlance(
         // Outer box with border effect
         Box(
             modifier = GlanceModifier
-                .size(120.dp)
+                .size(100.dp)
                 .padding(4.dp)
                 .apply {
                     context?.let {
@@ -99,7 +99,7 @@ fun VpnConnectButtonGlance(
             // Inner box with background drawable and rounded corners
             Box(
                 modifier = GlanceModifier
-                    .size(112.dp)
+                    .size(92.dp)
                     .background(ImageProvider(bgDrawableRes)),
                 contentAlignment = Alignment.Center
             ) {
@@ -109,7 +109,7 @@ fun VpnConnectButtonGlance(
                     Image(
                         provider = ImageProvider(iconRes),
                         contentDescription = null,
-                        modifier = GlanceModifier.size(60.dp)
+                        modifier = GlanceModifier.size(50.dp)
                     )
                     Spacer(modifier = GlanceModifier.height(4.dp))
                     Text(

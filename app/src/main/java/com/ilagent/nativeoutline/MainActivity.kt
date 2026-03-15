@@ -220,13 +220,12 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         viewModel.checkVpnConnectionState()
         viewModel.loadLastVpnServerState()
-
+    
         val isVpnConnected = viewModel.vpnConnectionState.value == true
-        val isVpnConnecting = viewModel.isConnecting.value == true
         val isAutoConnectOn = autoConnectViewModel.isAutoConnectEnabled.value
         val lastServerUrl = viewModel.vpnServerState.value?.url.orEmpty()
-
-        if (isAutoConnectOn && !isVpnConnected && !isVpnConnecting && lastServerUrl.isNotEmpty()) {
+    
+        if (isAutoConnectOn && !isVpnConnected && lastServerUrl.isNotEmpty()) {
             startVpn(lastServerUrl)
         }
     }

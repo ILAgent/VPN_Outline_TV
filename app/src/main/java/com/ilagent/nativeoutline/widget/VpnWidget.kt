@@ -18,14 +18,23 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
+import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.R
+import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.domain.VpnStateManager
 
 class VpnWidget : GlanceAppWidget() {
@@ -57,53 +66,62 @@ private fun VpnWidgetContent(
     isConnected: Boolean,
     context: Context
 ) {
-    // Status emojis - shield icon and check/cross
-    val statusEmoji = if (isConnected) "🛡️✅" else "🛡️❌"
-
-    // Background color resource based on status
-    val bgColorRes = if (isConnected) {
-        R.color.vpn_connected_overlay
-    } else {
-        R.color.vpn_disconnected_overlay
-    }
+    val preferencesManager = PreferencesManager(context)
+    val serverName = preferencesManager.selectedServerName ?: "No Server"
 
     val intent = Intent(context, MainActivity::class.java)
 
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
-            .clickable(actionStartActivity(intent)),
-        contentAlignment = Alignment.Center
+            .background(R.color.vpn_white_overlay)
+            .clickable(actionStartActivity(intent))
     ) {
-
-        Box(
+        Row(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(R.color.vpn_white_overlay)
-        ) {}
-        // Semi-transparent colored overlay
-        Box(
-            modifier = GlanceModifier
-                .fillMaxSize()
-                .background(bgColorRes)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Status indicator centered in the overlay
-            Text(
-                text = statusEmoji,
-                style = TextStyle(
-                    textAlign = TextAlign.Center
-                ),
+            // Left section: VPN Connect Button
+            Box(
                 modifier = GlanceModifier
-                    .fillMaxSize()
-                    .padding(4.dp)
-            )
+                    .width(108.dp)
+                    .height(108.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                VpnConnectButtonGlance(
+                    isConnected = isConnected,
+                    isConnectionLoading = false,
+                    context = context
+                )
+            }
+
+            Spacer(modifier = GlanceModifier.width(8.dp))
+
+            // Right section: Logo and server name
+            Column(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    provider = ImageProvider(R.drawable.logo),
+                    contentDescription = "App Logo",
+                    modifier = GlanceModifier.size(48.dp),
+                    contentScale = ContentScale.Fit
+                )
+                Spacer(modifier = GlanceModifier.height(8.dp))
+                Text(
+                    text = serverName,
+                    style = TextStyle(
+                        textAlign = TextAlign.Center
+                    ),
+                    maxLines = 2
+                )
+            }
         }
-        // Background with app logo
-        Image(
-            provider = ImageProvider(R.drawable.logo),
-            contentDescription = "VPN Background",
-            modifier = GlanceModifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
-        )
     }
 }
