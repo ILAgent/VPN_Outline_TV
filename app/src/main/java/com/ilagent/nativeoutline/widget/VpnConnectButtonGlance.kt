@@ -2,7 +2,6 @@ package com.ilagent.nativeoutline.widget
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -10,20 +9,13 @@ import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.background
-import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
-import androidx.glance.layout.Spacer
-import androidx.glance.layout.height
-import androidx.glance.layout.padding
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
-import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextStyle
 import com.ilagent.nativeoutline.R
 
 @androidx.compose.runtime.Composable
@@ -34,42 +26,25 @@ fun VpnConnectButtonGlance(
 ) {
     // Fixed square size for the button
     val buttonSize = 80.dp
-    val innerSize = buttonSize - 8.dp
-    
+
     if (isConnectionLoading) {
         // Loading state - show loading indicator with rounded corners
+
+        // Inner box with background drawable and rounded corners
         Box(
             modifier = GlanceModifier
                 .size(buttonSize)
-                .padding(4.dp)
-                .apply {
-                    context?.let {
-                        clickable(
-                            actionSendBroadcast(
-                                Intent(context, VpnWidgetActionReceiver::class.java).apply {
-                                    action = VpnWidgetActionReceiver.ACTION_TOGGLE_VPN
-                                }
-                            )
-                        )
-                    }
-                },
+                .background(ImageProvider(R.drawable.bg_vpn_button_loading)),
             contentAlignment = Alignment.Center
         ) {
-            // Inner box with background drawable and rounded corners
-            Box(
-                modifier = GlanceModifier
-                    .size(innerSize)
-                    .background(ImageProvider(R.drawable.bg_vpn_button_loading)),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    provider = ImageProvider(R.drawable.ic_loading_static),
-                    contentDescription = null,
-                    modifier = GlanceModifier.size(innerSize * 0.5f),
-                    contentScale = ContentScale.Fit
-                )
-            }
+            Image(
+                provider = ImageProvider(R.drawable.ic_loading_static),
+                contentDescription = null,
+                modifier = GlanceModifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
+            )
         }
+
     } else {
         // Connected or disconnected state - use drawable with rounded corners
         val bgDrawableRes = if (isConnected) {
@@ -79,13 +54,11 @@ fun VpnConnectButtonGlance(
         }
 
         val iconRes = if (isConnected) R.drawable.ic_pause else R.drawable.ic_play_arrow
-        val statusText = if (isConnected) "OFF" else "ON"
 
-        // Outer box with border effect
         Box(
             modifier = GlanceModifier
                 .size(buttonSize)
-                .padding(4.dp)
+                .background(ImageProvider(bgDrawableRes))
                 .clickable(
                     actionSendBroadcast(
                         Intent(context, VpnWidgetActionReceiver::class.java).apply {
@@ -95,34 +68,14 @@ fun VpnConnectButtonGlance(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            // Inner box with background drawable and rounded corners
-            Box(
-                modifier = GlanceModifier
-                    .size(innerSize)
-                    .background(ImageProvider(bgDrawableRes)),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        provider = ImageProvider(iconRes),
-                        contentDescription = null,
-                        modifier = GlanceModifier.size(innerSize * 0.5f),
-                        contentScale = ContentScale.Fit
-                    )
-                    Spacer(modifier = GlanceModifier.height(2.dp))
-                    Text(
-                        text = statusText,
-                        style = TextStyle(
-                            textAlign = TextAlign.Center,
-                            color = ColorProvider(Color.White, Color.White)
-                        )
-                    )
-                }
-            }
+            Image(
+                provider = ImageProvider(iconRes),
+                contentDescription = null,
+                modifier = GlanceModifier.size(buttonSize / 2),
+            )
         }
     }
+
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)

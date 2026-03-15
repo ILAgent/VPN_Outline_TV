@@ -15,20 +15,14 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
-import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
-import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextStyle
 import com.ilagent.nativeoutline.R
-import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.domain.VpnStateManager
 
 class VpnWidget : GlanceAppWidget() {
@@ -58,10 +52,8 @@ class VpnWidget : GlanceAppWidget() {
 @androidx.compose.runtime.Composable
 private fun VpnWidgetContent(
     isConnected: Boolean,
-    context: Context,
+    context: Context? = null,
 ) {
-    val preferencesManager = PreferencesManager(context)
-    val serverName = preferencesManager.selectedServerName ?: "No Server"
 
     Box(
         modifier = GlanceModifier
@@ -72,53 +64,18 @@ private fun VpnWidgetContent(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Left section: VPN Connect Button (50% width, square)
-            Box(
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                VpnConnectButtonGlance(
-                    isConnected = isConnected,
-                    isConnectionLoading = false,
-                    context = context
-                )
-            }
-
-            // Right section: Logo and server name (50% width)
-            Column(
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    provider = ImageProvider(R.drawable.logo),
-                    contentDescription = "App Logo",
-                    modifier = GlanceModifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
-                )
-            }
-        }
-
-        // Server name at bottom
-        Box(
-            modifier = GlanceModifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Text(
-                text = serverName,
-                style = TextStyle(
-                    textAlign = TextAlign.Center
-                ),
-                maxLines = 1,
-                modifier = GlanceModifier.padding(bottom = 4.dp)
+            VpnConnectButtonGlance(
+                isConnected = isConnected,
+                isConnectionLoading = false,
+                context = context
+            )
+            Image(
+                provider = ImageProvider(R.drawable.logo),
+                contentDescription = "App Logo",
+                modifier = GlanceModifier.size(80.dp),
+                contentScale = ContentScale.Fit
             )
         }
     }
@@ -131,7 +88,7 @@ private fun VpnWidgetContentPreview() {
     GlanceTheme {
         VpnWidgetContent(
             isConnected = false,
-            context = null!!
+            context = null
         )
     }
 }
@@ -143,7 +100,7 @@ private fun VpnWidgetContentConnectedPreview() {
     GlanceTheme {
         VpnWidgetContent(
             isConnected = true,
-            context = null!!
+            context = null
         )
     }
 }
