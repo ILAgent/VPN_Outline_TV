@@ -20,9 +20,11 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import com.ilagent.nativeoutline.MainActivity
@@ -70,16 +72,28 @@ private fun VpnWidgetContent(
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            VpnConnectButtonGlance(
-                isConnected = isConnected,
-                isConnectionLoading = false,
-                context = context
-            )
+            // VPN button - fills available height with square aspect ratio (via drawable)
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxHeight()
+                    .defaultWeight(),
+                contentAlignment = Alignment.Center
+            ) {
+                VpnConnectButtonGlance(
+                    isConnected = isConnected,
+                    isConnectionLoading = false,
+                    context = context
+                )
+            }
+            // Spacer between button and logo
+            Spacer(modifier = GlanceModifier.width(8.dp))
+            // Logo adapts to height, maintains aspect ratio via ContentScale
             Image(
                 provider = ImageProvider(R.drawable.logo),
                 contentDescription = "App Logo",
                 modifier = GlanceModifier
-                    .size(80.dp)
+                    .fillMaxHeight()
+                    .defaultWeight()
                     .clickable(
                         actionStartActivity(
                             Intent(context, MainActivity::class.java).apply {

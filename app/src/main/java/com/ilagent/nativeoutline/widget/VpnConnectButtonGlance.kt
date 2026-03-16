@@ -2,84 +2,62 @@ package com.ilagent.nativeoutline.widget
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Composable
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionSendBroadcast
-import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import com.ilagent.nativeoutline.R
 
-@androidx.compose.runtime.Composable
+@Composable
 fun VpnConnectButtonGlance(
     isConnected: Boolean,
     isConnectionLoading: Boolean,
     context: Context? = null,
 ) {
-    // Fixed square size for the button
-    val buttonSize = 80.dp
-
-    if (isConnectionLoading) {
-        // Loading state - show loading indicator with rounded corners
-
-        // Inner box with background drawable and rounded corners
-        Box(
-            modifier = GlanceModifier
-                .size(buttonSize)
-                .background(ImageProvider(R.drawable.bg_vpn_button_loading)),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                provider = ImageProvider(R.drawable.ic_loading_static),
-                contentDescription = null,
-                modifier = GlanceModifier.fillMaxSize(),
-                contentScale = ContentScale.Fit
-            )
-        }
-
-    } else {
-        // Connected or disconnected state - use drawable with rounded corners
-        val bgDrawableRes = if (isConnected) {
-            R.drawable.bg_vpn_button_connected
-        } else {
-            R.drawable.bg_vpn_button_disconnected
-        }
-
-        val iconRes = if (isConnected) R.drawable.ic_pause else R.drawable.ic_play_arrow
-
-        Box(
-            modifier = GlanceModifier
-                .size(buttonSize)
-                .background(ImageProvider(bgDrawableRes))
-                .clickable(
-                    actionSendBroadcast(
-                        Intent(context, VpnWidgetActionReceiver::class.java).apply {
-                            action = VpnWidgetActionReceiver.ACTION_TOGGLE_VPN
-                        }
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                provider = ImageProvider(iconRes),
-                contentDescription = null,
-                modifier = GlanceModifier.size(buttonSize / 2),
-            )
-        }
+    // Use compound drawable that scales properly while maintaining aspect ratio
+    val buttonDrawableRes = when {
+        isConnectionLoading -> R.drawable.btn_vpn_loading
+        isConnected -> R.drawable.btn_vpn_connected
+        else -> R.drawable.btn_vpn_disconnected
     }
 
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .let { modifier ->
+                if (!isConnectionLoading && context != null) {
+                    modifier.clickable(
+                        actionSendBroadcast(
+                            Intent(context, VpnWidgetActionReceiver::class.java).apply {
+                                action = VpnWidgetActionReceiver.ACTION_TOGGLE_VPN
+                            }
+                        )
+                    )
+                } else {
+                    modifier
+                }
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            provider = ImageProvider(buttonDrawableRes),
+            contentDescription = null,
+            modifier = GlanceModifier.fillMaxSize(),
+            contentScale = ContentScale.Fit
+        )
+    }
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@androidx.compose.runtime.Composable
+@Composable
 @Preview
 private fun VpnConnectButtonGlancePreview() {
     VpnConnectButtonGlance(
@@ -89,7 +67,7 @@ private fun VpnConnectButtonGlancePreview() {
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@androidx.compose.runtime.Composable
+@Composable
 @Preview
 private fun VpnConnectButtonGlanceConnectedPreview() {
     VpnConnectButtonGlance(
@@ -99,7 +77,7 @@ private fun VpnConnectButtonGlanceConnectedPreview() {
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
-@androidx.compose.runtime.Composable
+@Composable
 @Preview
 private fun VpnConnectButtonGlanceLoadingPreview() {
     VpnConnectButtonGlance(
