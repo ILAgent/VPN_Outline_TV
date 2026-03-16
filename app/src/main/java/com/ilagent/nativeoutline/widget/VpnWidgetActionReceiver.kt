@@ -3,6 +3,7 @@ package com.ilagent.nativeoutline.widget
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.domain.OutlineVpnService
 import com.ilagent.nativeoutline.domain.VpnStateManager
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
@@ -41,6 +42,11 @@ class VpnWidgetActionReceiver : BroadcastReceiver() {
                             e.printStackTrace()
                         }
                     }
+                } else {
+                    val mainIntent = Intent(context, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(mainIntent)
                 }
             }
         }
