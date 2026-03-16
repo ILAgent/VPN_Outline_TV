@@ -69,7 +69,6 @@ private fun VpnWidgetContent(
         // VPN button with defaultWeight for proper sizing
         VpnConnectButtonGlance(
             isConnected = isConnected,
-            isConnectionLoading = false,
             context = context,
             modifier = GlanceModifier
                 .fillMaxHeight()

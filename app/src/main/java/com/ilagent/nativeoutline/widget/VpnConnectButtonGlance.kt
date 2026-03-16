@@ -16,12 +16,10 @@ import com.ilagent.nativeoutline.R
 @Composable
 fun VpnConnectButtonGlance(
     isConnected: Boolean,
-    isConnectionLoading: Boolean,
     context: Context? = null,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     val buttonDrawableRes = when {
-        isConnectionLoading -> R.drawable.btn_vpn_loading
         isConnected -> R.drawable.btn_vpn_connected
         else -> R.drawable.btn_vpn_disconnected
     }
@@ -31,7 +29,7 @@ fun VpnConnectButtonGlance(
         contentDescription = null,
         modifier = modifier
             .let { mod ->
-                if (!isConnectionLoading && context != null) {
+                if (context != null) {
                     mod.clickable(
                         actionSendBroadcast(
                             Intent(context, VpnWidgetActionReceiver::class.java).apply {
@@ -53,7 +51,6 @@ fun VpnConnectButtonGlance(
 private fun VpnConnectButtonGlancePreview() {
     VpnConnectButtonGlance(
         isConnected = false,
-        isConnectionLoading = false,
     )
 }
 
@@ -63,16 +60,5 @@ private fun VpnConnectButtonGlancePreview() {
 private fun VpnConnectButtonGlanceConnectedPreview() {
     VpnConnectButtonGlance(
         isConnected = true,
-        isConnectionLoading = false,
-    )
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Composable
-@Preview
-private fun VpnConnectButtonGlanceLoadingPreview() {
-    VpnConnectButtonGlance(
-        isConnected = false,
-        isConnectionLoading = true,
     )
 }
