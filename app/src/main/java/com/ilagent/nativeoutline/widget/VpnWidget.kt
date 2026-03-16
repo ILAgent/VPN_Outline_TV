@@ -17,7 +17,6 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
@@ -60,50 +59,46 @@ private fun VpnWidgetContent(
     isConnected: Boolean,
     context: Context? = null,
 ) {
-
-    Box(
+    Row(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(R.color.vpn_white_overlay)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
+        // VPN button with defaultWeight for proper sizing
+        VpnConnectButtonGlance(
+            isConnected = isConnected,
+            isConnectionLoading = false,
+            context = context,
             modifier = GlanceModifier
-                .fillMaxSize()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // VPN button - fills available height with square aspect ratio (via drawable)
-            Box(
-                modifier = GlanceModifier
-                    .fillMaxHeight()
-                    .defaultWeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                VpnConnectButtonGlance(
-                    isConnected = isConnected,
-                    isConnectionLoading = false,
-                    context = context
-                )
-            }
-            // Spacer between button and logo
-            Spacer(modifier = GlanceModifier.width(8.dp))
-            // Logo adapts to height, maintains aspect ratio via ContentScale
-            Image(
-                provider = ImageProvider(R.drawable.logo),
-                contentDescription = "App Logo",
-                modifier = GlanceModifier
-                    .fillMaxHeight()
-                    .defaultWeight()
-                    .clickable(
-                        actionStartActivity(
-                            Intent(context, MainActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
+                .fillMaxHeight()
+                .defaultWeight()
+        )
+        // Spacer between button and logo
+        Spacer(modifier = GlanceModifier.width(8.dp))
+        // Logo
+        Image(
+            provider = ImageProvider(R.drawable.logo),
+            contentDescription = "App Logo",
+            modifier = GlanceModifier
+                .fillMaxHeight()
+                .defaultWeight()
+                .let {
+                    if (context != null) {
+                        it.clickable(
+                            actionStartActivity(
+                                Intent(context, MainActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                            )
                         )
-                    ),
-                contentScale = ContentScale.Fit
-            )
-        }
+                    } else {
+                        it
+                    }
+                },
+            contentScale = ContentScale.Fit
+        )
     }
 }
 

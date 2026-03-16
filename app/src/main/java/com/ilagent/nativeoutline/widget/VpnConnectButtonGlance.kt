@@ -8,10 +8,7 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionSendBroadcast
-import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
-import androidx.glance.layout.fillMaxSize
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import com.ilagent.nativeoutline.R
@@ -21,20 +18,21 @@ fun VpnConnectButtonGlance(
     isConnected: Boolean,
     isConnectionLoading: Boolean,
     context: Context? = null,
+    modifier: GlanceModifier = GlanceModifier,
 ) {
-    // Use compound drawable that scales properly while maintaining aspect ratio
     val buttonDrawableRes = when {
         isConnectionLoading -> R.drawable.btn_vpn_loading
         isConnected -> R.drawable.btn_vpn_connected
         else -> R.drawable.btn_vpn_disconnected
     }
 
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .let { modifier ->
+    Image(
+        provider = ImageProvider(buttonDrawableRes),
+        contentDescription = null,
+        modifier = modifier
+            .let { mod ->
                 if (!isConnectionLoading && context != null) {
-                    modifier.clickable(
+                    mod.clickable(
                         actionSendBroadcast(
                             Intent(context, VpnWidgetActionReceiver::class.java).apply {
                                 action = VpnWidgetActionReceiver.ACTION_TOGGLE_VPN
@@ -42,18 +40,11 @@ fun VpnConnectButtonGlance(
                         )
                     )
                 } else {
-                    modifier
+                    mod
                 }
             },
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            provider = ImageProvider(buttonDrawableRes),
-            contentDescription = null,
-            modifier = GlanceModifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
-        )
-    }
+        contentScale = ContentScale.Fit
+    )
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
