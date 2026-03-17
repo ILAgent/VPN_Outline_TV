@@ -14,6 +14,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -63,6 +64,7 @@ private fun VpnWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(R.color.vpn_white_overlay)
+            .cornerRadius(16.dp)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
