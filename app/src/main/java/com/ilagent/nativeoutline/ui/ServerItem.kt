@@ -119,7 +119,7 @@ fun ServerItem(
                 Text(
                     text = serverName.ifEmpty { context.getString(R.string.server_not_specified) },
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface, // Текст по умолчанию на фоне
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

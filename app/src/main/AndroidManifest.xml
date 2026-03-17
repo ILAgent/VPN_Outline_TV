@@ -66,6 +66,41 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- VPN Widget Receiver -->
+        <receiver
+            android:name=".widget.VpnWidgetReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/vpn_widget_info" />
+        </receiver>
+
+        <!-- VPN Widget Action Receiver -->
+        <receiver
+            android:name=".widget.VpnWidgetActionReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.ilagent.nativeoutline.widget.TOGGLE_VPN" />
+                <action android:name="com.ilagent.nativeoutline.widget.OPEN_APP" />
+            </intent-filter>
+        </receiver>
+
+        <!-- VPN Widget Update Receiver -->
+        <receiver
+            android:name=".widget.VpnWidgetUpdateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.ilagent.nativeoutline.STARTED" />
+                <action android:name="com.ilagent.nativeoutline.STOPPED" />
+                <action android:name="com.ilagent.nativeoutline.ERROR" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

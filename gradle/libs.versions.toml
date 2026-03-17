@@ -1,6 +1,7 @@
 [versions]
 agp = "9.0.0"
 core = "3.5.3"
+glanceAppwidget = "1.1.1"
 kotlin = "2.2.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -21,6 +22,10 @@ zxingAndroidEmbedded = "4.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
+androidx-glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "glanceAppwidget" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceAppwidget" }
+androidx-glance-preview = { module = "androidx.glance:glance-preview", version.ref = "glanceAppwidget" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

@@ -2,14 +2,7 @@ package com.ilagent.nativeoutline.ui
 
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,14 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,8 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +42,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
-import com.ilagent.nativeoutline.utils.versionName
+import com.ilagent.nativeoutline.utils.versionNameUi
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.SingleLiveEvent
@@ -118,16 +103,16 @@ fun MainScreen(
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> MainScreenContent(
                 onHelpClick = { isHelpDialogOpen = true },
-                onSettingsClick = { 
+                onSettingsClick = {
                     CrashlyticsLogger.logSettingsOpened()
-                    isSettingsDialogOpen = true 
+                    isSettingsDialogOpen = true
                 },
                 vpnServerState = vpnServerState,
                 onConnectClick = onConnectClick,
                 onDisconnectClick = onDisconnectClick,
-                onOpenServerDialog = { 
+                onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isDialogOpen = true 
+                    isDialogOpen = true
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -140,16 +125,16 @@ fun MainScreen(
 
             else -> TvScreenContent(
                 onHelpClick = { isHelpDialogOpen = true },
-                onSettingsClick = { 
+                onSettingsClick = {
                     CrashlyticsLogger.logSettingsOpened()
-                    isSettingsDialogOpen = true 
+                    isSettingsDialogOpen = true
                 },
                 vpnServerState = vpnServerState,
                 onConnectClick = onConnectClick,
                 onDisconnectClick = onDisconnectClick,
-                onOpenServerDialog = { 
+                onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isDialogOpen = true 
+                    isDialogOpen = true
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -209,8 +194,6 @@ fun MainScreenContent(
     onConnectionLoading: () -> Unit,
 ) {
     val context = LocalContext.current
-    val connectButtonInteractionSource = remember { MutableInteractionSource() }
-    val isConnectButtonFocused by connectButtonInteractionSource.collectIsFocusedAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -226,7 +209,7 @@ fun MainScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = context.getString(R.string.version, versionName(context)),
+                        text = context.getString(R.string.version, versionNameUi(context)),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -271,84 +254,18 @@ fun MainScreenContent(
             var requestPermission by remember { mutableStateOf(false) }
             NotificationPermission(requestPermission) {
                 onConnectClick(vpnServerState.url)
+                requestPermission = false
             }
-            if (isConnectionLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .padding(20.dp)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .border(
-                            width = 3.dp,
-                            color = if (isConnectButtonFocused)
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                            else
-                                Color.Transparent,
-                            shape = RoundedCornerShape(34.dp)
-                        )
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(30.dp))
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = if (isConnected) {
-                                    listOf(
-                                        Color(0xFF5EFFB5),
-                                        Color(0xFF2C7151)
-                                    )
-                                } else {
-                                    listOf(
-                                        Color(0xFFE57373),
-                                        Color(0xFFFF8A65)
-                                    )
-                                }
-                            )
-                        )
-                        .focusable(interactionSource = connectButtonInteractionSource)
-                        .clickable(
-                            interactionSource = connectButtonInteractionSource,
-                            indication = ripple(true)
-                        ) {
-                            if (!isEditing) {
-                                if (vpnServerState == VpnServerStateUi.DEFAULT) {
-                                    onOpenServerDialog()
-                                } else {
-                                    onConnectionLoading()
-                                    if (isConnected) {
-                                        requestPermission = false
-                                        onDisconnectClick()
-                                    } else {
-                                        requestPermission = true
-                                    }
-                                }
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Crossfade(
-                            targetState = isConnected,
-                            animationSpec = tween(600),
-                            label = "ConnectionStatusCrossfade"
-                        ) { connected ->
-                            Icon(
-                                imageVector = if (connected) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(60.dp)
-                            )
-                        }
-                        Text(
-                            text = context.getString(if (isConnected) R.string.off else R.string.on),
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
+            VpnConnectButton(
+                isConnected = isConnected,
+                isConnectionLoading = isConnectionLoading,
+                isEditing = isEditing,
+                vpnServerState = vpnServerState,
+                onOpenServerDialog = onOpenServerDialog,
+                onConnectionLoading = onConnectionLoading,
+                onDisconnectClick = onDisconnectClick,
+                onRequestPermission = { requestPermission = true }
+            )
         }
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -366,9 +283,9 @@ fun MainScreenContent(
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
-        errorMessage?.let { _message ->
+        errorMessage?.let { message ->
             Text(
-                text = _message,
+                text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Red
             )
@@ -400,8 +317,6 @@ fun TvScreenContent(
     onConnectionLoading: () -> Unit,
 ) {
     val context = LocalContext.current
-    val connectButtonInteractionSource = remember { MutableInteractionSource() }
-    val isConnectButtonFocused by connectButtonInteractionSource.collectIsFocusedAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -417,7 +332,7 @@ fun TvScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = context.getString(R.string.version, versionName(context)),
+                        text = context.getString(R.string.version, versionNameUi(context)),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -474,84 +389,18 @@ fun TvScreenContent(
                     var requestPermission by remember { mutableStateOf(false) }
                     NotificationPermission(requestPermission) {
                         onConnectClick(vpnServerState.url)
+                        requestPermission = false
                     }
-                    if (isConnectionLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(120.dp)
-                                .padding(20.dp)
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .size(120.dp)
-                                .border(
-                                    width = 3.dp,
-                                    color = if (isConnectButtonFocused)
-                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                                    else
-                                        Color.Transparent,
-                                    shape = RoundedCornerShape(34.dp)
-                                )
-                                .padding(4.dp)
-                                .clip(RoundedCornerShape(30.dp))
-                                .background(
-                                    brush = Brush.verticalGradient(
-                                        colors = if (isConnected) {
-                                            listOf(
-                                                Color(0xFF5EFFB5),
-                                                Color(0xFF2C7151)
-                                            )
-                                        } else {
-                                            listOf(
-                                                Color(0xFFE57373),
-                                                Color(0xFFFF8A65)
-                                            )
-                                        }
-                                    )
-                                )
-                                .focusable(interactionSource = connectButtonInteractionSource)
-                                .clickable(
-                                    interactionSource = connectButtonInteractionSource,
-                                    indication = ripple(true)
-                                ) {
-                                    if (!isEditing) {
-                                        if (vpnServerState == VpnServerStateUi.DEFAULT) {
-                                            onOpenServerDialog()
-                                        } else {
-                                            onConnectionLoading()
-                                            if (isConnected) {
-                                                requestPermission = false
-                                                onDisconnectClick()
-                                            } else {
-                                                requestPermission = true
-                                            }
-                                        }
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Crossfade(
-                                    targetState = isConnected,
-                                    animationSpec = tween(600),
-                                    label = "ConnectionStatusCrossfade"
-                                ) { connected ->
-                                    Icon(
-                                        imageVector = if (connected) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(60.dp)
-                                    )
-                                }
-                                Text(
-                                    text = context.getString(if (isConnected) R.string.off else R.string.on),
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
+                    VpnConnectButton(
+                        isConnected = isConnected,
+                        isConnectionLoading = isConnectionLoading,
+                        isEditing = isEditing,
+                        vpnServerState = vpnServerState,
+                        onOpenServerDialog = onOpenServerDialog,
+                        onConnectionLoading = onConnectionLoading,
+                        onDisconnectClick = onDisconnectClick,
+                        onRequestPermission = { requestPermission = true }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -570,9 +419,9 @@ fun TvScreenContent(
                     )
                 }
 
-                errorMessage?.let { _message ->
+                errorMessage?.let { message ->
                     Text(
-                        text = _message,
+                        text = message,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.Red
                     )

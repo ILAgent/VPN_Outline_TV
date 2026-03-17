@@ -31,10 +31,6 @@ class MainViewModel(
     private val _errorEvent = SingleLiveEvent<Unit>()
     val errorEvent: LiveData<Unit> get() = _errorEvent
 
-
-    private val _isConnecting = MutableLiveData(false)
-    val isConnecting: LiveData<Boolean> = _isConnecting
-
     suspend fun checkForAppUpdates(currentVersion: String, onUpdateAvailable: (String) -> Unit) {
         val updateStatus = updateManager.checkForAppUpdates(currentVersion)
         if (updateStatus is UpdateManager.UpdateStatus.Available) {
@@ -55,7 +51,6 @@ class MainViewModel(
     }
 
     fun startVpn(configString: String) {
-        _isConnecting.value = true
         viewModelScope.launch {
             runCatching { parseUrlOutline.parse(configString) }
                 .onSuccess { config -> vpnManager.start(config) }
@@ -110,7 +105,6 @@ class MainViewModel(
     }
 
     fun vpnEvent(event: VpnEvent) {
-        _isConnecting.value = false
         when (event) {
             VpnEvent.STARTED -> {
                 val started = System.currentTimeMillis()

@@ -261,4 +261,48 @@ object CrashlyticsLogger {
         Log.i(TAG, "Server imported from QR")
         analytics.logEvent("server_imported_from_qr", null)
     }
+
+    // ========== Логирование событий виджета ==========
+
+    /**
+     * Логирует добавление виджета на домашний экран
+     */
+    fun logWidgetAdded() {
+        Log.i(TAG, "Widget added")
+        analytics.logEvent("widget_added", null)
+    }
+
+    /**
+     * Логирует удаление виджета с домашнего экрана
+     */
+    fun logWidgetRemoved() {
+        Log.i(TAG, "Widget removed")
+        analytics.logEvent("widget_removed", null)
+    }
+
+    /**
+     * Логирует запуск VPN через виджет
+     * @param serverName Имя сервера
+     */
+    fun logWidgetVpnStarted(serverName: String) {
+        Log.i(TAG, "Widget VPN started: $serverName")
+        analytics.logEvent("widget_vpn_started", Bundle().apply { putString("server_name", serverName) })
+    }
+
+    /**
+     * Логирует остановку VPN через виджет
+     * @param serverName Имя сервера
+     */
+    fun logWidgetVpnStopped(serverName: String) {
+        Log.i(TAG, "Widget VPN stopped: $serverName")
+        analytics.logEvent("widget_vpn_stopped", Bundle().apply { putString("server_name", serverName) })
+    }
+
+    /**
+     * Логирует открытие приложения через виджет
+     */
+    fun logWidgetAppOpened() {
+        Log.i(TAG, "Widget app opened")
+        analytics.logEvent("widget_app_opened", null)
+    }
 }

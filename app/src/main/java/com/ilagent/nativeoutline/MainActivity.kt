@@ -68,16 +68,32 @@ class MainActivity : ComponentActivity() {
                         val selectedApps = preferencesManager.getSelectedApps() ?: emptyList()
                         val isWhitelistMode = !selectedApps.contains("all_apps")
                         val whitelistCount = if (isWhitelistMode) selectedApps.size else 0
-                        CrashlyticsLogger.logVpnConnected(state.name, isWhitelistMode, whitelistCount)
+                        val source = intent.getStringExtra(BroadcastVpnServiceAction.EXTRA_SOURCE)
+                            ?: BroadcastVpnServiceAction.SOURCE_APP
+
+                        if (source == BroadcastVpnServiceAction.SOURCE_WIDGET) {
+                            CrashlyticsLogger.logWidgetVpnStarted(state.name)
+                        } else {
+                            CrashlyticsLogger.logVpnConnected(state.name, isWhitelistMode, whitelistCount)
+                        }
                     }
                 }
                 BroadcastVpnServiceAction.STOPPED -> {
                     viewModel.vpnEvent(VpnEvent.STOPPED)
                     viewModel.vpnServerState.value?.let { state ->
-                        CrashlyticsLogger.logVpnDisconnected(state.name)
+                        val source = intent.getStringExtra(BroadcastVpnServiceAction.EXTRA_SOURCE)
+                            ?: BroadcastVpnServiceAction.SOURCE_APP
+
+                        if (source == BroadcastVpnServiceAction.SOURCE_WIDGET) {
+                            CrashlyticsLogger.logWidgetVpnStopped(state.name)
+                        } else {
+                            CrashlyticsLogger.logVpnDisconnected(state.name)
+                        }
                     }
                 }
-                BroadcastVpnServiceAction.ERROR -> viewModel.vpnEvent(VpnEvent.ERROR)
+                BroadcastVpnServiceAction.ERROR -> {
+                    viewModel.vpnEvent(VpnEvent.ERROR)
+                }
             }
         }
     }
@@ -218,13 +234,12 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         viewModel.checkVpnConnectionState()
         viewModel.loadLastVpnServerState()
-
+    
         val isVpnConnected = viewModel.vpnConnectionState.value == true
-        val isVpnConnecting = viewModel.isConnecting.value == true
         val isAutoConnectOn = autoConnectViewModel.isAutoConnectEnabled.value
         val lastServerUrl = viewModel.vpnServerState.value?.url.orEmpty()
-
-        if (isAutoConnectOn && !isVpnConnected && !isVpnConnecting && lastServerUrl.isNotEmpty()) {
+    
+        if (isAutoConnectOn && !isVpnConnected && lastServerUrl.isNotEmpty()) {
             startVpn(lastServerUrl)
         }
     }

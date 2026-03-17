@@ -78,6 +78,7 @@ class PreferencesManager(context: Context) {
     fun clearVpnStartTime() {
         preferences.edit { remove(KEY_VPN_START_TIME) }
     }
+
     var selectedServerName: String?
         set(name) = preferences.edit { putString(KEY_SERVER_NAME, name) }
         get() = preferences.getString(KEY_SERVER_NAME, null)

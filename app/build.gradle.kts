@@ -206,5 +206,11 @@ dependencies {
     implementation(libs.nanohttpd)
     implementation(libs.core)
     implementation(libs.zxing.android.embedded)
-
+    
+    // Glance for App Widgets
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.appwidget.preview)
+    implementation(libs.androidx.glance.preview)
+    
 }
