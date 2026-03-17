@@ -31,6 +31,7 @@ class OutlineVpnService : VpnService() {
 
     companion object {
         private const val CONFIG_EXTRA = "OutlineVpnService:config"
+        private const val SOURCE_EXTRA = "OutlineVpnService:source"
 
         private const val TAG = "OutlineVpnService"
         private const val ACTION_START = "action.start"
@@ -51,8 +52,23 @@ class OutlineVpnService : VpnService() {
             context.startService(newIntent(context, ACTION_START).putExtra(CONFIG_EXTRA, config))
         }
 
+        fun start(context: Context, config: ShadowSocksInfo, source: String) {
+            context.startService(
+                newIntent(context, ACTION_START)
+                    .putExtra(CONFIG_EXTRA, config)
+                    .putExtra(SOURCE_EXTRA, source)
+            )
+        }
+
         fun stop(context: Context) {
             context.startService(newIntent(context, ACTION_STOP))
+        }
+
+        fun stop(context: Context, source: String) {
+            context.startService(
+                newIntent(context, ACTION_STOP)
+                    .putExtra(SOURCE_EXTRA, source)
+            )
         }
 
         private fun newIntent(context: Context, action: String): Intent {
@@ -78,12 +94,14 @@ class OutlineVpnService : VpnService() {
         return when {
             action == ACTION_START && !VpnStateManager.isVpnConnected() -> {
                 @Suppress("DEPRECATION")
-                startVpn(intent.extras?.getParcelable(CONFIG_EXTRA))
+                val source = intent.extras?.getString(SOURCE_EXTRA) ?: BroadcastVpnServiceAction.SOURCE_APP
+                startVpn(intent.extras?.getParcelable(CONFIG_EXTRA), source)
                 START_STICKY
             }
 
             action == ACTION_STOP -> {
-                stopVpn()
+                val source = intent.extras?.getString(SOURCE_EXTRA) ?: BroadcastVpnServiceAction.SOURCE_APP
+                stopVpn(source)
                 START_NOT_STICKY
             }
 
@@ -91,7 +109,7 @@ class OutlineVpnService : VpnService() {
         }
     }
 
-    private fun startVpn(config: ShadowSocksInfo?) = scope.launch(Dispatchers.IO) {
+    private fun startVpn(config: ShadowSocksInfo?, source: String) = scope.launch(Dispatchers.IO) {
         if (config == null) {
             CrashlyticsLogger.logError("startVpn: null config")
             sendBroadcast(
@@ -113,7 +131,7 @@ class OutlineVpnService : VpnService() {
             Intent(
                 if (started) BroadcastVpnServiceAction.STARTED
                 else BroadcastVpnServiceAction.ERROR
-            ).setPackage(packageName)
+            ).setPackage(packageName).putExtra(BroadcastVpnServiceAction.EXTRA_SOURCE, source)
         )
     }
 
@@ -165,13 +183,17 @@ class OutlineVpnService : VpnService() {
         return VpnStateManager.isVpnConnected()
     }
 
-    private fun stopVpn() {
+    private fun stopVpn(source: String) {
         stopVpnTunnel()
         stopForeground()
         stopSelf()
         VpnStateManager.setVpnRunning(false)
 
-        sendBroadcast(Intent(BroadcastVpnServiceAction.STOPPED).setPackage(packageName))
+        sendBroadcast(
+            Intent(BroadcastVpnServiceAction.STOPPED)
+                .setPackage(packageName)
+                .putExtra(BroadcastVpnServiceAction.EXTRA_SOURCE, source)
+        )
     }
 
     private fun checkServerConnectivity(client: Client): ErrorCode {

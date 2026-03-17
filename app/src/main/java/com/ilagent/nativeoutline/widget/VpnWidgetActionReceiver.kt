@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ilagent.nativeoutline.MainActivity
+import com.ilagent.nativeoutline.data.broadcast.BroadcastVpnServiceAction
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
 import com.ilagent.nativeoutline.data.remote.RemoteJSONFetch
@@ -27,10 +28,7 @@ class VpnWidgetActionReceiver : BroadcastReceiver() {
 
                 if (isConnected) {
                     // Disconnect VPN
-                    val preferencesManager = PreferencesManager(context)
-                    val serverName = preferencesManager.selectedServerName ?: "unknown"
-                    OutlineVpnService.stop(context)
-                    CrashlyticsLogger.logWidgetVpnStopped(serverName)
+                    OutlineVpnService.stop(context, BroadcastVpnServiceAction.SOURCE_WIDGET)
                 } else {
                     // Connect VPN
                     val preferencesManager = PreferencesManager(context)
@@ -44,8 +42,11 @@ class VpnWidgetActionReceiver : BroadcastReceiver() {
                                 val parseUrlOutline =
                                     ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch())
                                 val config = parseUrlOutline.parse(serverUrl)
-                                OutlineVpnService.start(context, config)
-                                CrashlyticsLogger.logWidgetVpnStarted(serverName)
+                                OutlineVpnService.start(
+                                    context,
+                                    config,
+                                    BroadcastVpnServiceAction.SOURCE_WIDGET
+                                )
                             } catch (e: Exception) {
                                 CrashlyticsLogger.logException(
                                     e,
