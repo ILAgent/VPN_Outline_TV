@@ -273,6 +273,10 @@ class OutlineVpnService : VpnService() {
     override fun onRevoke() {
         super.onRevoke()
         Log.i(TAG, "onRevoke: ")
+        stopVpnTunnel()
+        stopForeground()
+        VpnStateManager.setVpnRunning(false)
+        sendBroadcast(Intent(BroadcastVpnServiceAction.STOPPED).setPackage(packageName))
     }
 
     override fun onDestroy() {

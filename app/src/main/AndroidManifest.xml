@@ -89,6 +89,18 @@
             </intent-filter>
         </receiver>
 
+        <!-- VPN Widget Update Receiver -->
+        <receiver
+            android:name=".widget.VpnWidgetUpdateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.ilagent.nativeoutline.STARTED" />
+                <action android:name="com.ilagent.nativeoutline.STOPPED" />
+                <action android:name="com.ilagent.nativeoutline.ERROR" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
