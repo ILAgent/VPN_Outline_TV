@@ -17,40 +17,51 @@ import kotlinx.coroutines.launch
 class VpnWidgetActionReceiver : BroadcastReceiver() {
     companion object {
         const val ACTION_TOGGLE_VPN = "com.ilagent.nativeoutline.widget.TOGGLE_VPN"
+        const val ACTION_OPEN_APP = "com.ilagent.nativeoutline.widget.OPEN_APP"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == ACTION_TOGGLE_VPN) {
-            val isConnected = VpnStateManager.isVpnConnected()
+        when (intent.action) {
+            ACTION_TOGGLE_VPN -> {
+                val isConnected = VpnStateManager.isVpnConnected()
 
-            if (isConnected) {
-                // Disconnect VPN
-                OutlineVpnService.stop(context)
-            } else {
-                // Connect VPN
-                val preferencesManager = PreferencesManager(context)
-                val serverName = preferencesManager.selectedServerName
-                val vpnKeys = preferencesManager.getVpnKeys()
-                val serverUrl = vpnKeys.find { it.name == serverName }?.key ?: ""
-
-                if (serverUrl.isNotEmpty()) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val parseUrlOutline =
-                                ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch())
-                            val config = parseUrlOutline.parse(serverUrl)
-                            OutlineVpnService.start(context, config)
-                        } catch (e: Exception) {
-                            CrashlyticsLogger.logException(
-                                e,
-                                "Error when starting OutlineVpnService in VpnWidgetActionReceiver"
-                            )
-                            startMainActivity(context)
-                        }
-                    }
+                if (isConnected) {
+                    // Disconnect VPN
+                    val preferencesManager = PreferencesManager(context)
+                    val serverName = preferencesManager.selectedServerName ?: "unknown"
+                    OutlineVpnService.stop(context)
+                    CrashlyticsLogger.logWidgetVpnStopped(serverName)
                 } else {
-                    startMainActivity(context)
+                    // Connect VPN
+                    val preferencesManager = PreferencesManager(context)
+                    val serverName = preferencesManager.selectedServerName ?: "unknown"
+                    val vpnKeys = preferencesManager.getVpnKeys()
+                    val serverUrl = vpnKeys.find { it.name == serverName }?.key ?: ""
+
+                    if (serverUrl.isNotEmpty()) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                val parseUrlOutline =
+                                    ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch())
+                                val config = parseUrlOutline.parse(serverUrl)
+                                OutlineVpnService.start(context, config)
+                                CrashlyticsLogger.logWidgetVpnStarted(serverName)
+                            } catch (e: Exception) {
+                                CrashlyticsLogger.logException(
+                                    e,
+                                    "Error when starting OutlineVpnService in VpnWidgetActionReceiver"
+                                )
+                                startMainActivity(context)
+                            }
+                        }
+                    } else {
+                        startMainActivity(context)
+                    }
                 }
+            }
+            ACTION_OPEN_APP -> {
+                CrashlyticsLogger.logWidgetAppOpened()
+                startMainActivity(context)
             }
         }
     }

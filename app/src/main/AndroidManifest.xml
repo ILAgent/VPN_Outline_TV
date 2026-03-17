@@ -86,6 +86,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.ilagent.nativeoutline.widget.TOGGLE_VPN" />
+                <action android:name="com.ilagent.nativeoutline.widget.OPEN_APP" />
             </intent-filter>
         </receiver>
 

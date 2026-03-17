@@ -13,7 +13,7 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -35,6 +35,7 @@ class VpnWidget : GlanceAppWidget() {
 
     companion object {
         private const val TAG = "VpnWidget"
+        const val ACTION_OPEN_APP = "com.ilagent.nativeoutline.widget.OPEN_APP"
     }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -88,9 +89,9 @@ private fun VpnWidgetContent(
                 .let {
                     if (context != null) {
                         it.clickable(
-                            actionStartActivity(
-                                Intent(context, MainActivity::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            actionSendBroadcast(
+                                Intent(context, VpnWidgetActionReceiver::class.java).apply {
+                                    action = VpnWidget.ACTION_OPEN_APP
                                 }
                             )
                         )
