@@ -176,6 +176,15 @@ object CrashlyticsLogger {
     }
 
     /**
+     * Логирует событие изменения языка
+     * @param languageCode Код языка (en, ru, zh)
+     */
+    fun logLanguageChanged(languageCode: String) {
+        Log.i(TAG, "Language changed to: $languageCode")
+        analytics.logEvent("language_changed", Bundle().apply { putString("language", languageCode) })
+    }
+
+    /**
      * Логирует событие изменения белого списка приложений
      * @param action Действие (all_apps, whitelist, added_apps, removed_app)
      */

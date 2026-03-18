@@ -44,6 +44,7 @@ import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.utils.versionNameUi
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.SingleLiveEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnServerStateUi
@@ -60,7 +61,8 @@ fun MainScreen(
     onDisconnectClick: () -> Unit,
     onSaveServer: (String, String) -> Unit,
     themeViewModel: ThemeViewModel,
-    autoConnectViewModel: AutoConnectViewModel
+    autoConnectViewModel: AutoConnectViewModel,
+    languageViewModel: LanguageViewModel
 ) {
     val errorMessage by remember { mutableStateOf<String?>(null) }
     var elapsedTime by remember { mutableIntStateOf(0) }
@@ -164,7 +166,8 @@ fun MainScreen(
                 preferencesManager = preferencesManager,
                 onDnsSelected = {},
                 themeViewModel = themeViewModel,
-                autoConnectViewModel = autoConnectViewModel
+                autoConnectViewModel = autoConnectViewModel,
+                languageViewModel = languageViewModel
             )
         }
 
@@ -455,6 +458,7 @@ fun DefaultPreview() {
         onDisconnectClick = {},
         onSaveServer = { _, _ -> },
         themeViewModel = ThemeViewModel(PreferencesManager(LocalContext.current)),
-        autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current))
+        autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current)),
+        languageViewModel = LanguageViewModel(LocalContext.current.applicationContext as android.app.Application)
     )
 }

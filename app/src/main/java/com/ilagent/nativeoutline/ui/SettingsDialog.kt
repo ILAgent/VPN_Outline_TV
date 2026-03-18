@@ -51,6 +51,7 @@ import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 
 @Composable
@@ -59,7 +60,8 @@ fun SettingsDialog(
     preferencesManager: PreferencesManager,
     onDnsSelected: (String) -> Unit,
     themeViewModel: ThemeViewModel,
-    autoConnectViewModel: AutoConnectViewModel
+    autoConnectViewModel: AutoConnectViewModel,
+    languageViewModel: LanguageViewModel
 ) {
     var selectedDns by remember {
         mutableStateOf(preferencesManager.getSelectedDns() ?: "8.8.8.8")
@@ -67,6 +69,7 @@ fun SettingsDialog(
 
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
     val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
+    val selectedLanguage by languageViewModel.languageCode
 
 
     LaunchedEffect(Unit) {
@@ -192,6 +195,22 @@ fun SettingsDialog(
                             CrashlyticsLogger.logThemeChanged(if (isChecked) "dark" else "light")
                         }
                     )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SettingsDialogSectionTitle(text = stringResource(id = R.string.language))
+                Column(Modifier.selectableGroup()) {
+                    LanguageViewModel.SUPPORTED_LANGUAGES.forEach { language ->
+                        SettingsDialogRadioItem(
+                            text = language.displayName,
+                            selected = selectedLanguage == language.code,
+                            onClick = {
+                                languageViewModel.setLanguage(language.code)
+                                CrashlyticsLogger.logLanguageChanged(language.code)
+                            }
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -425,6 +444,7 @@ private fun PreviewCustomSettingsDialog() {
         preferencesManager = preferencesManager,
         onDnsSelected = { },
         themeViewModel = ThemeViewModel(preferencesManager),
-        autoConnectViewModel = AutoConnectViewModel(preferencesManager)
+        autoConnectViewModel = AutoConnectViewModel(preferencesManager),
+        languageViewModel = LanguageViewModel(context.applicationContext as android.app.Application)
     )
 }

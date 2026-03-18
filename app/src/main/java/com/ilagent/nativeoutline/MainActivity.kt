@@ -42,11 +42,13 @@ import com.ilagent.nativeoutline.utils.activityresult.VPNPermissionLauncher
 import com.ilagent.nativeoutline.utils.activityresult.base.launch
 import com.ilagent.nativeoutline.utils.versionName
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.MainViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.VpnEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnServerStateUi
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -120,12 +122,32 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val languageViewModel: LanguageViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return LanguageViewModel(application) as T
+            }
+        }
+    }
 
     private val vpnPermission = VPNPermissionLauncher()
     private lateinit var preferencesManager: PreferencesManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        preferencesManager = PreferencesManager(applicationContext)
+        
+        // Apply saved language
+        val savedLanguage = preferencesManager.getSelectedLanguage()
+        if (savedLanguage != null) {
+            val locale = Locale(savedLanguage)
+            Locale.setDefault(locale)
+            val config = resources.configuration
+            config.setLocale(locale)
+            resources.updateConfiguration(config, resources.displayMetrics)
+        }
+
         lifecycleScope.launch {
             themeViewModel.isDarkTheme.collect { isDarkMode ->
                 enableEdgeToEdge(
@@ -138,8 +160,17 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+
+        // Restart activity when language changes
+        lifecycleScope.launch {
+            languageViewModel.currentLanguage.collect { languageCode ->
+                val currentLocale = resources.configuration.locale.language
+                if (currentLocale != languageCode) {
+                    recreate()
+                }
+            }
+        }
         super.onCreate(savedInstanceState)
-        preferencesManager = PreferencesManager(applicationContext)
 
         vpnPermission.register(this)
 
@@ -211,6 +242,7 @@ class MainActivity : ComponentActivity() {
                         onSaveServer = viewModel::saveVpnServer,
                         themeViewModel = themeViewModel,
                         autoConnectViewModel = autoConnectViewModel,
+                        languageViewModel = languageViewModel,
                     )
                 }
 

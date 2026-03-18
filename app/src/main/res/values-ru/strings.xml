@@ -74,6 +74,7 @@
     </string>
     <string name="theme">Тема</string>
     <string name="dark_mode">Темная тема</string>
+    <string name="language">Язык</string>
     <string name="system">Система</string>
     <string name="auto_connection">Автоматическое подключение при открытии приложения</string>
     <string name="key_received">Ключ успешно получен</string>
