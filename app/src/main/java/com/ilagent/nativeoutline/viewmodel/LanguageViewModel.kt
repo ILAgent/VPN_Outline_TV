@@ -43,6 +43,7 @@ class LanguageViewModel(application: Application) : AndroidViewModel(application
 
     private fun updateAppLanguage(languageCode: String) {
         val locale = when (languageCode) {
+            "system" -> Locale.getDefault()
             "zh-rTW" -> Locale("zh", "TW")
             else -> Locale(languageCode)
         }
@@ -56,11 +57,14 @@ class LanguageViewModel(application: Application) : AndroidViewModel(application
     }
 
     companion object {
-        val SUPPORTED_LANGUAGES = listOf(
-            Language("en", "English"),
-            Language("ru", "Русский"),
-            Language("zh-rTW", "中文")
-        )
+        fun getSupportedLanguages(context: android.content.Context): List<Language> {
+            return listOf(
+                Language("system", context.getString(com.ilagent.nativeoutline.R.string.system_language)),
+                Language("en", "English"),
+                Language("ru", "Русский"),
+                Language("zh-rTW", "中文")
+            )
+        }
     }
 }
 

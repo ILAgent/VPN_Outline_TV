@@ -201,7 +201,8 @@ fun SettingsDialog(
 
                 SettingsDialogSectionTitle(text = stringResource(id = R.string.language))
                 Column(Modifier.selectableGroup()) {
-                    LanguageViewModel.SUPPORTED_LANGUAGES.forEach { language ->
+                    val context = LocalContext.current
+                    LanguageViewModel.getSupportedLanguages(context).forEach { language ->
                         SettingsDialogRadioItem(
                             text = language.displayName,
                             selected = selectedLanguage == language.code,

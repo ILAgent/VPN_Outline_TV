@@ -75,6 +75,7 @@
 <string name="theme">主題</string>
 <string name="dark_mode">深色模式</string>
 <string name="language">語言</string>
+<string name="system_language">系統</string>
 <string name="system">系統</string>
 <string name="auto_connection">開啟應用程式時自動連線</string>
 <string name="key_received">金鑰接收成功</string>
