@@ -138,10 +138,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         preferencesManager = PreferencesManager(applicationContext)
         
+        // Save system language on first launch
+        if (preferencesManager.getSystemLanguage() == null) {
+            val systemLocale = Locale.getDefault()
+            val systemLanguageCode = when {
+                systemLocale.language == "zh" && systemLocale.country == "TW" -> "zh-rTW"
+                else -> systemLocale.language
+            }
+            preferencesManager.saveSystemLanguage(systemLanguageCode)
+        }
+        
         // Apply saved language
         val savedLanguage = preferencesManager.getSelectedLanguage()
-        if (savedLanguage != null && savedLanguage != "system") {
+        if (savedLanguage != null) {
             val locale = when (savedLanguage) {
+                "system" -> {
+                    val systemLanguageCode = preferencesManager.getSystemLanguage() ?: "en"
+                    when (systemLanguageCode) {
+                        "zh-rTW" -> Locale("zh", "TW")
+                        else -> Locale(systemLanguageCode)
+                    }
+                }
                 "zh-rTW" -> Locale("zh", "TW")
                 else -> Locale(savedLanguage)
             }
@@ -167,16 +184,22 @@ class MainActivity : ComponentActivity() {
         // Restart activity when language changes
         lifecycleScope.launch {
             languageViewModel.currentLanguage.collect { languageCode ->
-                if (languageCode == "system") {
-                    // For system language, don't restart - let system handle it
-                    return@collect
-                }
                 val currentLocale = resources.configuration.locale
                 val currentLanguageCode = when {
                     currentLocale.language == "zh" && currentLocale.country == "TW" -> "zh-rTW"
                     else -> currentLocale.language
                 }
-                if (currentLanguageCode != languageCode) {
+                
+                val shouldRestart = when (languageCode) {
+                    "system" -> {
+                        // Restart if current language is not the saved system language
+                        val systemLanguageCode = preferencesManager.getSystemLanguage() ?: "en"
+                        currentLanguageCode != systemLanguageCode
+                    }
+                    else -> currentLanguageCode != languageCode
+                }
+                
+                if (shouldRestart) {
                     recreate()
                 }
             }

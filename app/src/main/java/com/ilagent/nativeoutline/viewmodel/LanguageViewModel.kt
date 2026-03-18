@@ -43,7 +43,13 @@ class LanguageViewModel(application: Application) : AndroidViewModel(application
 
     private fun updateAppLanguage(languageCode: String) {
         val locale = when (languageCode) {
-            "system" -> Locale.getDefault()
+            "system" -> {
+                val systemLanguageCode = preferencesManager.getSystemLanguage() ?: "en"
+                when (systemLanguageCode) {
+                    "zh-rTW" -> Locale("zh", "TW")
+                    else -> Locale(systemLanguageCode)
+                }
+            }
             "zh-rTW" -> Locale("zh", "TW")
             else -> Locale(languageCode)
         }
