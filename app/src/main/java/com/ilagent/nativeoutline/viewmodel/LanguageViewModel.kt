@@ -1,7 +1,6 @@
 package com.ilagent.nativeoutline.viewmodel
 
 import android.app.Application
-import android.content.res.Configuration
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -11,55 +10,41 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class LanguageViewModel(application: Application) : AndroidViewModel(application) {
     private val preferencesManager = PreferencesManager(application)
 
+    private val _selectedLanguage = MutableStateFlow<String?>(null)
+    val selectedLanguage: StateFlow<String?> = _selectedLanguage.asStateFlow()
+
     private val _currentLanguage = MutableStateFlow(
-        preferencesManager.getSelectedLanguage() ?: Locale.getDefault().language
+        preferencesManager.getSelectedLanguage() ?: "system"
     )
     val currentLanguage: StateFlow<String> = _currentLanguage.asStateFlow()
 
     private val _languageCode = mutableStateOf(
-        preferencesManager.getSelectedLanguage() ?: Locale.getDefault().language
+        preferencesManager.getSelectedLanguage() ?: "system"
     )
     val languageCode: State<String> = _languageCode
 
     init {
         viewModelScope.launch {
-            _currentLanguage.value =
-                preferencesManager.getSelectedLanguage() ?: Locale.getDefault().language
-            _languageCode.value = _currentLanguage.value
+            val savedLanguage = preferencesManager.getSelectedLanguage() ?: "system"
+            _currentLanguage.value = savedLanguage
+            _languageCode.value = savedLanguage
         }
     }
 
     fun setLanguage(languageCode: String) {
+        val currentLanguage = _currentLanguage.value
+        if (currentLanguage == languageCode) {
+            return // Language hasn't changed, don't trigger restart
+        }
+        
         preferencesManager.saveSelectedLanguage(languageCode)
         _currentLanguage.value = languageCode
         _languageCode.value = languageCode
-        updateAppLanguage(languageCode)
-    }
-
-    private fun updateAppLanguage(languageCode: String) {
-        val locale = when (languageCode) {
-            "system" -> {
-                val systemLanguageCode = preferencesManager.getSystemLanguage() ?: "en"
-                when (systemLanguageCode) {
-                    "zh-rTW" -> Locale("zh", "TW")
-                    else -> Locale(systemLanguageCode)
-                }
-            }
-            "zh-rTW" -> Locale("zh", "TW")
-            else -> Locale(languageCode)
-        }
-        Locale.setDefault(locale)
-
-        val config = Configuration()
-        config.setLocale(locale)
-
-        val context = getApplication<Application>()
-        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        _selectedLanguage.value = languageCode
     }
 
     companion object {

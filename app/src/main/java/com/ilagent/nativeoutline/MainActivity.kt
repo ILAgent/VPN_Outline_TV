@@ -38,6 +38,7 @@ import com.ilagent.nativeoutline.ui.MainScreen
 import com.ilagent.nativeoutline.ui.UpdateDialog
 import com.ilagent.nativeoutline.ui.theme.NativeOutlineTheme
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
+import com.ilagent.nativeoutline.utils.LanguageContextWrapper
 import com.ilagent.nativeoutline.utils.activityresult.VPNPermissionLauncher
 import com.ilagent.nativeoutline.utils.activityresult.base.launch
 import com.ilagent.nativeoutline.utils.versionName
@@ -59,6 +60,30 @@ class MainActivity : ComponentActivity() {
             parseUrlOutline = ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch()),
             updateManager = UpdateManager.Github(context = applicationContext),
         )
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val preferencesManager = PreferencesManager(newBase)
+        
+        // Save system language on first launch
+        if (preferencesManager.getSystemLanguage() == null) {
+            val systemLocale = Locale.getDefault()
+            val systemLanguageCode = when {
+                systemLocale.language == "zh" && systemLocale.country == "TW" -> "zh-rTW"
+                else -> systemLocale.language
+            }
+            preferencesManager.saveSystemLanguage(systemLanguageCode)
+        }
+        
+        // Apply saved language
+        val savedLanguage = preferencesManager.getSelectedLanguage()
+        val context = if (savedLanguage != null && savedLanguage != "system") {
+            LanguageContextWrapper.wrap(newBase, savedLanguage)
+        } else {
+            newBase
+        }
+        
+        super.attachBaseContext(context)
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -133,39 +158,22 @@ class MainActivity : ComponentActivity() {
 
     private val vpnPermission = VPNPermissionLauncher()
     private lateinit var preferencesManager: PreferencesManager
-
+    private var lastLanguageCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         preferencesManager = PreferencesManager(applicationContext)
         
-        // Save system language on first launch
-        if (preferencesManager.getSystemLanguage() == null) {
-            val systemLocale = Locale.getDefault()
-            val systemLanguageCode = when {
-                systemLocale.language == "zh" && systemLocale.country == "TW" -> "zh-rTW"
-                else -> systemLocale.language
-            }
-            preferencesManager.saveSystemLanguage(systemLanguageCode)
-        }
-        
-        // Apply saved language
-        val savedLanguage = preferencesManager.getSelectedLanguage()
-        if (savedLanguage != null) {
-            val locale = when (savedLanguage) {
-                "system" -> {
-                    val systemLanguageCode = preferencesManager.getSystemLanguage() ?: "en"
-                    when (systemLanguageCode) {
-                        "zh-rTW" -> Locale("zh", "TW")
-                        else -> Locale(systemLanguageCode)
-                    }
+        // Restore last language code from saved instance state
+        lastLanguageCode = savedInstanceState?.getString("lastLanguageCode")
+
+        // Observe language changes and recreate activity
+        lifecycleScope.launch {
+            languageViewModel.selectedLanguage.collect { language ->
+                if (language != null && language != lastLanguageCode) {
+                    lastLanguageCode = language
+                    recreate()
                 }
-                "zh-rTW" -> Locale("zh", "TW")
-                else -> Locale(savedLanguage)
             }
-            Locale.setDefault(locale)
-            val config = resources.configuration
-            config.setLocale(locale)
-            resources.updateConfiguration(config, resources.displayMetrics)
         }
 
         lifecycleScope.launch {
@@ -181,29 +189,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Restart activity when language changes
-        lifecycleScope.launch {
-            languageViewModel.currentLanguage.collect { languageCode ->
-                val currentLocale = resources.configuration.locale
-                val currentLanguageCode = when {
-                    currentLocale.language == "zh" && currentLocale.country == "TW" -> "zh-rTW"
-                    else -> currentLocale.language
-                }
-                
-                val shouldRestart = when (languageCode) {
-                    "system" -> {
-                        // Restart if current language is not the saved system language
-                        val systemLanguageCode = preferencesManager.getSystemLanguage() ?: "en"
-                        currentLanguageCode != systemLanguageCode
-                    }
-                    else -> currentLanguageCode != languageCode
-                }
-                
-                if (shouldRestart) {
-                    recreate()
-                }
-            }
-        }
         super.onCreate(savedInstanceState)
 
         vpnPermission.register(this)
@@ -313,6 +298,11 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(receiver)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        lastLanguageCode?.let { outState.putString("lastLanguageCode", it) }
     }
 
     private fun startVpn(configString: String) {
