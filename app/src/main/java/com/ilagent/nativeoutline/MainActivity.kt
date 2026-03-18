@@ -141,7 +141,10 @@ class MainActivity : ComponentActivity() {
         // Apply saved language
         val savedLanguage = preferencesManager.getSelectedLanguage()
         if (savedLanguage != null) {
-            val locale = Locale(savedLanguage)
+            val locale = when (savedLanguage) {
+                "zh-rTW" -> Locale("zh", "TW")
+                else -> Locale(savedLanguage)
+            }
             Locale.setDefault(locale)
             val config = resources.configuration
             config.setLocale(locale)
@@ -164,8 +167,12 @@ class MainActivity : ComponentActivity() {
         // Restart activity when language changes
         lifecycleScope.launch {
             languageViewModel.currentLanguage.collect { languageCode ->
-                val currentLocale = resources.configuration.locale.language
-                if (currentLocale != languageCode) {
+                val currentLocale = resources.configuration.locale
+                val currentLanguageCode = when {
+                    currentLocale.language == "zh" && currentLocale.country == "TW" -> "zh-rTW"
+                    else -> currentLocale.language
+                }
+                if (currentLanguageCode != languageCode) {
                     recreate()
                 }
             }
