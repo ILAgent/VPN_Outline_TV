@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
             val systemLocale = Locale.getDefault()
             val systemLanguageCode = when {
                 systemLocale.language == "zh" && systemLocale.country == "TW" -> "zh-rTW"
+                systemLocale.language == "zh" && systemLocale.country == "CN" -> "zh-rCN"
                 else -> systemLocale.language
             }
             preferencesManager.saveSystemLanguage(systemLanguageCode)

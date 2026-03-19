@@ -16,6 +16,7 @@ class LanguageContextWrapper(base: Context) : ContextWrapper(base) {
             
             val config = Configuration(context.resources.configuration)
             val locale = when (languageCode) {
+                "zh-rCN" -> Locale("zh", "CN")
                 "zh-rTW" -> Locale("zh", "TW")
                 else -> Locale(languageCode)
             }

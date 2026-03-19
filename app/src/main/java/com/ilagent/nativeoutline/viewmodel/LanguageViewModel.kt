@@ -53,7 +53,8 @@ class LanguageViewModel(application: Application) : AndroidViewModel(application
                 Language("system", context.getString(com.ilagent.nativeoutline.R.string.system_language)),
                 Language("en", "English"),
                 Language("ru", "Русский"),
-                Language("zh-rTW", "中文")
+                Language("zh-rCN", "简体中文"),
+                Language("zh-rTW", "繁體中文")
             )
         }
     }
