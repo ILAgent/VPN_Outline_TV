@@ -59,7 +59,10 @@ class LanguageViewModel(context: Context) : ViewModel() {
                 Language("en", "English"),
                 Language("ru", "Русский"),
                 Language("zh-rCN", "简体中文"),
-                Language("zh-rTW", "繁體中文")
+                Language("zh-rTW", "繁體中文"),
+                Language("es", "Español"),
+                Language("fr", "Français"),
+                Language("de", "Deutsch")
             )
         }
     }

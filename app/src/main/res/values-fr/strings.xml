@@ -1,0 +1,98 @@
+<resources>
+    <string name="invalid_link_format">Format de lien invalide</string>
+    <string name="enter_the_key">Entrez la clé</string>
+    <string name="off">DÉSACTIVÉ</string>
+    <string name="on">ACTIVÉ</string>
+    <string name="elapsed_time">Temps de connexion %s</string>
+    <string name="invalid_decoded_info_format">Format de commutation invalide</string>
+    <string name="edit_server_info">Informations du serveur</string>
+    <string name="server_name">Nom du serveur</string>
+    <string name="outline_key">Clé Outline</string>
+    <string name="save">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="clear">Effacer</string>
+    <string name="paste_from_clipboard">Coller depuis le presse-papiers</string>
+    <string name="clipboard_empty">Le presse-papiers est vide</string>
+    <string name="vpn_name">Outline VPN</string>
+    <string name="vpn_connected">VPN connecté</string>
+    <string name="vpn_disconnected">VPN déconnecté</string>
+    <string name="stop_vpn">Arrêter</string>
+    <string name="no_server">Aucun serveur</string>
+    <string name="vpn_widget_description">Widget d\'état VPN</string>
+    <string name="default_server_name">Serveur #1</string>
+    <string name="server_not_specified">Serveur non spécifié</string>
+    <string name="vpn_start_failed">Échec du démarrage du VPN</string>
+    <string name="disconnect_before_settings">Déconnectez-vous d\'abord du VPN</string>
+    <string name="wrong_outline_key_format">Format de clé Outline incorrect</string>
+    <string name="by_author">par IL_Agent</string>
+    <string name="app_update_available">Mettre à jour Outline ?</string>
+    <string name="loading_progress">Chargement : %1$s%%</string>
+    <string name="update">Mettre à jour</string>
+    <string name="your_version">Votre version : %1$s</string>
+    <string name="upgrade_to">Mettre à jour vers : %1$s</string>
+    <string name="failed_to_get_latest_version">Échec de l\'obtention de la dernière version</string>
+    <string name="update_error">Erreur de mise à jour</string>
+    <string name="app_update_downloading">Téléchargement de la mise à jour…</string>
+    <string name="settings">Paramètres</string>
+    <string name="DNS">DNS du serveur</string>
+    <string name="license">Licence</string>
+    <string name="all_applications">Toutes les applications (VPN pour toutes)</string>
+    <string name="for_all_apps">Pour toutes les applications</string>
+    <string name="whitelist_mode">Liste blanche</string>
+    <string name="remove">Supprimer</string>
+    <string name="thank_you_message">Merci d\'aider au développement de khoben</string>
+    <string name="add_an_application">Ajouter</string>
+    <string name="select_applications">Sélectionnez les applications qui utiliseront le VPN (liste blanche). Les autres fonctionneront sans VPN.</string>
+    <string name="whitelist_empty_hint">La liste blanche est vide — aucune application n\'utilise le VPN. Ajoutez des applications ou choisissez « Toutes les applications ».</string>
+    <string name="search_apps">Rechercher des applications</string>
+    <string name="saved_vpn_keys">Clés VPN enregistrées</string>
+    <string name="add_new_key">Ajouter une nouvelle clé</string>
+    <string name="internal_storage">Stockage interne</string>
+    <string name="external_memory">Mémoire externe</string>
+    <string name="select_outline_key">Sélectionnez le fichier avec la clé Outline</string>
+    <string name="could_not_devices">Impossible de trouver des périphériques de stockage disponibles</string>
+    <string name="there_are_nofiles">Il n\'y a pas de fichiers ou dossiers dans :</string>
+    <string name="you_must_grant_permission">Pour utiliser cette fonctionnalité, vous devez accorder l\'autorisation.</string>
+    <string name="community">Communauté de l\'application</string>
+    <string name="go_to_group">Aller au groupe</string>
+    <string name="instructions">Instructions</string>
+    <string name="help_text">
+    Comment ajouter une clé\n\n
+    Vous pouvez ajouter une clé de deux manières :\n
+    1. Coller depuis le presse-papiers.\n
+    2. Charger depuis un fichier.\n\n
+    3. Télécharger depuis un code QR.\n\n
+    Pour ce faire, suivez ces étapes :\n
+    1. Allez dans la section « Informations du serveur ».\n
+    2. Choisissez l\'une des options disponibles pour insérer la clé.\n\n
+    Formats de fichier pris en charge pour le chargement des clés : .txt, .json, .xml\n\n
+    Changer le DNS\n\n
+    Lorsque vous modifiez le DNS dans les paramètres, vous pouvez supprimer les publicités ; cependant, cela ne fonctionne pas sur tous les serveurs DNS.\n\n
+    Applications via VPN (liste blanche) :\n\n
+    • Toutes les applications — VPN pour chaque application.\n
+    • Liste blanche — appuyez sur « Ajouter à la liste blanche » et choisissez les applications. Seules celles-ci utilisent le VPN ; toutes les autres fonctionnent sans VPN.
+    </string>
+    <string name="theme">Thème</string>
+    <string name="dark_mode">Mode sombre</string>
+    <string name="language">Langue</string>
+    <string name="system_language">Système</string>
+    <string name="system">Système</string>
+    <string name="auto_connection">Connexion automatique à l\'ouverture de l\'application</string>
+    <string name="key_received">Clé reçue avec succès</string>
+    <string name="Generate_new_qr_code">Générer un nouveau code QR</string>
+    <string name="scan_the_qr_code_from_your">Scannez le code QR depuis votre téléphone (doit être sur le même réseau Wi-Fi/LAN)</string>
+    <string name="qr_code_generation">Génération de code QR</string>
+    <string name="error_ip_not_found">Échec de l\'obtention de l\'adresse IP de l\'appareil</string>
+    <string name="error_port_unavailable">Échec de l\'occupation du port</string>
+    <string name="error_port_in_use">Le port est occupé, réessayez…</string>
+    <string name="error_server_start_failed">Erreur lors du démarrage du serveur local : %1$s</string>
+    <string name="pair_title">Collez la clé</string>
+    <string name="pair_placeholder">Clé</string>
+    <string name="pair_send">Envoyer</string>
+    <string name="pair_enter_key_alert">Entrez la clé</string>
+    <string name="pair_key_sent_msg">Clé envoyée. Vous pouvez revenir à la TV.</string>
+    <string name="pair_error_prefix">Erreur :</string>
+    <string name="error_file_too_large">Fichier trop volumineux. Taille maximale : 10 Ko</string>
+    <string name="error_reading_file">Erreur de lecture du fichier : %s</string>
+    <string name="error_file_access_unavailable">Accès au fichier indisponible. Utilisez le collage depuis le presse-papiers ou le code QR.</string>
+</resources>
