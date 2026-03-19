@@ -43,6 +43,7 @@ import com.ilagent.nativeoutline.utils.activityresult.VPNPermissionLauncher
 import com.ilagent.nativeoutline.utils.activityresult.base.launch
 import com.ilagent.nativeoutline.utils.versionName
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.MainViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
@@ -157,6 +158,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val dnsViewModel: DnsViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return DnsViewModel(application) as T
+            }
+        }
+    }
+
     private val vpnPermission = VPNPermissionLauncher()
     private lateinit var preferencesManager: PreferencesManager
     private var lastLanguageCode: String? = null
@@ -263,6 +273,7 @@ class MainActivity : ComponentActivity() {
                         themeViewModel = themeViewModel,
                         autoConnectViewModel = autoConnectViewModel,
                         languageViewModel = languageViewModel,
+                        dnsViewModel = dnsViewModel,
                     )
                 }
 

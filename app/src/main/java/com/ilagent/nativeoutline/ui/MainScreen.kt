@@ -44,6 +44,7 @@ import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.utils.versionNameUi
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.SingleLiveEvent
@@ -62,7 +63,8 @@ fun MainScreen(
     onSaveServer: (String, String) -> Unit,
     themeViewModel: ThemeViewModel,
     autoConnectViewModel: AutoConnectViewModel,
-    languageViewModel: LanguageViewModel
+    languageViewModel: LanguageViewModel,
+    dnsViewModel: DnsViewModel
 ) {
     val errorMessage by remember { mutableStateOf<String?>(null) }
     var elapsedTime by remember { mutableIntStateOf(0) }
@@ -167,7 +169,8 @@ fun MainScreen(
                 onDnsSelected = {},
                 themeViewModel = themeViewModel,
                 autoConnectViewModel = autoConnectViewModel,
-                languageViewModel = languageViewModel
+                languageViewModel = languageViewModel,
+                dnsViewModel = dnsViewModel
             )
         }
 
@@ -459,6 +462,7 @@ fun DefaultPreview() {
         onSaveServer = { _, _ -> },
         themeViewModel = ThemeViewModel(PreferencesManager(LocalContext.current)),
         autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current)),
-        languageViewModel = LanguageViewModel(LocalContext.current.applicationContext as android.app.Application)
+        languageViewModel = LanguageViewModel(LocalContext.current.applicationContext as android.app.Application),
+        dnsViewModel = DnsViewModel(LocalContext.current.applicationContext as android.app.Application)
     )
 }
