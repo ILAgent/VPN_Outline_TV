@@ -73,7 +73,9 @@
     • Белый список — нажмите «Добавить в белый список» и выберите приложения. Только они работают через VPN, остальные — без VPN.
     </string>
     <string name="theme">Тема</string>
-    <string name="dark_mode">Темная тема</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+    <string name="theme_system">Системная</string>
     <string name="language">Язык</string>
     <string name="system_language">Системный</string>
     <string name="system">Система</string>

@@ -73,7 +73,9 @@
 • 白名單 — 點擊「新增至白名單」並選擇應用程式。只有這些應用程式使用 VPN；其他所有應用程式不使用 VPN。
 </string>
 <string name="theme">主題</string>
-<string name="dark_mode">深色模式</string>
+    <string name="theme_light">淺色</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_system">系統</string>
 <string name="language">語言</string>
 <string name="system_language">系統</string>
 <string name="system">系統</string>

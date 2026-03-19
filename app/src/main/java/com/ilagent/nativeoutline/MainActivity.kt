@@ -188,7 +188,16 @@ class MainActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
-            themeViewModel.isDarkTheme.collect { isDarkMode ->
+            themeViewModel.themeMode.collect { themeMode ->
+                val isDarkMode = when (themeMode) {
+                    com.ilagent.nativeoutline.viewmodel.ThemeMode.DARK -> true
+                    com.ilagent.nativeoutline.viewmodel.ThemeMode.LIGHT -> false
+                    com.ilagent.nativeoutline.viewmodel.ThemeMode.SYSTEM -> {
+                        // Use system theme
+                        val currentNightMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+                        currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
+                    }
+                }
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) {
                         isDarkMode
@@ -218,7 +227,12 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+            val themeMode by themeViewModel.themeMode.collectAsState()
+            val isDarkTheme = when (themeMode) {
+                com.ilagent.nativeoutline.viewmodel.ThemeMode.DARK -> true
+                com.ilagent.nativeoutline.viewmodel.ThemeMode.LIGHT -> false
+                com.ilagent.nativeoutline.viewmodel.ThemeMode.SYSTEM -> androidx.compose.foundation.isSystemInDarkTheme()
+            }
             val connectionState by viewModel.vpnConnectionState.observeAsState(false)
             val vpnServerState by viewModel.vpnServerState.observeAsState(VpnServerStateUi.DEFAULT)
             val errorMessage = remember { mutableStateOf<String?>(null) }

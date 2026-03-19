@@ -51,6 +51,7 @@ import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
+import com.ilagent.nativeoutline.viewmodel.ThemeMode
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 
 @Composable
@@ -67,7 +68,7 @@ fun SettingsDialog(
     var showDnsDialog by remember { mutableStateOf(false) }
 
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
-    val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
+    val selectedThemeMode by themeViewModel.themeMode.collectAsState()
     val selectedLanguage by languageViewModel.languageCode
     val selectedDns by dnsViewModel.dnsCode
 
@@ -99,33 +100,39 @@ fun SettingsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SettingsDialogSectionTitle(text = stringResource(id = R.string.theme))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
-                        contentDescription = "Dark Mode",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(id = R.string.dark_mode),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Switch(
-                        checked = selectedTheme,
-                        onCheckedChange = { isChecked ->
-                            themeViewModel.setTheme(isChecked)
-                            CrashlyticsLogger.logThemeChanged(if (isChecked) "dark" else "light")
-                        }
-                    )
-                }
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
+                    contentDescription = "Theme",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
+                )
+                
+                SettingsDialogRadioItem(
+                    text = stringResource(id = R.string.theme_light),
+                    selected = selectedThemeMode == ThemeMode.LIGHT,
+                    onClick = {
+                        themeViewModel.setThemeMode(ThemeMode.LIGHT)
+                        CrashlyticsLogger.logThemeChanged("light")
+                    }
+                )
+                
+                SettingsDialogRadioItem(
+                    text = stringResource(id = R.string.theme_dark),
+                    selected = selectedThemeMode == ThemeMode.DARK,
+                    onClick = {
+                        themeViewModel.setThemeMode(ThemeMode.DARK)
+                        CrashlyticsLogger.logThemeChanged("dark")
+                    }
+                )
+                
+                SettingsDialogRadioItem(
+                    text = stringResource(id = R.string.theme_system),
+                    selected = selectedThemeMode == ThemeMode.SYSTEM,
+                    onClick = {
+                        themeViewModel.setThemeMode(ThemeMode.SYSTEM)
+                        CrashlyticsLogger.logThemeChanged("system")
+                    }
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 

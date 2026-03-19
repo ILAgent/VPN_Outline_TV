@@ -13,13 +13,15 @@ class ThemeViewModel(
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
-    private val _isDarkTheme = MutableStateFlow(preferencesManager.getSelectedTheme())
-    val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
+    private val _themeMode = MutableStateFlow(
+        ThemeMode.valueOf(preferencesManager.getSelectedThemeMode().uppercase())
+    )
+    val themeMode: StateFlow<ThemeMode> = _themeMode
 
-    fun setTheme(isDark: Boolean) {
+    fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
-            preferencesManager.saveSelectedTheme(isDark)
-            _isDarkTheme.value = isDark
+            preferencesManager.saveSelectedThemeMode(mode.name.lowercase())
+            _themeMode.value = mode
         }
     }
 }
