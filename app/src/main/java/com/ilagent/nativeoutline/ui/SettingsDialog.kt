@@ -53,6 +53,7 @@ import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeMode
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
+import com.ilagent.nativeoutline.viewmodel.getThemeDisplayName
 
 @Composable
 fun SettingsDialog(
@@ -66,6 +67,7 @@ fun SettingsDialog(
 ) {
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDnsDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
     val selectedThemeMode by themeViewModel.themeMode.collectAsState()
@@ -100,39 +102,26 @@ fun SettingsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SettingsDialogSectionTitle(text = stringResource(id = R.string.theme))
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
-                    contentDescription = "Theme",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
-                )
-                
-                SettingsDialogRadioItem(
-                    text = stringResource(id = R.string.theme_light),
-                    selected = selectedThemeMode == ThemeMode.LIGHT,
-                    onClick = {
-                        themeViewModel.setThemeMode(ThemeMode.LIGHT)
-                        CrashlyticsLogger.logThemeChanged("light")
-                    }
-                )
-                
-                SettingsDialogRadioItem(
-                    text = stringResource(id = R.string.theme_dark),
-                    selected = selectedThemeMode == ThemeMode.DARK,
-                    onClick = {
-                        themeViewModel.setThemeMode(ThemeMode.DARK)
-                        CrashlyticsLogger.logThemeChanged("dark")
-                    }
-                )
-                
-                SettingsDialogRadioItem(
-                    text = stringResource(id = R.string.theme_system),
-                    selected = selectedThemeMode == ThemeMode.SYSTEM,
-                    onClick = {
-                        themeViewModel.setThemeMode(ThemeMode.SYSTEM)
-                        CrashlyticsLogger.logThemeChanged("system")
-                    }
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showThemeDialog = true }
+                        .padding(12.dp)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
+                        contentDescription = "Theme",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = getThemeDisplayName(selectedThemeMode),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -218,6 +207,17 @@ fun SettingsDialog(
                 dnsViewModel.setDns(dnsCode)
                 onDnsSelected(dnsCode)
                 CrashlyticsLogger.logDnsChanged(dnsCode)
+            }
+        )
+    }
+
+    if (showThemeDialog) {
+        ThemeDialog(
+            onDismiss = { showThemeDialog = false },
+            themeViewModel = themeViewModel,
+            onThemeSelected = { themeMode ->
+                themeViewModel.setThemeMode(themeMode)
+                CrashlyticsLogger.logThemeChanged(themeMode.name.lowercase())
             }
         )
     }
