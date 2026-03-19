@@ -73,7 +73,9 @@
     • Liste blanche — appuyez sur « Ajouter à la liste blanche » et choisissez les applications. Seules celles-ci utilisent le VPN ; toutes les autres fonctionnent sans VPN.
     </string>
     <string name="theme">Thème</string>
-    <string name="dark_mode">Mode sombre</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_system">Système</string>
     <string name="language">Langue</string>
     <string name="system_language">Système</string>
     <string name="system">Système</string>

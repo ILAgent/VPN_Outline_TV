@@ -51,7 +51,9 @@ import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
+import com.ilagent.nativeoutline.viewmodel.ThemeMode
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
+import com.ilagent.nativeoutline.viewmodel.getThemeDisplayName
 
 @Composable
 fun SettingsDialog(
@@ -65,9 +67,10 @@ fun SettingsDialog(
 ) {
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showDnsDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
-    val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
+    val selectedThemeMode by themeViewModel.themeMode.collectAsState()
     val selectedLanguage by languageViewModel.languageCode
     val selectedDns by dnsViewModel.dnsCode
 
@@ -103,27 +106,20 @@ fun SettingsDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clickable { showThemeDialog = true }
                         .padding(12.dp)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_moon),
-                        contentDescription = "Dark Mode",
+                        contentDescription = "Theme",
                         tint = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text = stringResource(id = R.string.dark_mode),
+                        text = getThemeDisplayName(selectedThemeMode),
                         modifier = Modifier.weight(1f)
-                    )
-
-                    Switch(
-                        checked = selectedTheme,
-                        onCheckedChange = { isChecked ->
-                            themeViewModel.setTheme(isChecked)
-                            CrashlyticsLogger.logThemeChanged(if (isChecked) "dark" else "light")
-                        }
                     )
                 }
 
@@ -211,6 +207,17 @@ fun SettingsDialog(
                 dnsViewModel.setDns(dnsCode)
                 onDnsSelected(dnsCode)
                 CrashlyticsLogger.logDnsChanged(dnsCode)
+            }
+        )
+    }
+
+    if (showThemeDialog) {
+        ThemeDialog(
+            onDismiss = { showThemeDialog = false },
+            themeViewModel = themeViewModel,
+            onThemeSelected = { themeMode ->
+                themeViewModel.setThemeMode(themeMode)
+                CrashlyticsLogger.logThemeChanged(themeMode.name.lowercase())
             }
         )
     }

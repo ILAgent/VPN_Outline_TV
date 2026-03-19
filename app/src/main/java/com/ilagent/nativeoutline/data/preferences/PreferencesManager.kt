@@ -39,12 +39,12 @@ class PreferencesManager(context: Context) {
         }
     }
 
-    fun saveSelectedTheme(isDark: Boolean) {
-        preferences.edit { putBoolean(KEY_SELECTED_THEME, isDark) }
+    fun saveSelectedThemeMode(themeMode: String) {
+        preferences.edit { putString(KEY_SELECTED_THEME, themeMode) }
     }
 
-    fun getSelectedTheme(): Boolean {
-        return preferences.getBoolean(KEY_SELECTED_THEME, false)
+    fun getSelectedThemeMode(): String {
+        return preferences.getString(KEY_SELECTED_THEME, "system") ?: "system"
     }
 
     fun addOrUpdateVpnKey(serverName: String, key: String) {

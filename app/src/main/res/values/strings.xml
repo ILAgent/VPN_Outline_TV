@@ -227,7 +227,9 @@
     • Whitelist — tap \"Add to whitelist\" and choose apps. Only those use VPN; all others work without VPN.
     </string>
     <string name="theme">Theme</string>
-    <string name="dark_mode">Dark Mode</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
     <string name="language">Language</string>
     <string name="system_language">System</string>
     <string name="system">System</string>
