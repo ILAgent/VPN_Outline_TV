@@ -93,7 +93,7 @@ fun SettingsDialog(
         },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                SettingsDialogSectionTitle(text = "Server DNS")
+                SettingsDialogSectionTitle(text = stringResource(id = R.string.DNS))
                 Column(Modifier.selectableGroup()) {
                     SettingsDialogRadioItem(
                         text = "Google DNS",
