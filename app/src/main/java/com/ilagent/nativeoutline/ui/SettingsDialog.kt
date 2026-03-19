@@ -66,6 +66,7 @@ fun SettingsDialog(
     var selectedDns by remember {
         mutableStateOf(preferencesManager.getSelectedDns() ?: "8.8.8.8")
     }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
     val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
@@ -200,18 +201,17 @@ fun SettingsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SettingsDialogSectionTitle(text = stringResource(id = R.string.language))
-                Column(Modifier.selectableGroup()) {
-                    val context = LocalContext.current
-                    LanguageViewModel.getSupportedLanguages(context).forEach { language ->
-                        SettingsDialogRadioItem(
-                            text = language.displayName,
-                            selected = selectedLanguage == language.code,
-                            onClick = {
-                                languageViewModel.setLanguage(language.code)
-                                CrashlyticsLogger.logLanguageChanged(language.code)
-                            }
-                        )
-                    }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showLanguageDialog = true }
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = getLanguageDisplayName(selectedLanguage, LocalContext.current),
+                        modifier = Modifier.weight(1f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -262,6 +262,17 @@ fun SettingsDialog(
             )
         }
     )
+
+    if (showLanguageDialog) {
+        LanguageDialog(
+            onDismiss = { showLanguageDialog = false },
+            languageViewModel = languageViewModel,
+            onLanguageSelected = { languageCode ->
+                languageViewModel.setLanguage(languageCode)
+                CrashlyticsLogger.logLanguageChanged(languageCode)
+            }
+        )
+    }
 }
 
 
@@ -434,6 +445,12 @@ fun NiaTextButton(
     }
 }
 
+fun getLanguageDisplayName(languageCode: String, context: android.content.Context): String {
+    return LanguageViewModel.getSupportedLanguages(context)
+        .find { it.code == languageCode }?.displayName
+        ?: context.getString(R.string.system_language)
+}
+
 @Preview
 @Composable
 private fun PreviewCustomSettingsDialog() {
@@ -446,6 +463,6 @@ private fun PreviewCustomSettingsDialog() {
         onDnsSelected = { },
         themeViewModel = ThemeViewModel(preferencesManager),
         autoConnectViewModel = AutoConnectViewModel(preferencesManager),
-        languageViewModel = LanguageViewModel(context.applicationContext as android.app.Application)
+        languageViewModel = LanguageViewModel(context)
     )
 }
