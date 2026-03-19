@@ -38,15 +38,19 @@ import com.ilagent.nativeoutline.ui.MainScreen
 import com.ilagent.nativeoutline.ui.UpdateDialog
 import com.ilagent.nativeoutline.ui.theme.NativeOutlineTheme
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
+import com.ilagent.nativeoutline.utils.LanguageContextWrapper
 import com.ilagent.nativeoutline.utils.activityresult.VPNPermissionLauncher
 import com.ilagent.nativeoutline.utils.activityresult.base.launch
 import com.ilagent.nativeoutline.utils.versionName
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.DnsViewModel
+import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.MainViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.state.VpnEvent
 import com.ilagent.nativeoutline.viewmodel.state.VpnServerStateUi
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -57,6 +61,31 @@ class MainActivity : ComponentActivity() {
             parseUrlOutline = ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch()),
             updateManager = UpdateManager.Github(context = applicationContext),
         )
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val preferencesManager = PreferencesManager(newBase)
+        
+        // Save system language on first launch
+        if (preferencesManager.getSystemLanguage() == null) {
+            val systemLocale = Locale.getDefault()
+            val systemLanguageCode = when {
+                systemLocale.language == "zh" && systemLocale.country == "TW" -> "zh-rTW"
+                systemLocale.language == "zh" && systemLocale.country == "CN" -> "zh-rCN"
+                else -> systemLocale.language
+            }
+            preferencesManager.saveSystemLanguage(systemLanguageCode)
+        }
+        
+        // Apply saved language
+        val savedLanguage = preferencesManager.getSelectedLanguage()
+        val context = if (savedLanguage != null && savedLanguage != "system") {
+            LanguageContextWrapper.wrap(newBase, savedLanguage)
+        } else {
+            newBase
+        }
+        
+        super.attachBaseContext(context)
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -120,12 +149,44 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val languageViewModel: LanguageViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return LanguageViewModel(application) as T
+            }
+        }
+    }
+
+    private val dnsViewModel: DnsViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return DnsViewModel(application) as T
+            }
+        }
+    }
 
     private val vpnPermission = VPNPermissionLauncher()
     private lateinit var preferencesManager: PreferencesManager
-
+    private var lastLanguageCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        preferencesManager = PreferencesManager(applicationContext)
+        
+        // Restore last language code from saved instance state
+        lastLanguageCode = savedInstanceState?.getString("lastLanguageCode")
+
+        // Observe language changes and recreate activity
+        lifecycleScope.launch {
+            languageViewModel.selectedLanguage.collect { language ->
+                if (language != null && language != lastLanguageCode) {
+                    lastLanguageCode = language
+                    recreate()
+                }
+            }
+        }
+
         lifecycleScope.launch {
             themeViewModel.isDarkTheme.collect { isDarkMode ->
                 enableEdgeToEdge(
@@ -138,8 +199,8 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+
         super.onCreate(savedInstanceState)
-        preferencesManager = PreferencesManager(applicationContext)
 
         vpnPermission.register(this)
 
@@ -211,6 +272,8 @@ class MainActivity : ComponentActivity() {
                         onSaveServer = viewModel::saveVpnServer,
                         themeViewModel = themeViewModel,
                         autoConnectViewModel = autoConnectViewModel,
+                        languageViewModel = languageViewModel,
+                        dnsViewModel = dnsViewModel,
                     )
                 }
 
@@ -247,6 +310,11 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(receiver)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        lastLanguageCode?.let { outState.putString("lastLanguageCode", it) }
     }
 
     private fun startVpn(configString: String) {

@@ -228,6 +228,8 @@
     </string>
     <string name="theme">Theme</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="language">Language</string>
+    <string name="system_language">System</string>
     <string name="system">System</string>
     <string name="auto_connection">Automatic connection when opening the application</string>
     <string name="key_received">Key received successfully</string>

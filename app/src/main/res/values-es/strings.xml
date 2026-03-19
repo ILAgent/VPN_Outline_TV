@@ -1,0 +1,98 @@
+<resources>
+    <string name="invalid_link_format">Formato de enlace no válido</string>
+    <string name="enter_the_key">Introduce la clave</string>
+    <string name="off">APAGADO</string>
+    <string name="on">ENCENDIDO</string>
+    <string name="elapsed_time">Tiempo de conexión %s</string>
+    <string name="invalid_decoded_info_format">Formato de cambio no válido</string>
+    <string name="edit_server_info">Información del servidor</string>
+    <string name="server_name">Nombre del servidor</string>
+    <string name="outline_key">Clave de Outline</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="clear">Borrar</string>
+    <string name="paste_from_clipboard">Pegar desde el portapapeles</string>
+    <string name="clipboard_empty">El portapapeles está vacío</string>
+    <string name="vpn_name">Outline VPN</string>
+    <string name="vpn_connected">VPN conectada</string>
+    <string name="vpn_disconnected">VPN desconectada</string>
+    <string name="stop_vpn">Detener</string>
+    <string name="no_server">Sin servidor</string>
+    <string name="vpn_widget_description">Widget de estado de VPN</string>
+    <string name="default_server_name">Servidor #1</string>
+    <string name="server_not_specified">Servidor no especificado</string>
+    <string name="vpn_start_failed">Error al iniciar VPN</string>
+    <string name="disconnect_before_settings">Primero desconecta de la VPN</string>
+    <string name="wrong_outline_key_format">Formato de clave de Outline incorrecto</string>
+    <string name="by_author">por IL_Agent</string>
+    <string name="app_update_available">¿Actualizar Outline?</string>
+    <string name="loading_progress">Cargando: %1$s%%</string>
+    <string name="update">Actualizar</string>
+    <string name="your_version">Tu versión: %1$s</string>
+    <string name="upgrade_to">Actualizar a: %1$s</string>
+    <string name="failed_to_get_latest_version">Error al obtener la última versión</string>
+    <string name="update_error">Error de actualización</string>
+    <string name="app_update_downloading">Descargando actualización…</string>
+    <string name="settings">Configuración</string>
+    <string name="DNS">DNS del servidor</string>
+    <string name="license">Licencia</string>
+    <string name="all_applications">Todas las aplicaciones (VPN para todas)</string>
+    <string name="for_all_apps">Para todas las aplicaciones</string>
+    <string name="whitelist_mode">Lista blanca</string>
+    <string name="remove">Eliminar</string>
+    <string name="thank_you_message">Gracias por ayudar a desarrollar khoben</string>
+    <string name="add_an_application">Añadir</string>
+    <string name="select_applications">Selecciona las aplicaciones que usarán VPN (lista blanca). Las demás funcionarán sin VPN.</string>
+    <string name="whitelist_empty_hint">La lista blanca está vacía: ninguna aplicación usa VPN. Añade aplicaciones o elige «Todas las aplicaciones».</string>
+    <string name="search_apps">Buscar aplicaciones</string>
+    <string name="saved_vpn_keys">Claves VPN guardadas</string>
+    <string name="add_new_key">Añadir nueva clave</string>
+    <string name="internal_storage">Almacenamiento interno</string>
+    <string name="external_memory">Memoria externa</string>
+    <string name="select_outline_key">Selecciona el archivo con la clave de Outline</string>
+    <string name="could_not_devices">No se encontraron dispositivos de almacenamiento disponibles</string>
+    <string name="there_are_nofiles">No hay archivos o carpetas en:</string>
+    <string name="you_must_grant_permission">Para usar esta función, debes conceder permiso.</string>
+    <string name="community">Comunidad de la aplicación</string>
+    <string name="go_to_group">Ir al grupo</string>
+    <string name="instructions">Instrucciones</string>
+    <string name="help_text">
+    Cómo añadir una clave\n\n
+    Puedes añadir una clave de dos formas:\n
+    1. Pegar desde el portapapeles.\n
+    2. Cargar desde un archivo.\n\n
+    3. Descargar desde código QR.\n\n
+    Para hacerlo, sigue estos pasos:\n
+    1. Ve a la sección «Información del servidor».\n
+    2. Elige una de las opciones disponibles para insertar la clave.\n\n
+    Formatos de archivo admitidos para cargar claves: .txt, .json, .xml\n\n
+    Cambiar DNS\n\n
+    Al cambiar el DNS en la configuración, puedes eliminar los anuncios; sin embargo, esto no funciona en todos los servidores DNS.\n\n
+    Aplicaciones a través de VPN (lista blanca):\n\n
+    • Todas las aplicaciones — VPN para cada aplicación.\n
+    • Lista blanca — toca «Añadir a lista blanca» y elige aplicaciones. Solo esas usan VPN; todas las demás funcionan sin VPN.
+    </string>
+    <string name="theme">Tema</string>
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="language">Idioma</string>
+    <string name="system_language">Sistema</string>
+    <string name="system">Sistema</string>
+    <string name="auto_connection">Conexión automática al abrir la aplicación</string>
+    <string name="key_received">Clave recibida correctamente</string>
+    <string name="Generate_new_qr_code">Generar un nuevo código QR</string>
+    <string name="scan_the_qr_code_from_your">Escanea el código QR desde tu teléfono (debe estar en la misma red Wi-Fi/LAN)</string>
+    <string name="qr_code_generation">Generación de código QR</string>
+    <string name="error_ip_not_found">Error al obtener la dirección IP del dispositivo</string>
+    <string name="error_port_unavailable">Error al ocupar el puerto</string>
+    <string name="error_port_in_use">El puerto está ocupado, inténtalo de nuevo…</string>
+    <string name="error_server_start_failed">Error al iniciar el servidor local: %1$s</string>
+    <string name="pair_title">Pega la clave</string>
+    <string name="pair_placeholder">Clave</string>
+    <string name="pair_send">Enviar</string>
+    <string name="pair_enter_key_alert">Introduce la clave</string>
+    <string name="pair_key_sent_msg">Clave enviada. Puedes volver a la TV.</string>
+    <string name="pair_error_prefix">Error:</string>
+    <string name="error_file_too_large">Archivo demasiado grande. Tamaño máximo: 10 KB</string>
+    <string name="error_reading_file">Error al leer el archivo: %s</string>
+    <string name="error_file_access_unavailable">Acceso al archivo no disponible. Usa pegar desde el portapapeles o código QR.</string>
+</resources>

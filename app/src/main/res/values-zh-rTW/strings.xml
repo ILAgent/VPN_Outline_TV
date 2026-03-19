@@ -1,0 +1,98 @@
+<resources>
+<string name="invalid_link_format">無效的連結格式</string>
+<string name="enter_the_key">輸入金鑰</string>
+<string name="off">關閉</string>
+<string name="on">開啟</string>
+<string name="elapsed_time">連線時間 %s</string>
+<string name="invalid_decoded_info_format">無效的切換格式</string>
+<string name="edit_server_info">伺服器資訊</string>
+<string name="server_name">伺服器名稱</string>
+<string name="outline_key">Outline 金鑰</string>
+<string name="save">儲存</string>
+<string name="cancel">取消</string>
+<string name="clear">清除</string>
+<string name="paste_from_clipboard">從剪貼簿貼上</string>
+<string name="clipboard_empty">剪貼簿是空的</string>
+<string name="vpn_name">Outline VPN</string>
+<string name="vpn_connected">VPN 已連線</string>
+<string name="vpn_disconnected">VPN 已斷線</string>
+<string name="stop_vpn">停止</string>
+<string name="no_server">沒有伺服器</string>
+<string name="vpn_widget_description">VPN 狀態小工具</string>
+<string name="default_server_name">伺服器 #1</string>
+<string name="server_not_specified">未指定伺服器</string>
+<string name="vpn_start_failed">VPN 啟動失敗</string>
+<string name="disconnect_before_settings">請先斷開 VPN 連線</string>
+<string name="wrong_outline_key_format">錯誤的 Outline 金鑰格式</string>
+<string name="by_author">作者：IL_Agent</string>
+<string name="app_update_available">更新 Outline？</string>
+<string name="loading_progress">載入中：%1$s%%</string>
+<string name="update">更新</string>
+<string name="your_version">您的版本：%1$s</string>
+<string name="upgrade_to">升級至：%1$s</string>
+<string name="failed_to_get_latest_version">無法取得最新版本</string>
+<string name="update_error">更新錯誤</string>
+<string name="app_update_downloading">正在下載更新…</string>
+<string name="settings">設定</string>
+<string name="DNS">伺服器 DNS</string>
+<string name="license">授權</string>
+<string name="all_applications">所有應用程式（所有應用程式使用 VPN）</string>
+<string name="for_all_apps">所有應用程式</string>
+<string name="whitelist_mode">白名單</string>
+<string name="remove">移除</string>
+<string name="thank_you_message">感謝協助開發 khoben</string>
+<string name="add_an_application">新增</string>
+<string name="select_applications">選擇將使用 VPN 的應用程式（白名單）。其他應用程式不使用 VPN。</string>
+<string name="whitelist_empty_hint">白名單是空的 — 沒有應用程式使用 VPN。新增應用程式或選擇「所有應用程式」。</string>
+<string name="search_apps">搜尋應用程式</string>
+<string name="saved_vpn_keys">已儲存的 VPN 金鑰</string>
+<string name="add_new_key">新增金鑰</string>
+<string name="internal_storage">內部儲存空間</string>
+<string name="external_memory">外部記憶體</string>
+<string name="select_outline_key">選擇包含 Outline 金鑰的檔案</string>
+<string name="could_not_devices">找不到可用的儲存裝置</string>
+<string name="there_are_nofiles">以下位置沒有檔案或資料夾：</string>
+<string name="you_must_grant_permission">要使用此功能，您必須授予權限。</string>
+<string name="community">應用程式社群</string>
+<string name="go_to_group">前往群組</string>
+<string name="instructions">說明</string>
+<string name="help_text">
+如何新增金鑰\n\n
+您可以透過兩種方式新增金鑰：\n
+1. 從剪貼簿貼上。\n
+2. 從檔案上傳。\n\n
+3. 從 QR 碼下載。\n\n
+請依照以下步驟操作：\n
+1. 前往「伺服器資訊」區段。\n
+2. 選擇其中一個可用選項來插入金鑰。\n\n
+支援的金鑰上傳檔案格式：.txt、.json、.xml\n\n
+變更 DNS\n\n
+在設定中變更 DNS 時，您可以移除廣告；但這並非在所有 DNS 伺服器上都有效。\n\n
+透過 VPN 的應用程式（白名單）：\n\n
+• 所有應用程式 — 每個應用程式都使用 VPN。\n
+• 白名單 — 點擊「新增至白名單」並選擇應用程式。只有這些應用程式使用 VPN；其他所有應用程式不使用 VPN。
+</string>
+<string name="theme">主題</string>
+<string name="dark_mode">深色模式</string>
+<string name="language">語言</string>
+<string name="system_language">系統</string>
+<string name="system">系統</string>
+<string name="auto_connection">開啟應用程式時自動連線</string>
+<string name="key_received">金鑰接收成功</string>
+<string name="Generate_new_qr_code">產生新的 QR 碼</string>
+<string name="scan_the_qr_code_from_your">從您的手機掃描 QR 碼（必須在同一個 Wi-Fi/LAN 網路上）</string>
+<string name="qr_code_generation">QR 碼產生</string>
+<string name="error_ip_not_found">無法取得裝置 IP 位址</string>
+<string name="error_port_unavailable">無法佔用連接埠</string>
+<string name="error_port_in_use">連接埠忙碌中，請重試…</string>
+<string name="error_server_start_failed">啟動本機伺服器時發生錯誤：%1$s</string>
+<string name="pair_title">貼上金鑰</string>
+<string name="pair_placeholder">金鑰</string>
+<string name="pair_send">傳送</string>
+<string name="pair_enter_key_alert">輸入金鑰</string>
+<string name="pair_key_sent_msg">金鑰已傳送。您可以返回電視。</string>
+<string name="pair_error_prefix">錯誤：</string>
+<string name="error_file_too_large">檔案太大。最大大小：10 KB</string>
+<string name="error_reading_file">讀取檔案時發生錯誤：%s</string>
+<string name="error_file_access_unavailable">無法存取檔案。請使用剪貼簿貼上或 QR 碼。</string>
+</resources>

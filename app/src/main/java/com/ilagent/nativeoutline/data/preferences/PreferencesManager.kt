@@ -115,6 +115,22 @@ class PreferencesManager(context: Context) {
         return preferences.getBoolean(KEY_AUTO_CONNECTION, false)
     }
 
+    fun saveSelectedLanguage(languageCode: String) {
+        preferences.edit { putString(KEY_SELECTED_LANGUAGE, languageCode) }
+    }
+
+    fun getSelectedLanguage(): String? {
+        return preferences.getString(KEY_SELECTED_LANGUAGE, null)
+    }
+
+    fun saveSystemLanguage(languageCode: String) {
+        preferences.edit { putString(KEY_SYSTEM_LANGUAGE, languageCode) }
+    }
+
+    fun getSystemLanguage(): String? {
+        return preferences.getString(KEY_SYSTEM_LANGUAGE, null)
+    }
+
     companion object {
         private const val PREFS_NAME = "outline_vpn_prefs"
         private const val KEY_VPN_LIST = "vpn_keys_list"
@@ -124,5 +140,7 @@ class PreferencesManager(context: Context) {
         private const val KEY_SELECTED_APPS = "selected_apps"
         private const val KEY_SELECTED_THEME = "selected_theme"
         private const val KEY_AUTO_CONNECTION = "auto_connection_enabled"
+        private const val KEY_SELECTED_LANGUAGE = "selected_language"
+        private const val KEY_SYSTEM_LANGUAGE = "system_language"
     }
 }

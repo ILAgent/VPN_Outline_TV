@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SystemSecurityUpdateWarning
@@ -27,7 +26,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +49,8 @@ import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
+import com.ilagent.nativeoutline.viewmodel.DnsViewModel
+import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 
 @Composable
@@ -59,24 +59,17 @@ fun SettingsDialog(
     preferencesManager: PreferencesManager,
     onDnsSelected: (String) -> Unit,
     themeViewModel: ThemeViewModel,
-    autoConnectViewModel: AutoConnectViewModel
+    autoConnectViewModel: AutoConnectViewModel,
+    languageViewModel: LanguageViewModel,
+    dnsViewModel: DnsViewModel
 ) {
-    var selectedDns by remember {
-        mutableStateOf(preferencesManager.getSelectedDns() ?: "8.8.8.8")
-    }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var showDnsDialog by remember { mutableStateOf(false) }
 
     val isAutoConnectionEnabled by autoConnectViewModel.isAutoConnectEnabled.collectAsState()
     val selectedTheme by themeViewModel.isDarkTheme.collectAsState()
-
-
-    LaunchedEffect(Unit) {
-        if (preferencesManager.getSelectedDns().isNullOrEmpty()) {
-            preferencesManager.saveSelectedDns("8.8.8.8")
-            onDnsSelected("8.8.8.8")
-        } else {
-            selectedDns = preferencesManager.getSelectedDns() ?: "8.8.8.8"
-        }
-    }
+    val selectedLanguage by languageViewModel.languageCode
+    val selectedDns by dnsViewModel.dnsCode
 
     AlertDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -89,77 +82,17 @@ fun SettingsDialog(
         },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                SettingsDialogSectionTitle(text = "Server DNS")
-                Column(Modifier.selectableGroup()) {
-                    SettingsDialogRadioItem(
-                        text = "Google DNS",
-                        selected = selectedDns == "8.8.8.8",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("8.8.8.8")
-                            selectedDns = "8.8.8.8"
-                            onDnsSelected("8.8.8.8")
-                            CrashlyticsLogger.logDnsChanged("8.8.8.8")
-                        }
-                    )
-                    SettingsDialogRadioItem(
-                        text = "Cloudflare DNS",
-                        selected = selectedDns == "1.1.1.1",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("1.1.1.1")
-                            selectedDns = "1.1.1.1"
-                            onDnsSelected("1.1.1.1")
-                            CrashlyticsLogger.logDnsChanged("1.1.1.1")
-                        }
-                    )
-                    SettingsDialogRadioItem(
-                        text = "Yandex DNS",
-                        selected = selectedDns == "77.88.8.8",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("77.88.8.8")
-                            selectedDns = "77.88.8.8"
-                            onDnsSelected("77.88.8.8")
-                            CrashlyticsLogger.logDnsChanged("77.88.8.8")
-                        }
-                    )
-                    SettingsDialogRadioItem(
-                        text = "AdGuard DNS",
-                        selected = selectedDns == "94.140.14.14",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("94.140.14.14")
-                            selectedDns = "94.140.14.14"
-                            onDnsSelected("94.140.14.14")
-                            CrashlyticsLogger.logDnsChanged("94.140.14.14")
-                        }
-                    )
-                    SettingsDialogRadioItem(
-                        text = "OpenDNS",
-                        selected = selectedDns == "208.67.222.222",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("208.67.222.222")
-                            selectedDns = "208.67.222.222"
-                            onDnsSelected("208.67.222.222")
-                            CrashlyticsLogger.logDnsChanged("208.67.222.222")
-                        }
-                    )
-                    SettingsDialogRadioItem(
-                        text = "Quad9 DNS",
-                        selected = selectedDns == "9.9.9.9",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("9.9.9.9")
-                            selectedDns = "9.9.9.9"
-                            onDnsSelected("9.9.9.9")
-                            CrashlyticsLogger.logDnsChanged("9.9.9.9")
-                        }
-                    )
-                    SettingsDialogRadioItem(
-                        text = "Comodo Secure DNS",
-                        selected = selectedDns == "8.26.56.26",
-                        onClick = {
-                            preferencesManager.saveSelectedDns("8.26.56.26")
-                            selectedDns = "8.26.56.26"
-                            onDnsSelected("8.26.56.26")
-                            CrashlyticsLogger.logDnsChanged("8.26.56.26")
-                        }
+                SettingsDialogSectionTitle(text = stringResource(id = R.string.DNS))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showDnsDialog = true }
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = getDnsDisplayName(selectedDns),
+                        modifier = Modifier.weight(1f)
                     )
                 }
 
@@ -191,6 +124,22 @@ fun SettingsDialog(
                             themeViewModel.setTheme(isChecked)
                             CrashlyticsLogger.logThemeChanged(if (isChecked) "dark" else "light")
                         }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SettingsDialogSectionTitle(text = stringResource(id = R.string.language))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showLanguageDialog = true }
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = getLanguageDisplayName(selectedLanguage, LocalContext.current),
+                        modifier = Modifier.weight(1f)
                     )
                 }
 
@@ -242,6 +191,29 @@ fun SettingsDialog(
             )
         }
     )
+
+    if (showLanguageDialog) {
+        LanguageDialog(
+            onDismiss = { showLanguageDialog = false },
+            languageViewModel = languageViewModel,
+            onLanguageSelected = { languageCode ->
+                languageViewModel.setLanguage(languageCode)
+                CrashlyticsLogger.logLanguageChanged(languageCode)
+            }
+        )
+    }
+
+    if (showDnsDialog) {
+        DnsDialog(
+            onDismiss = { showDnsDialog = false },
+            dnsViewModel = dnsViewModel,
+            onDnsSelected = { dnsCode ->
+                dnsViewModel.setDns(dnsCode)
+                onDnsSelected(dnsCode)
+                CrashlyticsLogger.logDnsChanged(dnsCode)
+            }
+        )
+    }
 }
 
 
@@ -414,6 +386,18 @@ fun NiaTextButton(
     }
 }
 
+fun getLanguageDisplayName(languageCode: String, context: android.content.Context): String {
+    return LanguageViewModel.getSupportedLanguages(context)
+        .find { it.code == languageCode }?.displayName
+        ?: context.getString(R.string.system_language)
+}
+
+fun getDnsDisplayName(dnsCode: String): String {
+    return DnsViewModel.getSupportedDnsServers()
+        .find { it.code == dnsCode }?.displayName
+        ?: dnsCode
+}
+
 @Preview
 @Composable
 private fun PreviewCustomSettingsDialog() {
@@ -425,6 +409,8 @@ private fun PreviewCustomSettingsDialog() {
         preferencesManager = preferencesManager,
         onDnsSelected = { },
         themeViewModel = ThemeViewModel(preferencesManager),
-        autoConnectViewModel = AutoConnectViewModel(preferencesManager)
+        autoConnectViewModel = AutoConnectViewModel(preferencesManager),
+        languageViewModel = LanguageViewModel(context),
+        dnsViewModel = DnsViewModel(context)
     )
 }

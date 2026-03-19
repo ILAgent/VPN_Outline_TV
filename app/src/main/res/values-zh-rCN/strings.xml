@@ -1,0 +1,98 @@
+<resources>
+    <string name="invalid_link_format">链接格式无效</string>
+    <string name="enter_the_key">输入密钥</string>
+    <string name="off">断开</string>
+    <string name="on">连接</string>
+    <string name="elapsed_time">连接时间 %s</string>
+    <string name="invalid_decoded_info_format">切换格式无效</string>
+    <string name="edit_server_info">服务器信息</string>
+    <string name="server_name">服务器名称</string>
+    <string name="outline_key">Outline 密钥</string>
+    <string name="save">保存</string>
+    <string name="clear">清除</string>
+    <string name="cancel">取消</string>
+    <string name="paste_from_clipboard">从剪贴板粘贴</string>
+    <string name="clipboard_empty">剪贴板为空</string>
+    <string name="vpn_name">Outline VPN</string>
+    <string name="vpn_connected">VPN 已连接</string>
+    <string name="vpn_disconnected">VPN 已断开</string>
+    <string name="stop_vpn">停止</string>
+    <string name="no_server">无服务器</string>
+    <string name="vpn_widget_description">VPN 状态小部件</string>
+    <string name="default_server_name">服务器 #1</string>
+    <string name="server_not_specified">未指定服务器</string>
+    <string name="vpn_start_failed">VPN 启动失败</string>
+    <string name="wrong_outline_key_format">Outline 密钥格式错误</string>
+    <string name="disconnect_before_settings">请先断开 VPN 连接</string>
+    <string name="by_author">作者 IL_Agent</string>
+    <string name="app_update_available">更新 Outline？</string>
+    <string name="loading_progress">加载中：%1$s%%</string>
+    <string name="update">更新</string>
+    <string name="your_version">当前版本：%1$s</string>
+    <string name="upgrade_to">更新至：%1$s</string>
+    <string name="failed_to_get_latest_version">获取最新版本失败</string>
+    <string name="update_error">更新错误</string>
+    <string name="app_update_downloading">正在下载更新…</string>
+    <string name="settings">设置</string>
+    <string name="DNS">DNS 服务器</string>
+    <string name="license">许可证</string>
+    <string name="all_applications">所有应用程序（所有应用使用 VPN）</string>
+    <string name="for_all_apps">所有应用程序</string>
+    <string name="whitelist_mode">白名单</string>
+    <string name="remove">移除</string>
+    <string name="thank_you_message">感谢 khoben 协助开发</string>
+    <string name="add_an_application">添加</string>
+    <string name="select_applications">选择将通过 VPN 运行的应用程序（白名单）。其他应用程序不使用 VPN。</string>
+    <string name="whitelist_empty_hint">白名单为空 — 没有应用程序使用 VPN。请添加应用程序或选择「所有应用程序」。</string>
+    <string name="search_apps">搜索应用程序</string>
+    <string name="saved_vpn_keys">已保存的 VPN 密钥</string>
+    <string name="add_new_key">添加新密钥</string>
+    <string name="internal_storage">内部存储</string>
+    <string name="external_memory">外部存储</string>
+    <string name="select_outline_key">选择包含 Outline 密钥的文件</string>
+    <string name="could_not_devices">找不到可用的存储设备</string>
+    <string name="there_are_nofiles">没有文件或文件夹：</string>
+    <string name="you_must_grant_permission">要使用此功能，必须授予权限。</string>
+    <string name="community">应用社区</string>
+    <string name="go_to_group">前往群组</string>
+    <string name="instructions">说明</string>
+    <string name="help_text">
+    如何添加密钥\\n\\n
+    您可以通过三种方式添加密钥：\\n
+    1. 从剪贴板粘贴。\\n
+    2. 从文件上传。\\n\\n
+    3. 从二维码下载。\\n\\n
+    为此，请按照以下步骤操作：\\n
+    1. 进入「服务器信息」部分。\\n
+    2. 选择其中一个可用选项来插入密钥。\\n\\n
+    支持的密钥上传文件格式：.txt、.json、.xml\\n\\n
+    更改 DNS\\n\\n
+    在设置中更改 DNS 时，您可以移除广告；但这并非在所有 DNS 服务器上都有效。\\n\\n
+    通过 VPN 的应用程序（白名单）：\\n\\n
+    • 所有应用程序 — 每个应用程序都使用 VPN。\\n
+    • 白名单 — 点击「添加到白名单」并选择应用程序。只有这些应用程序使用 VPN，其他应用程序不使用 VPN。
+    </string>
+    <string name="theme">主题</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="language">语言</string>
+    <string name="system_language">系统</string>
+    <string name="system">系统</string>
+    <string name="auto_connection">打开应用时自动连接</string>
+    <string name="key_received">密钥接收成功</string>
+    <string name="Generate_new_qr_code">生成新的二维码</string>
+    <string name="scan_the_qr_code_from_your">用手机扫描二维码（必须在同一 Wi-Fi/LAN 网络中）</string>
+    <string name="qr_code_generation">二维码生成</string>
+    <string name="error_ip_not_found">无法获取设备 IP 地址</string>
+    <string name="error_port_unavailable">无法占用端口</string>
+    <string name="error_port_in_use">端口被占用，正在重试…</string>
+    <string name="error_server_start_failed">启动本地服务器错误：%1$s</string>
+    <string name="pair_title">粘贴密钥</string>
+    <string name="pair_placeholder">密钥</string>
+    <string name="pair_send">发送</string>
+    <string name="pair_enter_key_alert">请输入密钥</string>
+    <string name="pair_key_sent_msg">密钥已发送。可以返回电视了。</string>
+    <string name="pair_error_prefix">错误：</string>
+    <string name="error_file_too_large">文件太大。最大大小：10 KB</string>
+    <string name="error_reading_file">读取文件错误：%s</string>
+    <string name="error_file_access_unavailable">文件访问不可用。请使用剪贴板粘贴或二维码。</string>
+</resources>
