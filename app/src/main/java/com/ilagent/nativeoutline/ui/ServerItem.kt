@@ -32,18 +32,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.FixedScale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.IpCountryCodeProvider
 import com.ilagent.nativeoutline.data.remote.RemoteJSONFetch
 import com.ilagent.nativeoutline.data.remote.ServerIconProvider
+import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.ServerItemViewModel
 
 @Composable
@@ -102,12 +104,22 @@ fun ServerItem(
 
             if (serverIconState != null) {
                 AsyncImage(
-                    model = serverIconState,
+                    model = ImageRequest.Builder(context)
+                        .data(serverIconState)
+                        .listener(
+                            onError = { _, result ->
+                                CrashlyticsLogger.logException(
+                                    result.throwable,
+                                    "Failed to load server flag: $serverIconState"
+                                )
+                            }
+                        )
+                        .build(),
                     contentDescription = "Server icon",
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape),
-                    contentScale = FixedScale(3f),
+                    contentScale = ContentScale.FillBounds,
                 )
             }
 

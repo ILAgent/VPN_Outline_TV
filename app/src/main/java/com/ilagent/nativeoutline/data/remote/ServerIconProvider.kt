@@ -11,22 +11,26 @@ interface ServerIconProvider {
         private val preferencesManager: PreferencesManager
     ) : ServerIconProvider {
 
-        private val API_URL = "https://flagsapi.com/%s/flat/64.png"
+        private val FLAG_API_URL = "https://flagcdn.com/w40/%s.png"
+        // Список устаревших доменов, которые больше не работают
+        private val deprecatedDomains = listOf("flagsapi.com")
 
         override suspend fun icon(serverHost: String): String? {
             return try {
-                // Сначала проверяем кэш
+                // Проверяем кэш
                 val savedFlagUrl = preferencesManager.getFlagUrl(serverHost)
-                if (savedFlagUrl != null) {
+                
+                // Если есть сохраненный URL и он не использует устаревший домен
+                if (savedFlagUrl != null && deprecatedDomains.none { savedFlagUrl.contains(it) }) {
                     return savedFlagUrl
                 }
 
-                // Если нет в кэше, получаем код страны
+                // Если нет в кэше или URL устарел, получаем код страны
                 val countryCode = ipCountryCodeProvider.countryCode(serverHost)
                     ?: return null
 
                 // Формируем URL флага
-                val serverIconUrl = API_URL.format(countryCode)
+                val serverIconUrl = FLAG_API_URL.format(countryCode)
                 preferencesManager.saveFlagUrl(serverHost, serverIconUrl)
 
                 serverIconUrl
