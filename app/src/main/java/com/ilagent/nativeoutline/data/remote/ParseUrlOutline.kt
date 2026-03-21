@@ -11,6 +11,7 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import androidx.core.net.toUri
 
 interface ParseUrlOutline {
     suspend fun parse(ssUrl: String): ShadowSocksInfo
@@ -59,6 +60,7 @@ interface ParseUrlOutline {
                     val decoded = Base64.decode(s, Base64.DEFAULT)
                     decoded.isNotEmpty()
                 } catch (e: IllegalArgumentException) {
+                    CrashlyticsLogger.logException(e)
                     false
                 }
             }
@@ -83,11 +85,11 @@ interface ParseUrlOutline {
         }
 
         override fun extractServerHost(ssUrl: String): String? {
-            val parsedUrl = Uri.parse(ssUrl)
+            val parsedUrl = ssUrl.toUri()
             return parsedUrl.host
         }
 
-        private suspend fun parseShadowSocksConfUrl(ssConfUrl: String): ShadowSocksInfo {
+        private fun parseShadowSocksConfUrl(ssConfUrl: String): ShadowSocksInfo {
             if (!ssConfUrl.startsWith("ssconf://")) {
                 throw IllegalArgumentException("Invalid ssconf URL format")
             }
