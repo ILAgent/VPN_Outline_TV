@@ -36,20 +36,6 @@ object CrashlyticsLogger {
         crashlytics.recordException(throwable)
     }
 
-    /**
-     * Логирует ошибку с сообщением как non-fatal
-     * @param message Сообщение об ошибке
-     * @param cause Причина ошибки (опционально)
-     */
-    fun logError(message: String, cause: Throwable? = null) {
-        Log.e(TAG, message, cause)
-        crashlytics.setCustomKey("error_message", message)
-        if (cause != null) {
-            crashlytics.recordException(cause)
-        } else {
-            crashlytics.recordException(Exception(message))
-        }
-    }
 
     /**
      * Логирует ошибку с дополнительными параметрами
@@ -181,7 +167,9 @@ object CrashlyticsLogger {
      */
     fun logLanguageChanged(languageCode: String) {
         Log.i(TAG, "Language changed to: $languageCode")
-        analytics.logEvent("language_changed", Bundle().apply { putString("language", languageCode) })
+        analytics.logEvent(
+            "language_changed",
+            Bundle().apply { putString("language", languageCode) })
     }
 
     /**
@@ -295,7 +283,9 @@ object CrashlyticsLogger {
      */
     fun logWidgetVpnStarted(serverName: String) {
         Log.i(TAG, "Widget VPN started: $serverName")
-        analytics.logEvent("widget_vpn_started", Bundle().apply { putString("server_name", serverName) })
+        analytics.logEvent(
+            "widget_vpn_started",
+            Bundle().apply { putString("server_name", serverName) })
     }
 
     /**
@@ -304,7 +294,9 @@ object CrashlyticsLogger {
      */
     fun logWidgetVpnStopped(serverName: String) {
         Log.i(TAG, "Widget VPN stopped: $serverName")
-        analytics.logEvent("widget_vpn_stopped", Bundle().apply { putString("server_name", serverName) })
+        analytics.logEvent(
+            "widget_vpn_stopped",
+            Bundle().apply { putString("server_name", serverName) })
     }
 
     /**

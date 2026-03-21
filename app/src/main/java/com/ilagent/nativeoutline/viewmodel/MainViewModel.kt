@@ -54,7 +54,13 @@ class MainViewModel(
         viewModelScope.launch {
             runCatching { parseUrlOutline.parse(configString) }
                 .onSuccess { config -> vpnManager.start(config) }
-                .onFailure { errorVpnEvent() }
+                .onFailure {
+                    CrashlyticsLogger.logException(
+                        it,
+                        "Error when starting OutlineVpnService in MainViewModel"
+                    )
+                    errorVpnEvent()
+                }
         }
     }
 

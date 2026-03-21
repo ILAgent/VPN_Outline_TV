@@ -78,10 +78,7 @@ interface ParseUrlOutline {
             return@withContext when {
                 ssUrl.startsWith("ssconf://") -> parseShadowSocksConfUrl(ssUrl)
                 ssUrl.startsWith("ss://") -> parseShadowSocksSsUrl(ssUrl)
-                else -> {
-                    CrashlyticsLogger.logError("Invalid URL format: $ssUrl")
-                    throw IllegalArgumentException("Invalid URL format")
-                }
+                else -> throw IllegalArgumentException("Invalid URL format")
             }
         }
 
@@ -117,7 +114,10 @@ interface ParseUrlOutline {
             val method = jsonObject.getString("method")
             val prefix = jsonObject.optString("prefix").takeIf { it.isNotBlank() }
 
-            Log.d("ParseUrl", "Parsed JSON - Host: $host, Port: $port, Method: $method, Password: $password, Prefix: $prefix")
+            Log.d(
+                "ParseUrl",
+                "Parsed JSON - Host: $host, Port: $port, Method: $method, Password: $password, Prefix: $prefix"
+            )
 
             return ShadowSocksInfo(method, password, host, port, prefix)
         }
@@ -144,7 +144,8 @@ interface ParseUrlOutline {
 
         private fun parsePartialEncodedSsUrl(ssData: String): ShadowSocksInfo {
             val matchResult = SS_URL_REGEX.find("ss://$ssData")
-            val groups = matchResult?.groupValues ?: throw IllegalArgumentException("Invalid link format")
+            val groups =
+                matchResult?.groupValues ?: throw IllegalArgumentException("Invalid link format")
 
             Log.d("ParseUrl", "Match groups: $groups")
 
@@ -205,7 +206,8 @@ interface ParseUrlOutline {
                 throw IllegalArgumentException("Invalid host and port format")
             }
             val host = hostPortSplit[0]
-            val port = hostPortSplit[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid port number")
+            val port = hostPortSplit[1].toIntOrNull()
+                ?: throw IllegalArgumentException("Invalid port number")
 
             Log.d("ParseUrl", "Method: $method, Password: $password, Host: $host, Port: $port")
 
@@ -213,7 +215,8 @@ interface ParseUrlOutline {
         }
 
         companion object {
-            private val SS_URL_REGEX = Regex("ss://([^@]+)@([^:]+):(\\d+)(?:/\\?([^#]+))?(?:#(.+))?")
+            private val SS_URL_REGEX =
+                Regex("ss://([^@]+)@([^:]+):(\\d+)(?:/\\?([^#]+))?(?:#(.+))?")
         }
     }
 }

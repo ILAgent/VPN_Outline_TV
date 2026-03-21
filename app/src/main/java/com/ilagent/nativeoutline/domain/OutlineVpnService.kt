@@ -94,13 +94,15 @@ class OutlineVpnService : VpnService() {
         return when {
             action == ACTION_START && !VpnStateManager.isVpnConnected() -> {
                 @Suppress("DEPRECATION")
-                val source = intent.extras?.getString(SOURCE_EXTRA) ?: BroadcastVpnServiceAction.SOURCE_APP
+                val source =
+                    intent.extras?.getString(SOURCE_EXTRA) ?: BroadcastVpnServiceAction.SOURCE_APP
                 startVpn(intent.extras?.getParcelable(CONFIG_EXTRA), source)
                 START_STICKY
             }
 
             action == ACTION_STOP -> {
-                val source = intent.extras?.getString(SOURCE_EXTRA) ?: BroadcastVpnServiceAction.SOURCE_APP
+                val source =
+                    intent.extras?.getString(SOURCE_EXTRA) ?: BroadcastVpnServiceAction.SOURCE_APP
                 stopVpn(source)
                 START_NOT_STICKY
             }
@@ -111,7 +113,7 @@ class OutlineVpnService : VpnService() {
 
     private fun startVpn(config: ShadowSocksInfo?, source: String) = scope.launch(Dispatchers.IO) {
         if (config == null) {
-            CrashlyticsLogger.logError("startVpn: null config")
+            CrashlyticsLogger.logException(IllegalStateException("startVpn: null config"))
             sendBroadcast(
                 Intent(BroadcastVpnServiceAction.ERROR).setPackage(packageName)
             )
@@ -153,7 +155,7 @@ class OutlineVpnService : VpnService() {
             try {
                 val errorCode = checkServerConnectivity(client)
                 if (errorCode != ErrorCode.NO_ERROR && errorCode != ErrorCode.UDP_RELAY_NOT_ENABLED) {
-                    CrashlyticsLogger.logError("startVpn: Server connectivity check failed with error: $errorCode")
+                    CrashlyticsLogger.logException(IllegalStateException("startVpn: Server connectivity check failed with error: $errorCode"))
                     return false
                 }
             } catch (e: Exception) {
@@ -221,7 +223,10 @@ class OutlineVpnService : VpnService() {
                 startForeground(NOTIFICATION_SERVICE_ID, notification)
             }
         } catch (e: java.lang.Exception) {
-            CrashlyticsLogger.logException(e, "startForegroundWithNotification: Unable to display persistent notification")
+            CrashlyticsLogger.logException(
+                e,
+                "startForegroundWithNotification: Unable to display persistent notification"
+            )
         }
     }
 
@@ -247,7 +252,8 @@ class OutlineVpnService : VpnService() {
             .setColor(NOTIFICATION_COLOR)
             .setContentTitle(getString(R.string.vpn_name))
             .setContentText(getString(R.string.vpn_connected))
-            .addAction(0, getString(R.string.stop_vpn),
+            .addAction(
+                0, getString(R.string.stop_vpn),
                 PendingIntent.getService(
                     this,
                     0,
