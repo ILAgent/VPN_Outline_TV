@@ -7,7 +7,6 @@ import com.ilagent.nativeoutline.MainActivity
 import com.ilagent.nativeoutline.data.broadcast.BroadcastVpnServiceAction
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
-import com.ilagent.nativeoutline.data.remote.RemoteJSONFetch
 import com.ilagent.nativeoutline.domain.OutlineVpnService
 import com.ilagent.nativeoutline.domain.VpnStateManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
@@ -40,7 +39,7 @@ class VpnWidgetActionReceiver : BroadcastReceiver() {
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
                                 val parseUrlOutline =
-                                    ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch())
+                                    ParseUrlOutline.Base()
                                 val config = parseUrlOutline.parse(serverUrl)
                                 OutlineVpnService.start(
                                     context,
@@ -60,6 +59,7 @@ class VpnWidgetActionReceiver : BroadcastReceiver() {
                     }
                 }
             }
+
             ACTION_OPEN_APP -> {
                 CrashlyticsLogger.logWidgetAppOpened()
                 startMainActivity(context)

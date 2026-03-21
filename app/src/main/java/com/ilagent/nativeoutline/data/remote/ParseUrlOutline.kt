@@ -3,6 +3,7 @@ package com.ilagent.nativeoutline.data.remote
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import androidx.core.net.toUri
 import com.ilagent.nativeoutline.data.model.ShadowSocksInfo
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +12,6 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import androidx.core.net.toUri
 
 interface ParseUrlOutline {
     suspend fun parse(ssUrl: String): ShadowSocksInfo
@@ -73,7 +73,7 @@ interface ParseUrlOutline {
         }
     }
 
-    class Base(private val jsonFetch: RemoteJSONFetch) : ParseUrlOutline {
+    class Base() : ParseUrlOutline {
 
         override suspend fun parse(ssUrl: String): ShadowSocksInfo = withContext(Dispatchers.IO) {
             Log.d("ParseUrl", "Parsing URL: $ssUrl")

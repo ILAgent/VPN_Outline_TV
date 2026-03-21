@@ -31,7 +31,6 @@ import androidx.lifecycle.lifecycleScope
 import com.ilagent.nativeoutline.data.broadcast.BroadcastVpnServiceAction
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
-import com.ilagent.nativeoutline.data.remote.RemoteJSONFetch
 import com.ilagent.nativeoutline.domain.OutlineVpnManager
 import com.ilagent.nativeoutline.domain.update.UpdateManager
 import com.ilagent.nativeoutline.ui.MainScreen
@@ -58,14 +57,14 @@ class MainActivity : ComponentActivity() {
         MainViewModel.Factory(
             preferencesManager = PreferencesManager(context = applicationContext),
             vpnManager = OutlineVpnManager(context = applicationContext),
-            parseUrlOutline = ParseUrlOutline.Base(RemoteJSONFetch.HttpURLConnectionJSONFetch()),
+            parseUrlOutline = ParseUrlOutline.Base(),
             updateManager = UpdateManager.Github(context = applicationContext),
         )
     }
 
     override fun attachBaseContext(newBase: Context) {
         val preferencesManager = PreferencesManager(newBase)
-        
+
         // Save system language on first launch
         if (preferencesManager.getSystemLanguage() == null) {
             val systemLocale = Locale.getDefault()
@@ -76,7 +75,7 @@ class MainActivity : ComponentActivity() {
             }
             preferencesManager.saveSystemLanguage(systemLanguageCode)
         }
-        
+
         // Apply saved language
         val savedLanguage = preferencesManager.getSelectedLanguage()
         val context = if (savedLanguage != null && savedLanguage != "system") {
@@ -84,7 +83,7 @@ class MainActivity : ComponentActivity() {
         } else {
             newBase
         }
-        
+
         super.attachBaseContext(context)
     }
 
@@ -103,10 +102,15 @@ class MainActivity : ComponentActivity() {
                         if (source == BroadcastVpnServiceAction.SOURCE_WIDGET) {
                             CrashlyticsLogger.logWidgetVpnStarted(state.name)
                         } else {
-                            CrashlyticsLogger.logVpnConnected(state.name, isWhitelistMode, whitelistCount)
+                            CrashlyticsLogger.logVpnConnected(
+                                state.name,
+                                isWhitelistMode,
+                                whitelistCount
+                            )
                         }
                     }
                 }
+
                 BroadcastVpnServiceAction.STOPPED -> {
                     viewModel.vpnEvent(VpnEvent.STOPPED)
                     viewModel.vpnServerState.value?.let { state ->
@@ -120,6 +124,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+
                 BroadcastVpnServiceAction.ERROR -> {
                     viewModel.vpnEvent(VpnEvent.ERROR)
                 }
@@ -173,7 +178,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         preferencesManager = PreferencesManager(applicationContext)
-        
+
         // Restore last language code from saved instance state
         lastLanguageCode = savedInstanceState?.getString("lastLanguageCode")
 
@@ -194,7 +199,8 @@ class MainActivity : ComponentActivity() {
                     com.ilagent.nativeoutline.viewmodel.ThemeMode.LIGHT -> false
                     com.ilagent.nativeoutline.viewmodel.ThemeMode.SYSTEM -> {
                         // Use system theme
-                        val currentNightMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+                        val currentNightMode =
+                            resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
                         currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
                     }
                 }
@@ -311,11 +317,11 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         viewModel.checkVpnConnectionState()
         viewModel.loadLastVpnServerState()
-    
+
         val isVpnConnected = viewModel.vpnConnectionState.value == true
         val isAutoConnectOn = autoConnectViewModel.isAutoConnectEnabled.value
         val lastServerUrl = viewModel.vpnServerState.value?.url.orEmpty()
-    
+
         if (isAutoConnectOn && !isVpnConnected && lastServerUrl.isNotEmpty()) {
             startVpn(lastServerUrl)
         }
