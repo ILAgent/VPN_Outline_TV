@@ -110,6 +110,17 @@ class MainViewModel(
         _vpnServerState.value = VpnServerStateUi(name = name, host = host, url = url)
     }
 
+    fun clearSelectedServer() {
+        preferencesManager.selectedServerName = null
+        preferencesManager.clearVpnStartTime()
+        _vpnServerState.value = VpnServerStateUi(
+            name = "",
+            host = "",
+            url = "",
+            startTime = 0L
+        )
+    }
+
     fun vpnEvent(event: VpnEvent) {
         when (event) {
             VpnEvent.STARTED -> {

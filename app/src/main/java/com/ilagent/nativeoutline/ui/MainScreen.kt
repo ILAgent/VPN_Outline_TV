@@ -61,6 +61,7 @@ fun MainScreen(
     onConnectClick: (String) -> Unit,
     onDisconnectClick: () -> Unit,
     onSaveServer: (String, String) -> Unit,
+    onClearSelectedServer: () -> Unit,
     themeViewModel: ThemeViewModel,
     autoConnectViewModel: AutoConnectViewModel,
     languageViewModel: LanguageViewModel,
@@ -162,6 +163,9 @@ fun MainScreen(
                 onDismiss = { isServerListDialogOpen = false },
                 onSelectServer = { serverInfo ->
                     onSaveServer(serverInfo.name, serverInfo.key)
+                },
+                onClearSelectedServer = {
+                    onClearSelectedServer()
                 },
                 onAddServerClick = { action ->
                     addServerInitialAction = action
@@ -485,6 +489,7 @@ fun DefaultPreview() {
         onConnectClick = { _ -> },
         onDisconnectClick = {},
         onSaveServer = { _, _ -> },
+        onClearSelectedServer = {},
         themeViewModel = ThemeViewModel(PreferencesManager(LocalContext.current)),
         autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current)),
         languageViewModel = LanguageViewModel(LocalContext.current.applicationContext as android.app.Application),

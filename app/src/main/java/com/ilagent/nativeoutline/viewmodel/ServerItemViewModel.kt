@@ -15,6 +15,10 @@ class ServerItemViewModel(private val serverIconProvider: ServerIconProvider) : 
         _serverIconState.value = serverIconProvider.icon(serverHost)
     }
 
+    fun clearServerIcon() {
+        _serverIconState.value = null
+    }
+
     class Factory(
         private val serverIconProvider: ServerIconProvider
     ) : ViewModelProvider.Factory {

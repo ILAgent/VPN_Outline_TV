@@ -71,7 +71,13 @@ fun ServerItem(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    LaunchedEffect(serverHost) { viewModel.serverHost(serverHost) }
+    LaunchedEffect(serverHost) {
+        if (serverHost.isEmpty()) {
+            viewModel.clearServerIcon()
+        } else {
+            viewModel.serverHost(serverHost)
+        }
+    }
 
     Box(
         modifier = Modifier

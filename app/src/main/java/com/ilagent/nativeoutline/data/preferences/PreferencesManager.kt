@@ -58,13 +58,28 @@ class PreferencesManager(context: Context) {
         saveVpnKeys(existingList)
     }
 
-    fun deleteVpnKey(serverName: String) {
+    fun deleteVpnKey(serverName: String): VpnServerInfo? {
         val existingList = getVpnKeys().toMutableList()
         val index = existingList.indexOfFirst { it.name == serverName }
         if (index >= 0) {
             existingList.removeAt(index)
             saveVpnKeys(existingList)
+            
+            // Если удаляемый сервер был выбран, обновляем выбор
+            if (selectedServerName == serverName) {
+                if (existingList.isNotEmpty()) {
+                    // Выбираем первый сервер из списка
+                    val firstServer = existingList.first()
+                    selectedServerName = firstServer.name
+                    return firstServer
+                } else {
+                    // Если список пуст, очищаем выбранный сервер
+                    selectedServerName = null
+                    return null
+                }
+            }
         }
+        return null
     }
 
     fun saveVpnStartTime(startTime: Long) {

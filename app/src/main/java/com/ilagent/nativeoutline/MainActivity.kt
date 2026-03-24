@@ -290,6 +290,7 @@ class MainActivity : ComponentActivity() {
                         onConnectClick = ::startVpn,
                         onDisconnectClick = viewModel::stopVpn,
                         onSaveServer = viewModel::saveVpnServer,
+                        onClearSelectedServer = viewModel::clearSelectedServer,
                         themeViewModel = themeViewModel,
                         autoConnectViewModel = autoConnectViewModel,
                         languageViewModel = languageViewModel,

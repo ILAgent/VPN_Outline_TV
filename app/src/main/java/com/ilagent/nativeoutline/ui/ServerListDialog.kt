@@ -59,6 +59,7 @@ fun ServerListDialog(
     preferencesManager: PreferencesManager,
     onDismiss: () -> Unit,
     onSelectServer: (VpnServerInfo) -> Unit,
+    onClearSelectedServer: () -> Unit,
     onAddServerClick: (String?) -> Unit
 ) {
     val context = LocalContext.current
@@ -112,9 +113,20 @@ fun ServerListDialog(
                                     onDismiss()
                                 },
                                 onDelete = {
-                                    preferencesManager.deleteVpnKey(server.name)
+                                    val newSelectedServer = preferencesManager.deleteVpnKey(server.name)
                                     CrashlyticsLogger.logServerDeleted(server.name)
                                     savedVpnKeys = preferencesManager.getVpnKeys()
+                                    
+                                    // Если был выбран удалённый сервер
+                                    if (server.name == currentServerName) {
+                                        if (newSelectedServer != null) {
+                                            // Выбираем первый сервер из списка
+                                            onSelectServer(newSelectedServer)
+                                        } else {
+                                            // Если список пуст, очищаем выбранный сервер
+                                            onClearSelectedServer()
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -241,6 +253,7 @@ fun ServerListDialogPreview() {
         preferencesManager = PreferencesManager(LocalContext.current),
         onDismiss = {},
         onSelectServer = {},
+        onClearSelectedServer = {},
         onAddServerClick = { }
     )
 }
