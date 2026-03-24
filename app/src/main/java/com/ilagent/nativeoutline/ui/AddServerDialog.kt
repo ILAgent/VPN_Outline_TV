@@ -7,15 +7,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ContentPaste
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,37 +31,37 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ilagent.nativeoutline.R
-import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.ServerDialogViewModel
 
+/**
+ * Dialog for adding a new VPN server.
+ * Contains fields for server name and outline key,
+ * with buttons to import from clipboard, file, or QR code.
+ * @param initialAction - initial action to perform: "clipboard", "file", "qr", or null
+ */
 @Composable
-fun ServerDialog(
-    currentName: String,
-    currentKey: String,
+fun AddServerDialog(
     onDismiss: () -> Unit,
-    onSave: (String, String) -> Unit
+    onSave: (String, String) -> Unit,
+    initialAction: String? = null
 ) {
     val viewModel: ServerDialogViewModel = viewModel(
         factory = ServerDialogViewModel.Factory(ParseUrlOutline.Validate.Base())
     )
 
-    var serverName by remember { mutableStateOf(currentName) }
-    var serverKey by remember { mutableStateOf(currentKey) }
+    var serverName by remember { mutableStateOf("") }
+    var serverKey by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var isKeyError by remember { mutableStateOf(false) }
-    var showQrPair by remember { mutableStateOf(false) }
+    var showQrPair by remember { mutableStateOf(initialAction == "qr") }
 
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val preferencesManager = remember { PreferencesManager(context) }
-    var savedVpnKeys by remember { mutableStateOf(preferencesManager.getVpnKeys()) }
-    var expanded by remember { mutableStateOf(false) }
 
     fun validateKey(key: String) {
         isKeyError = !viewModel.validate(key)
@@ -76,13 +72,13 @@ fun ServerDialog(
         validateKey(key)
     }
 
-    // Launcher для Storage Access Framework (SAF) - работает на всех устройствах
+    // Launcher for Storage Access Framework (SAF) - works on all devices
     val safFilePickerLauncher = rememberLauncherForActivityResult(
         contract = GetContent()
     ) { uri: Uri? ->
         uri?.let {
             try {
-                // Проверяем размер файла (максимум 100 КБ для Outline ключа)
+                // Check file size (max 100 KB for Outline key)
                 val fileSize = context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
                     val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
                     if (cursor.moveToFirst() && sizeIndex != -1) {
@@ -103,7 +99,7 @@ fun ServerDialog(
                 context.contentResolver.openInputStream(it)?.use { inputStream ->
                     val data = inputStream.bufferedReader().readText().trim()
                     if (data.isNotBlank()) {
-                        // Ограничиваем длину текста из файла
+                        // Limit text length from file
                         val trimmedData = if (data.length > 2000) {
                             data.substring(0, 2000)
                         } else {
@@ -122,18 +118,54 @@ fun ServerDialog(
         }
     }
 
+    // Handle initial action when dialog opens
+    LaunchedEffect(initialAction) {
+        when (initialAction) {
+            "clipboard" -> {
+                val clipboardText = clipboardManager.getText()?.text
+                if (!clipboardText.isNullOrEmpty()) {
+                    val trimmedText = if (clipboardText.length > 2000) {
+                        clipboardText.substring(0, 2000)
+                    } else {
+                        clipboardText
+                    }
+                    val parsedName = trimmedText.substringAfterLast("#", serverName)
+                    serverName = parsedName
+                    setServerKey(trimmedText)
+                    CrashlyticsLogger.logServerImportedFromClipboard()
+                } else {
+                    Toast.makeText(context, R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
+                }
+            }
+            "file" -> {
+                try {
+                    safFilePickerLauncher.launch("*/*")
+                } catch (e: Exception) {
+                    CrashlyticsLogger.logException(e, "SAF file picker launch failed")
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.error_file_access_unavailable),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+            "qr" -> {
+                // QR dialog is already opened via showQrPair initial state
+            }
+        }
+    }
+
     AlertDialog(
         onDismissRequest = {
             if (!isLoading) onDismiss()
         },
         title = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.edit_server_info),
+                    text = stringResource(id = R.string.add_new_server),
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -141,12 +173,11 @@ fun ServerDialog(
                     modifier = Modifier.weight(1f)
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-
                     IconButton(
                         onClick = {
                             val clipboardText = clipboardManager.getText()?.text
                             if (!clipboardText.isNullOrEmpty()) {
-                                // Ограничиваем длину текста из буфера обмена
+                                // Limit text length from clipboard
                                 val trimmedText = if (clipboardText.length > 2000) {
                                     clipboardText.substring(0, 2000)
                                 } else {
@@ -170,12 +201,11 @@ fun ServerDialog(
                     IconButton(
                         onClick = {
                             try {
-                                // Всегда используем Storage Access Framework (SAF)
-                                // Работает на всех устройствах Android без специальных разрешений
-                                // "*/*" позволяет выбирать любые файлы, включая без расширения
+                                // Always use Storage Access Framework (SAF)
+                                // Works on all Android devices without special permissions
+                                // "*/*" allows selecting any files, including without extension
                                 safFilePickerLauncher.launch("*/*")
                             } catch (e: Exception) {
-                                // Если SAF не поддерживается, показываем сообщение
                                 CrashlyticsLogger.logException(e, "SAF file picker launch failed")
                                 Toast.makeText(
                                     context,
@@ -203,72 +233,9 @@ fun ServerDialog(
         },
         text = {
             Column {
-                Box {
-                    OutlinedTextField(
-                        value = serverName,
-                        onValueChange = { serverName = it },
-                        label = { Text(stringResource(id = R.string.saved_vpn_keys)) },
-                        singleLine = true,
-                        readOnly = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        trailingIcon = {
-                            IconButton(onClick = { expanded = !expanded }) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowDropDown,
-                                    contentDescription = "Dropdown Menu"
-                                )
-                            }
-                        }
-                    )
-
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(id = R.string.add_new_key)) },
-                            onClick = {
-                                expanded = false
-                                serverName = ""
-                                setServerKey("")
-                            }
-                        )
-
-                        savedVpnKeys.forEach { item ->
-                            DropdownMenuItem(
-                                text = { Text(text = item.name) },
-                                trailingIcon = {
-                                    IconButton(onClick = {
-                                        preferencesManager.deleteVpnKey(item.name)
-                                        CrashlyticsLogger.logServerDeleted(item.name)
-                                        savedVpnKeys = preferencesManager.getVpnKeys()
-                                        serverName = ""
-                                        setServerKey("")
-                                        expanded = false
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete"
-                                        )
-                                    }
-                                },
-                                onClick = {
-                                    expanded = false
-                                    serverName = item.name
-                                    setServerKey(item.key)
-                                }
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 OutlinedTextField(
                     value = serverName,
-                    onValueChange = { 
+                    onValueChange = {
                         if (it.length <= 1000) {
                             serverName = it
                         }
@@ -293,7 +260,7 @@ fun ServerDialog(
                         }
                     },
                     onValueChange = {
-                        // Ограничиваем длину ключа до 2000 символов для предотвращения OOM
+                        // Limit key length to 2000 characters to prevent OOM
                         if (it.length <= 2000) {
                             val parsedName = it.substringAfterLast("#", serverName)
                             serverName = parsedName
@@ -328,13 +295,6 @@ fun ServerDialog(
         confirmButton = {
             Row {
                 TextButton(onClick = {
-                    serverName = context.getString(R.string.default_server_name)
-                    serverKey = ""
-                }) {
-                    Text(stringResource(id = R.string.clear))
-                }
-
-                TextButton(onClick = {
                     if (!isLoading) onDismiss()
                 }) {
                     Text(stringResource(id = R.string.cancel))
@@ -344,18 +304,18 @@ fun ServerDialog(
                     onClick = {
                         isLoading = true
                         try {
-                            onSave(serverName, serverKey)
-                            preferencesManager.addOrUpdateVpnKey(serverName, serverKey)
-                            savedVpnKeys = preferencesManager.getVpnKeys()
+                            val finalName = serverName.ifEmpty { 
+                                context.getString(R.string.default_server_name) 
+                            }
+                            onSave(finalName, serverKey)
                             isLoading = false
-                            onDismiss()
                         } catch (e: Exception) {
                             CrashlyticsLogger.logException(e, "Failed to save VPN server")
                             errorMessage = e.message
                             isLoading = false
                         }
                     },
-                    enabled = !isLoading && !isKeyError
+                    enabled = !isLoading && !isKeyError && serverKey.isNotBlank()
                 ) {
                     Text(stringResource(id = R.string.save))
                 }
@@ -366,7 +326,7 @@ fun ServerDialog(
     if (showQrPair) {
         PairByQrDialog(
             onKeyReady = { keyFromQr ->
-                // Ограничиваем длину ключа из QR-кода
+                // Limit key length from QR code
                 val trimmedKey = if (keyFromQr.length > 2000) {
                     keyFromQr.substring(0, 2000)
                 } else {
@@ -386,10 +346,8 @@ fun ServerDialog(
 
 @Preview
 @Composable
-fun DialogPreview() {
-    ServerDialog(
-        currentName = "Server #1",
-        currentKey = "",
+fun AddServerDialogPreview() {
+    AddServerDialog(
         onDismiss = {},
         onSave = { _, _ -> },
     )

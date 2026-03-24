@@ -252,4 +252,8 @@
     <string name="error_file_too_large">File too large. Maximum size: 10 KB</string>
     <string name="error_reading_file">Error reading file: %s</string>
     <string name="error_file_access_unavailable">File access unavailable. Use clipboard paste or QR code.</string>
+    <string name="select_server">Select Server</string>
+    <string name="add_server">Add</string>
+    <string name="add_new_server">Add Server</string>
+    <string name="no_saved_servers">No saved servers. Add a new server using the button below.</string>
 </resources>

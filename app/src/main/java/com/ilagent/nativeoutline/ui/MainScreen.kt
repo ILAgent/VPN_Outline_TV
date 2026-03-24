@@ -69,7 +69,9 @@ fun MainScreen(
     val errorMessage by remember { mutableStateOf<String?>(null) }
     var elapsedTime by remember { mutableIntStateOf(0) }
     val isEditing by remember { mutableStateOf(false) }
-    var isDialogOpen by remember { mutableStateOf(false) }
+    var isServerListDialogOpen by remember { mutableStateOf(false) }
+    var isAddServerDialogOpen by remember { mutableStateOf(false) }
+    var addServerInitialAction by remember { mutableStateOf<String?>(null) }
     var isSettingsDialogOpen by remember { mutableStateOf(false) }
     var isHelpDialogOpen by remember { mutableStateOf(false) }
     var isConnectionLoading by remember { mutableStateOf(false) }
@@ -116,7 +118,7 @@ fun MainScreen(
                 onDisconnectClick = onDisconnectClick,
                 onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isDialogOpen = true
+                    isServerListDialogOpen = true
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -138,7 +140,7 @@ fun MainScreen(
                 onDisconnectClick = onDisconnectClick,
                 onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isDialogOpen = true
+                    isServerListDialogOpen = true
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -150,15 +152,38 @@ fun MainScreen(
             )
 
         }
-        if (isDialogOpen) {
-            ServerDialog(
-                currentName = vpnServerState.name,
-                currentKey = vpnServerState.url,
-                onDismiss = { isDialogOpen = false },
-                onSave = { name, key ->
-                    onSaveServer(name, key)
-                    isDialogOpen = false
+        
+        // Server list dialog - shown when clicking on server selection
+        if (isServerListDialogOpen) {
+            ServerListDialog(
+                currentServerName = vpnServerState.name,
+                currentServerKey = vpnServerState.url,
+                preferencesManager = preferencesManager,
+                onDismiss = { isServerListDialogOpen = false },
+                onSelectServer = { serverInfo ->
+                    onSaveServer(serverInfo.name, serverInfo.key)
                 },
+                onAddServerClick = { action ->
+                    addServerInitialAction = action
+                    isAddServerDialogOpen = true
+                }
+            )
+        }
+
+        // Add server dialog - shown when clicking "Add" button
+        if (isAddServerDialogOpen) {
+            AddServerDialog(
+                onDismiss = {
+                    isAddServerDialogOpen = false
+                    addServerInitialAction = null
+                },
+                onSave = { name, key ->
+                    preferencesManager.addOrUpdateVpnKey(name, key)
+                    onSaveServer(name, key)
+                    isAddServerDialogOpen = false
+                    addServerInitialAction = null
+                },
+                initialAction = addServerInitialAction
             )
         }
 
