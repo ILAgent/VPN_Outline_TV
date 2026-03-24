@@ -120,7 +120,12 @@ fun MainScreen(
                 onDisconnectClick = onDisconnectClick,
                 onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isServerListDialogOpen = true
+                    if (preferencesManager.getVpnKeys().isEmpty()) {
+                        addServerInitialAction = null
+                        isAddServerDialogOpen = true
+                    } else {
+                        isServerListDialogOpen = true
+                    }
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -142,7 +147,12 @@ fun MainScreen(
                 onDisconnectClick = onDisconnectClick,
                 onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isServerListDialogOpen = true
+                    if (preferencesManager.getVpnKeys().isEmpty()) {
+                        addServerInitialAction = null
+                        isAddServerDialogOpen = true
+                    } else {
+                        isServerListDialogOpen = true
+                    }
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
