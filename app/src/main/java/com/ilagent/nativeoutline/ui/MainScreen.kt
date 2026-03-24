@@ -76,6 +76,7 @@ fun MainScreen(
     var isSettingsDialogOpen by remember { mutableStateOf(false) }
     var isHelpDialogOpen by remember { mutableStateOf(false) }
     var isConnectionLoading by remember { mutableStateOf(false) }
+    var serverListRefreshTrigger by remember { mutableIntStateOf(0) }
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -170,7 +171,8 @@ fun MainScreen(
                 onAddServerClick = { action ->
                     addServerInitialAction = action
                     isAddServerDialogOpen = true
-                }
+                },
+                refreshTrigger = serverListRefreshTrigger
             )
         }
 
@@ -184,6 +186,7 @@ fun MainScreen(
                 onSave = { name, key ->
                     preferencesManager.addOrUpdateVpnKey(name, key)
                     onSaveServer(name, key)
+                    serverListRefreshTrigger++
                     isAddServerDialogOpen = false
                     addServerInitialAction = null
                 },

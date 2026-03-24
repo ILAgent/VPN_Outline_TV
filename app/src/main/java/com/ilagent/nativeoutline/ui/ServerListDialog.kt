@@ -60,10 +60,16 @@ fun ServerListDialog(
     onDismiss: () -> Unit,
     onSelectServer: (VpnServerInfo) -> Unit,
     onClearSelectedServer: () -> Unit,
-    onAddServerClick: (String?) -> Unit
+    onAddServerClick: (String?) -> Unit,
+    refreshTrigger: Int = 0
 ) {
     val context = LocalContext.current
     var savedVpnKeys by remember { mutableStateOf(preferencesManager.getVpnKeys()) }
+
+    // Refresh server list when refreshTrigger changes
+    LaunchedEffect(refreshTrigger) {
+        savedVpnKeys = preferencesManager.getVpnKeys()
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -254,6 +260,7 @@ fun ServerListDialogPreview() {
         onDismiss = {},
         onSelectServer = {},
         onClearSelectedServer = {},
-        onAddServerClick = { }
+        onAddServerClick = { },
+        refreshTrigger = 0
     )
 }
