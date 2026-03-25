@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -42,7 +43,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
-import com.ilagent.nativeoutline.utils.versionNameUi
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
@@ -207,7 +207,6 @@ fun MainScreen(
         if (isSettingsDialogOpen) {
             SettingsDialog(
                 onDismiss = { isSettingsDialogOpen = false },
-                preferencesManager = preferencesManager,
                 onDnsSelected = {},
                 themeViewModel = themeViewModel,
                 autoConnectViewModel = autoConnectViewModel,
@@ -257,8 +256,9 @@ fun MainScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = context.getString(R.string.version, versionNameUi(context)),
+                        text = context.getString(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
                 }
             },
@@ -379,8 +379,11 @@ fun TvScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = context.getString(R.string.version, versionNameUi(context)),
+                        text = context.getString(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             },

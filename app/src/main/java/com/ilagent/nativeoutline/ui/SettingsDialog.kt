@@ -48,17 +48,16 @@ import androidx.core.net.toUri
 import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
+import com.ilagent.nativeoutline.utils.versionNameUi
 import com.ilagent.nativeoutline.viewmodel.AutoConnectViewModel
 import com.ilagent.nativeoutline.viewmodel.DnsViewModel
 import com.ilagent.nativeoutline.viewmodel.LanguageViewModel
-import com.ilagent.nativeoutline.viewmodel.ThemeMode
 import com.ilagent.nativeoutline.viewmodel.ThemeViewModel
 import com.ilagent.nativeoutline.viewmodel.getThemeDisplayName
 
 @Composable
 fun SettingsDialog(
     onDismiss: () -> Unit,
-    preferencesManager: PreferencesManager,
     onDnsSelected: (String) -> Unit,
     themeViewModel: ThemeViewModel,
     autoConnectViewModel: AutoConnectViewModel,
@@ -321,6 +320,12 @@ fun LinksPanel() {
                     }
                     .padding(8.dp)
             ) {
+                Text(
+                    text = context.getString(R.string.version, versionNameUi(context)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_github),
                     contentDescription = "Open GitHub",
@@ -413,7 +418,6 @@ private fun PreviewCustomSettingsDialog() {
 
     SettingsDialog(
         onDismiss = {},
-        preferencesManager = preferencesManager,
         onDnsSelected = { },
         themeViewModel = ThemeViewModel(preferencesManager),
         autoConnectViewModel = AutoConnectViewModel(preferencesManager),
