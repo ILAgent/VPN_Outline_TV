@@ -97,4 +97,8 @@
 <string name="error_file_too_large">檔案太大。最大大小：10 KB</string>
 <string name="error_reading_file">讀取檔案時發生錯誤：%s</string>
 <string name="error_file_access_unavailable">無法存取檔案。請使用剪貼簿貼上或 QR 碼。</string>
+    <string name="select_server">選擇伺服器</string>
+    <string name="add_server">新增</string>
+    <string name="add_new_server">新增伺服器</string>
+    <string name="no_saved_servers">沒有已儲存的伺服器。使用下方的按鈕新增伺服器。</string>
 </resources>

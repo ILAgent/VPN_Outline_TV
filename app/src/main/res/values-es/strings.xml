@@ -97,4 +97,8 @@
     <string name="error_file_too_large">Archivo demasiado grande. Tamaño máximo: 10 KB</string>
     <string name="error_reading_file">Error al leer el archivo: %s</string>
     <string name="error_file_access_unavailable">Acceso al archivo no disponible. Usa pegar desde el portapapeles o código QR.</string>
+    <string name="select_server">Seleccionar servidor</string>
+    <string name="add_server">Añadir</string>
+    <string name="add_new_server">Añadir servidor</string>
+    <string name="no_saved_servers">No hay servidores guardados. Añade un nuevo servidor usando el botón de abajo.</string>
 </resources>
