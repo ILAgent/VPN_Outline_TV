@@ -71,6 +71,11 @@ fun ServerListDialog(
         savedVpnKeys = preferencesManager.getVpnKeys()
     }
 
+    // Log dialog opening
+    LaunchedEffect(Unit) {
+        CrashlyticsLogger.logServerListDialogOpened()
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -115,6 +120,7 @@ fun ServerListDialog(
                                 isSelected = isSelected,
                                 preferencesManager = preferencesManager,
                                 onSelect = {
+                                    CrashlyticsLogger.logServerSelected(server.name)
                                     onSelectServer(server)
                                     onDismiss()
                                 },
@@ -145,7 +151,10 @@ fun ServerListDialog(
                 TextButton(onClick = onDismiss) {
                     Text(stringResource(id = R.string.cancel))
                 }
-                TextButton(onClick = { onAddServerClick(null) }) {
+                TextButton(onClick = {
+                    CrashlyticsLogger.logAddServerButtonClicked()
+                    onAddServerClick(null)
+                }) {
                     Text(stringResource(id = R.string.add_server))
                 }
             }

@@ -63,8 +63,16 @@ fun AddServerDialog(
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
+    // Log dialog opening
+    LaunchedEffect(Unit) {
+        CrashlyticsLogger.logServerDialogOpened()
+    }
+
     fun validateKey(key: String) {
         isKeyError = !viewModel.validate(key)
+        if (isKeyError && key.isNotBlank()) {
+            CrashlyticsLogger.logServerKeyValidationError("invalid_format")
+        }
     }
 
     fun setServerKey(key: String) {
@@ -157,7 +165,10 @@ fun AddServerDialog(
 
     AlertDialog(
         onDismissRequest = {
-            if (!isLoading) onDismiss()
+            if (!isLoading) {
+                CrashlyticsLogger.logServerAddCancelled()
+                onDismiss()
+            }
         },
         title = {
             Row(
@@ -175,6 +186,7 @@ fun AddServerDialog(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = {
+                            CrashlyticsLogger.logServerImportedFromClipboard()
                             val clipboardText = clipboardManager.getText()?.text
                             if (!clipboardText.isNullOrEmpty()) {
                                 // Limit text length from clipboard
@@ -186,7 +198,6 @@ fun AddServerDialog(
                                 val parsedName = trimmedText.substringAfterLast("#", serverName)
                                 serverName = parsedName
                                 setServerKey(trimmedText)
-                                CrashlyticsLogger.logServerImportedFromClipboard()
                             } else {
                                 Toast.makeText(context, R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
                             }
@@ -221,7 +232,10 @@ fun AddServerDialog(
                         )
                     }
                     IconButton(
-                        onClick = { showQrPair = true }
+                        onClick = {
+                            CrashlyticsLogger.logQrScanStarted()
+                            showQrPair = true
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Filled.QrCode,
@@ -295,7 +309,10 @@ fun AddServerDialog(
         confirmButton = {
             Row {
                 TextButton(onClick = {
-                    if (!isLoading) onDismiss()
+                    if (!isLoading) {
+                        CrashlyticsLogger.logServerAddCancelled()
+                        onDismiss()
+                    }
                 }) {
                     Text(stringResource(id = R.string.cancel))
                 }
@@ -304,9 +321,10 @@ fun AddServerDialog(
                     onClick = {
                         isLoading = true
                         try {
-                            val finalName = serverName.ifEmpty { 
-                                context.getString(R.string.default_server_name) 
+                            val finalName = serverName.ifEmpty {
+                                context.getString(R.string.default_server_name)
                             }
+                            CrashlyticsLogger.logServerAdded(finalName)
                             onSave(finalName, serverKey)
                             isLoading = false
                         } catch (e: Exception) {
