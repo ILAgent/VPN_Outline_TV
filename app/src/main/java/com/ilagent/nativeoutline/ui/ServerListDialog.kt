@@ -43,6 +43,7 @@ import com.ilagent.nativeoutline.R
 import com.ilagent.nativeoutline.data.model.VpnServerInfo
 import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.IpCountryCodeProvider
+import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
 import com.ilagent.nativeoutline.data.remote.RemoteJSONFetch
 import com.ilagent.nativeoutline.data.remote.ServerIconProvider
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
@@ -176,8 +177,10 @@ private fun ServerListItem(
     // Extract host from key for loading flag
     val serverHost = remember(serverKey) {
         try {
-            serverKey.toUri().host ?: ""
+            val parseUrlOutline = ParseUrlOutline.Base()
+            parseUrlOutline.extractServerHost(serverKey) ?: ""
         } catch (e: Exception) {
+            CrashlyticsLogger.logException(e, "Failed to extract host from server key")
             ""
         }
     }
