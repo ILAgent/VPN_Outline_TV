@@ -61,6 +61,7 @@ fun MainScreen(
     onConnectClick: (String) -> Unit,
     onDisconnectClick: () -> Unit,
     onSaveServer: (String, String) -> Unit,
+    onSelectServer: (String, String) -> Unit,
     onClearSelectedServer: () -> Unit,
     themeViewModel: ThemeViewModel,
     autoConnectViewModel: AutoConnectViewModel,
@@ -173,7 +174,7 @@ fun MainScreen(
                 preferencesManager = preferencesManager,
                 onDismiss = { isServerListDialogOpen = false },
                 onSelectServer = { serverInfo ->
-                    onSaveServer(serverInfo.name, serverInfo.key)
+                    onSelectServer(serverInfo.name, serverInfo.key)
                 },
                 onClearSelectedServer = {
                     onClearSelectedServer()
@@ -194,7 +195,6 @@ fun MainScreen(
                     addServerInitialAction = null
                 },
                 onSave = { name, key ->
-                    preferencesManager.addOrUpdateVpnKey(name, key)
                     onSaveServer(name, key)
                     serverListRefreshTrigger++
                     isAddServerDialogOpen = false
@@ -502,6 +502,7 @@ fun DefaultPreview() {
         onConnectClick = { _ -> },
         onDisconnectClick = {},
         onSaveServer = { _, _ -> },
+        onSelectServer = { _, _ -> },
         onClearSelectedServer = {},
         themeViewModel = ThemeViewModel(PreferencesManager(LocalContext.current)),
         autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current)),

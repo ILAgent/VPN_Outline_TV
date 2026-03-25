@@ -5,7 +5,12 @@ import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Folder
@@ -18,7 +23,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -87,12 +97,13 @@ fun AddServerDialog(
         uri?.let {
             try {
                 // Check file size (max 100 KB for Outline key)
-                val fileSize = context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
-                    val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                    if (cursor.moveToFirst() && sizeIndex != -1) {
-                        cursor.getLong(sizeIndex)
-                    } else null
-                }
+                val fileSize =
+                    context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
+                        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                        if (cursor.moveToFirst() && sizeIndex != -1) {
+                            cursor.getLong(sizeIndex)
+                        } else null
+                    }
 
                 val maxFileSize = 10240L
                 if (fileSize != null && fileSize > maxFileSize) {
@@ -113,15 +124,17 @@ fun AddServerDialog(
                         } else {
                             data
                         }
-                        val parsedName = trimmedData.substringAfterLast("#", serverName)
-                        serverName = parsedName
                         setServerKey(trimmedData)
                         CrashlyticsLogger.logServerImportedFromFile()
                     }
                 }
             } catch (e: Exception) {
                 CrashlyticsLogger.logException(e, "Failed to read file from SAF")
-                Toast.makeText(context, context.getString(R.string.error_reading_file, e.message ?: ""), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_reading_file, e.message ?: ""),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -137,14 +150,13 @@ fun AddServerDialog(
                     } else {
                         clipboardText
                     }
-                    val parsedName = trimmedText.substringAfterLast("#", serverName)
-                    serverName = parsedName
                     setServerKey(trimmedText)
                     CrashlyticsLogger.logServerImportedFromClipboard()
                 } else {
                     Toast.makeText(context, R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
                 }
             }
+
             "file" -> {
                 try {
                     safFilePickerLauncher.launch("*/*")
@@ -157,6 +169,7 @@ fun AddServerDialog(
                     ).show()
                 }
             }
+
             "qr" -> {
                 // QR dialog is already opened via showQrPair initial state
             }
@@ -195,11 +208,13 @@ fun AddServerDialog(
                                 } else {
                                     clipboardText
                                 }
-                                val parsedName = trimmedText.substringAfterLast("#", serverName)
-                                serverName = parsedName
                                 setServerKey(trimmedText)
                             } else {
-                                Toast.makeText(context, R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    R.string.clipboard_empty,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     ) {
@@ -276,8 +291,6 @@ fun AddServerDialog(
                     onValueChange = {
                         // Limit key length to 2000 characters to prevent OOM
                         if (it.length <= 2000) {
-                            val parsedName = it.substringAfterLast("#", serverName)
-                            serverName = parsedName
                             setServerKey(it)
                         }
                     },
@@ -350,8 +363,6 @@ fun AddServerDialog(
                 } else {
                     keyFromQr
                 }
-                val parsedName = trimmedKey.substringAfterLast("#", serverName)
-                serverName = parsedName
                 setServerKey(trimmedKey)
                 CrashlyticsLogger.logServerImportedFromQr()
                 showQrPair = false

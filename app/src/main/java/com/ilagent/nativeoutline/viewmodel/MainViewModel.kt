@@ -101,13 +101,30 @@ class MainViewModel(
     }
 
     fun saveVpnServer(name: String, url: String) {
+        val existingKeys = preferencesManager.getVpnKeys()
+        val isFirstServer = existingKeys.isEmpty()
+        
         preferencesManager.addOrUpdateVpnKey(name, url)
         preferencesManager.clearVpnStartTime()
-        preferencesManager.selectedServerName = name
+        
+        // Make server active and update UI state only if it's the first one
+        if (isFirstServer) {
+            preferencesManager.selectedServerName = name
+            val host = runCatching { parseUrlOutline.extractServerHost(url) ?: "" }.getOrDefault("")
+            _vpnServerState.value = VpnServerStateUi(name = name, host = host, url = url)
+        }
+        
         CrashlyticsLogger.logServerAdded(name)
-
+    }
+    
+    fun selectVpnServer(name: String, url: String) {
+        preferencesManager.selectedServerName = name
+        preferencesManager.clearVpnStartTime()
+        
         val host = runCatching { parseUrlOutline.extractServerHost(url) ?: "" }.getOrDefault("")
         _vpnServerState.value = VpnServerStateUi(name = name, host = host, url = url)
+        
+        CrashlyticsLogger.logServerSelected(name)
     }
 
     fun clearSelectedServer() {
