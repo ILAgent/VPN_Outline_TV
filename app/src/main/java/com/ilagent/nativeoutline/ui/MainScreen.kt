@@ -61,6 +61,8 @@ fun MainScreen(
     onConnectClick: (String) -> Unit,
     onDisconnectClick: () -> Unit,
     onSaveServer: (String, String) -> Unit,
+    onSelectServer: (String, String) -> Unit,
+    onClearSelectedServer: () -> Unit,
     themeViewModel: ThemeViewModel,
     autoConnectViewModel: AutoConnectViewModel,
     languageViewModel: LanguageViewModel,
@@ -69,10 +71,13 @@ fun MainScreen(
     val errorMessage by remember { mutableStateOf<String?>(null) }
     var elapsedTime by remember { mutableIntStateOf(0) }
     val isEditing by remember { mutableStateOf(false) }
-    var isDialogOpen by remember { mutableStateOf(false) }
+    var isServerListDialogOpen by remember { mutableStateOf(false) }
+    var isAddServerDialogOpen by remember { mutableStateOf(false) }
+    var addServerInitialAction by remember { mutableStateOf<String?>(null) }
     var isSettingsDialogOpen by remember { mutableStateOf(false) }
     var isHelpDialogOpen by remember { mutableStateOf(false) }
     var isConnectionLoading by remember { mutableStateOf(false) }
+    var serverListRefreshTrigger by remember { mutableIntStateOf(0) }
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -116,7 +121,12 @@ fun MainScreen(
                 onDisconnectClick = onDisconnectClick,
                 onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isDialogOpen = true
+                    if (preferencesManager.getVpnKeys().isEmpty()) {
+                        addServerInitialAction = null
+                        isAddServerDialogOpen = true
+                    } else {
+                        isServerListDialogOpen = true
+                    }
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -138,7 +148,12 @@ fun MainScreen(
                 onDisconnectClick = onDisconnectClick,
                 onOpenServerDialog = {
                     CrashlyticsLogger.logServerDialogOpened()
-                    isDialogOpen = true
+                    if (preferencesManager.getVpnKeys().isEmpty()) {
+                        addServerInitialAction = null
+                        isAddServerDialogOpen = true
+                    } else {
+                        isServerListDialogOpen = true
+                    }
                 },
                 isConnected = isConnected,
                 isConnectionLoading = isConnectionLoading,
@@ -150,15 +165,42 @@ fun MainScreen(
             )
 
         }
-        if (isDialogOpen) {
-            ServerDialog(
-                currentName = vpnServerState.name,
-                currentKey = vpnServerState.url,
-                onDismiss = { isDialogOpen = false },
+        
+        // Server list dialog - shown when clicking on server selection
+        if (isServerListDialogOpen) {
+            ServerListDialog(
+                currentServerName = vpnServerState.name,
+                currentServerKey = vpnServerState.url,
+                preferencesManager = preferencesManager,
+                onDismiss = { isServerListDialogOpen = false },
+                onSelectServer = { serverInfo ->
+                    onSelectServer(serverInfo.name, serverInfo.key)
+                },
+                onClearSelectedServer = {
+                    onClearSelectedServer()
+                },
+                onAddServerClick = { action ->
+                    addServerInitialAction = action
+                    isAddServerDialogOpen = true
+                },
+                refreshTrigger = serverListRefreshTrigger
+            )
+        }
+
+        // Add server dialog - shown when clicking "Add" button
+        if (isAddServerDialogOpen) {
+            AddServerDialog(
+                onDismiss = {
+                    isAddServerDialogOpen = false
+                    addServerInitialAction = null
+                },
                 onSave = { name, key ->
                     onSaveServer(name, key)
-                    isDialogOpen = false
+                    serverListRefreshTrigger++
+                    isAddServerDialogOpen = false
+                    addServerInitialAction = null
                 },
+                initialAction = addServerInitialAction
             )
         }
 
@@ -460,6 +502,8 @@ fun DefaultPreview() {
         onConnectClick = { _ -> },
         onDisconnectClick = {},
         onSaveServer = { _, _ -> },
+        onSelectServer = { _, _ -> },
+        onClearSelectedServer = {},
         themeViewModel = ThemeViewModel(PreferencesManager(LocalContext.current)),
         autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current)),
         languageViewModel = LanguageViewModel(LocalContext.current.applicationContext as android.app.Application),

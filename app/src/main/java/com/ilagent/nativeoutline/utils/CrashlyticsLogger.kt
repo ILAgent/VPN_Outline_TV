@@ -236,6 +236,48 @@ object CrashlyticsLogger {
     }
 
     /**
+     * Логирует открытие диалога выбора сервера
+     */
+    fun logServerListDialogOpened() {
+        Log.i(TAG, "Server list dialog opened")
+        analytics.logEvent("server_list_dialog_opened", null)
+    }
+
+    /**
+     * Логирует выбор сервера из списка
+     * @param serverName Имя выбранного сервера
+     */
+    fun logServerSelected(serverName: String) {
+        Log.i(TAG, "Server selected: $serverName")
+        analytics.logEvent("server_selected", Bundle().apply { putString("server_name", serverName) })
+    }
+
+    /**
+     * Логирует нажатие кнопки "Добавить сервер" в диалоге выбора
+     */
+    fun logAddServerButtonClicked() {
+        Log.i(TAG, "Add server button clicked")
+        analytics.logEvent("add_server_button_clicked", null)
+    }
+
+    /**
+     * Логирует отмену добавления сервера
+     */
+    fun logServerAddCancelled() {
+        Log.i(TAG, "Server add cancelled")
+        analytics.logEvent("server_add_cancelled", null)
+    }
+
+    /**
+     * Логирует ошибку валидации ключа сервера
+     * @param errorType Тип ошибки (invalid_format, empty_key, etc.)
+     */
+    fun logServerKeyValidationError(errorType: String) {
+        Log.i(TAG, "Server key validation error: $errorType")
+        analytics.logEvent("server_key_validation_error", Bundle().apply { putString("error_type", errorType) })
+    }
+
+    /**
      * Логирует импорт сервера из файла
      */
     fun logServerImportedFromFile() {

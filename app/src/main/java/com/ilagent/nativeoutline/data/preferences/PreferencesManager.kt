@@ -58,13 +58,28 @@ class PreferencesManager(context: Context) {
         saveVpnKeys(existingList)
     }
 
-    fun deleteVpnKey(serverName: String) {
+    fun deleteVpnKey(serverName: String): VpnServerInfo? {
         val existingList = getVpnKeys().toMutableList()
         val index = existingList.indexOfFirst { it.name == serverName }
         if (index >= 0) {
             existingList.removeAt(index)
             saveVpnKeys(existingList)
+            
+            // Если удаляемый сервер был выбран, обновляем выбор
+            if (selectedServerName == serverName) {
+                if (existingList.isNotEmpty()) {
+                    // Выбираем первый сервер из списка
+                    val firstServer = existingList.first()
+                    selectedServerName = firstServer.name
+                    return firstServer
+                } else {
+                    // Если список пуст, очищаем выбранный сервер
+                    selectedServerName = null
+                    return null
+                }
+            }
         }
+        return null
     }
 
     fun saveVpnStartTime(startTime: Long) {
@@ -129,6 +144,21 @@ class PreferencesManager(context: Context) {
 
     fun getSystemLanguage(): String? {
         return preferences.getString(KEY_SYSTEM_LANGUAGE, null)
+    }
+
+    /**
+     * Generates a unique default server name based on existing servers.
+     * Finds the highest number in "Server #N" pattern and returns "Server #(N+1)"
+     */
+    fun generateDefaultServerName(): String {
+        val existingServers = getVpnKeys()
+        val serverNumberPattern = Regex("^Server #(\\d+)$")
+        
+        val maxNumber = existingServers.mapNotNull { server ->
+            serverNumberPattern.find(server.name)?.groupValues?.get(1)?.toIntOrNull()
+        }.maxOrNull() ?: 0
+        
+        return "Server #${maxNumber + 1}"
     }
 
     companion object {

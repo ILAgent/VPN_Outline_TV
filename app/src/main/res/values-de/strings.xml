@@ -19,7 +19,6 @@
     <string name="stop_vpn">Stoppen</string>
     <string name="no_server">Kein Server</string>
     <string name="vpn_widget_description">VPN-Status-Widget</string>
-    <string name="default_server_name">Server #1</string>
     <string name="server_not_specified">Server nicht angegeben</string>
     <string name="vpn_start_failed">VPN-Start fehlgeschlagen</string>
     <string name="disconnect_before_settings">Trennen Sie zuerst die VPN-Verbindung</string>
@@ -97,4 +96,8 @@
     <string name="error_file_too_large">Datei zu groß. Maximale Größe: 10 KB</string>
     <string name="error_reading_file">Fehler beim Lesen der Datei: %s</string>
     <string name="error_file_access_unavailable">Dateizugriff nicht verfügbar. Verwenden Sie das Einfügen aus der Zwischenablage oder den QR-Code.</string>
+    <string name="select_server">Server auswählen</string>
+    <string name="add_server">Hinzufügen</string>
+    <string name="add_new_server">Server hinzufügen</string>
+    <string name="no_saved_servers">Keine gespeicherten Server. Fügen Sie einen neuen Server mit der Schaltfläche unten hinzu.</string>
 </resources>

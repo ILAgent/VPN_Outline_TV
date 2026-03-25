@@ -19,7 +19,6 @@
     <string name="stop_vpn">停止</string>
     <string name="no_server">无服务器</string>
     <string name="vpn_widget_description">VPN 状态小部件</string>
-    <string name="default_server_name">服务器 #1</string>
     <string name="server_not_specified">未指定服务器</string>
     <string name="vpn_start_failed">VPN 启动失败</string>
     <string name="wrong_outline_key_format">Outline 密钥格式错误</string>
@@ -97,4 +96,8 @@
     <string name="error_file_too_large">文件太大。最大大小：10 KB</string>
     <string name="error_reading_file">读取文件错误：%s</string>
     <string name="error_file_access_unavailable">文件访问不可用。请使用剪贴板粘贴或二维码。</string>
+    <string name="select_server">选择服务器</string>
+    <string name="add_server">添加</string>
+    <string name="add_new_server">添加服务器</string>
+    <string name="no_saved_servers">没有保存的服务器。使用下面的按钮添加新服务器。</string>
 </resources>
