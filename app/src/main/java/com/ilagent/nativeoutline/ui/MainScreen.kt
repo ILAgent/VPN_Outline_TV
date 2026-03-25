@@ -268,7 +268,9 @@ fun MainScreenContent(
                     Text(
                         text = context.getString(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             },
@@ -504,6 +506,7 @@ fun TvScreenContent(
 }
 
 @Preview(name = "Default")
+@Preview(name = "small", device = "id:3.2in QVGA (ADP2)")
 @Preview(name = "tv", device = "id:tv_1080p")
 @Preview(name = "tablet", device = "id:7in WSVGA (Tablet)")
 @Composable
@@ -523,7 +526,7 @@ fun DefaultPreview() {
         onClearSelectedServer = {},
         themeViewModel = ThemeViewModel(PreferencesManager(LocalContext.current)),
         autoConnectViewModel = AutoConnectViewModel(PreferencesManager(LocalContext.current)),
-        languageViewModel = LanguageViewModel(LocalContext.current.applicationContext as android.app.Application),
-        dnsViewModel = DnsViewModel(LocalContext.current.applicationContext as android.app.Application)
+        languageViewModel = LanguageViewModel(LocalContext.current),
+        dnsViewModel = DnsViewModel(LocalContext.current)
     )
 }
