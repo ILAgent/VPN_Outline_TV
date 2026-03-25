@@ -19,7 +19,6 @@
     <string name="stop_vpn">Остановить</string>
     <string name="no_server">Нет сервера</string>
     <string name="vpn_widget_description">Виджет статуса VPN</string>
-    <string name="default_server_name">Server #1</string>
     <string name="server_not_specified">Сервер не указан</string>
     <string name="vpn_start_failed">Не удалось запустить VPN</string>
     <string name="wrong_outline_key_format">Неправильный формат ключа Outline</string>

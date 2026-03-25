@@ -19,7 +19,6 @@
     <string name="stop_vpn">停止</string>
     <string name="no_server">无服务器</string>
     <string name="vpn_widget_description">VPN 状态小部件</string>
-    <string name="default_server_name">服务器 #1</string>
     <string name="server_not_specified">未指定服务器</string>
     <string name="vpn_start_failed">VPN 启动失败</string>
     <string name="wrong_outline_key_format">Outline 密钥格式错误</string>
