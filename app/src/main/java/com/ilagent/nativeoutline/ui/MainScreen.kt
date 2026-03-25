@@ -165,7 +165,7 @@ fun MainScreen(
             )
 
         }
-        
+
         // Server list dialog - shown when clicking on server selection
         if (isServerListDialogOpen) {
             ServerListDialog(
@@ -317,20 +317,19 @@ fun MainScreenContent(
         }
 
         Spacer(modifier = Modifier.height(4.dp))
-
-        if (isConnected) {
-            val time = String.format(
-                Locale.getDefault(),
-                "%02d:%02d:%02d",
-                elapsedTime / 3600,
-                (elapsedTime % 3600) / 60,
-                elapsedTime % 60
-            )
-            Text(
-                text = context.getString(R.string.elapsed_time).format(time),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
+        Text(
+            text = if (isConnected) {
+                val time = String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d:%02d",
+                    elapsedTime / 3600,
+                    (elapsedTime % 3600) / 60,
+                    elapsedTime % 60
+                )
+                context.getString(R.string.elapsed_time).format(time)
+            } else "",
+            style = MaterialTheme.typography.bodyLarge,
+        )
         errorMessage?.let { message ->
             Text(
                 text = message,
@@ -452,20 +451,19 @@ fun TvScreenContent(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-                if (isConnected) {
-                    val time = String.format(
-                        Locale.getDefault(),
-                        "%02d:%02d:%02d",
-                        elapsedTime / 3600,
-                        (elapsedTime % 3600) / 60,
-                        elapsedTime % 60
-                    )
-                    Text(
-                        text = context.getString(R.string.elapsed_time).format(time),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
+                Text(
+                    text = if (isConnected) {
+                        val time = String.format(
+                            Locale.getDefault(),
+                            "%02d:%02d:%02d",
+                            elapsedTime / 3600,
+                            (elapsedTime % 3600) / 60,
+                            elapsedTime % 60
+                        )
+                        context.getString(R.string.elapsed_time).format(time)
+                    } else "",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
 
                 errorMessage?.let { message ->
                     Text(
