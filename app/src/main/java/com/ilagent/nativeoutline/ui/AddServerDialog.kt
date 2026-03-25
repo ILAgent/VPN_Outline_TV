@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ilagent.nativeoutline.R
+import com.ilagent.nativeoutline.data.preferences.PreferencesManager
 import com.ilagent.nativeoutline.data.remote.ParseUrlOutline
 import com.ilagent.nativeoutline.utils.CrashlyticsLogger
 import com.ilagent.nativeoutline.viewmodel.ServerDialogViewModel
@@ -72,6 +73,7 @@ fun AddServerDialog(
 
     val context = LocalContext.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val preferencesManager = PreferencesManager(context)
 
     // Log dialog opening
     LaunchedEffect(Unit) {
@@ -335,7 +337,7 @@ fun AddServerDialog(
                         isLoading = true
                         try {
                             val finalName = serverName.ifEmpty {
-                                context.getString(R.string.default_server_name)
+                                preferencesManager.generateDefaultServerName()
                             }
                             CrashlyticsLogger.logServerAdded(finalName)
                             onSave(finalName, serverKey)

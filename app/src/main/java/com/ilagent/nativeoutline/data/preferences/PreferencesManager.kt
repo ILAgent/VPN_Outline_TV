@@ -146,6 +146,21 @@ class PreferencesManager(context: Context) {
         return preferences.getString(KEY_SYSTEM_LANGUAGE, null)
     }
 
+    /**
+     * Generates a unique default server name based on existing servers.
+     * Finds the highest number in "Server #N" pattern and returns "Server #(N+1)"
+     */
+    fun generateDefaultServerName(): String {
+        val existingServers = getVpnKeys()
+        val serverNumberPattern = Regex("^Server #(\\d+)$")
+        
+        val maxNumber = existingServers.mapNotNull { server ->
+            serverNumberPattern.find(server.name)?.groupValues?.get(1)?.toIntOrNull()
+        }.maxOrNull() ?: 0
+        
+        return "Server #${maxNumber + 1}"
+    }
+
     companion object {
         private const val PREFS_NAME = "outline_vpn_prefs"
         private const val KEY_VPN_LIST = "vpn_keys_list"
