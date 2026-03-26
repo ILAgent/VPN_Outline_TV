@@ -106,7 +106,7 @@ private fun VpnWidgetContent(
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @androidx.compose.runtime.Composable
-@Preview
+@Preview(heightDp = 40, widthDp = 80)
 private fun VpnWidgetContentPreview() {
     GlanceTheme {
         VpnWidgetContent(
@@ -118,7 +118,7 @@ private fun VpnWidgetContentPreview() {
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @androidx.compose.runtime.Composable
-@Preview
+@Preview(heightDp = 40, widthDp = 80)
 private fun VpnWidgetContentConnectedPreview() {
     GlanceTheme {
         VpnWidgetContent(
