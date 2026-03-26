@@ -140,7 +140,7 @@ interface ServerIconProvider {
             return null
         }
     }
-    
+
     companion object {
         /**
          * Creates a default fallback provider with all available flag providers in recommended order.

@@ -82,7 +82,6 @@ fun ServerItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .border(
                 width = 3.dp,
                 color = if (isFocused)

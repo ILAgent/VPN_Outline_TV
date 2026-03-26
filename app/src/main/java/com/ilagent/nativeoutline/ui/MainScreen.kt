@@ -245,14 +245,7 @@ fun MainScreenContent(
     onConnectionLoading: () -> Unit,
 ) {
     val context = LocalContext.current
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-
+    Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = {
                 Row(
@@ -295,66 +288,74 @@ fun MainScreenContent(
             )
         )
 
-        ServerItem(
-            serverName = vpnServerState.name,
-            serverHost = vpnServerState.host,
-            onForwardIconClick = {
-                if (!isConnected && !isConnectionLoading) {
-                    onOpenServerDialog()
-                } else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.disconnect_before_settings),
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-            },
-        )
-        Box {
-            var requestPermission by remember { mutableStateOf(false) }
-            NotificationPermission(requestPermission) {
-                onConnectClick(vpnServerState.url)
-                requestPermission = false
-            }
-            VpnConnectButton(
-                isConnected = isConnected,
-                isConnectionLoading = isConnectionLoading,
-                isEditing = isEditing,
-                vpnServerState = vpnServerState,
-                onOpenServerDialog = onOpenServerDialog,
-                onConnectionLoading = onConnectionLoading,
-                onDisconnectClick = onDisconnectClick,
-                onRequestPermission = { requestPermission = true }
-            )
-        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
 
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = if (isConnected) {
-                val time = String.format(
-                    Locale.getDefault(),
-                    "%02d:%02d:%02d",
-                    elapsedTime / 3600,
-                    (elapsedTime % 3600) / 60,
-                    elapsedTime % 60
-                )
-                context.getString(R.string.elapsed_time).format(time)
-            } else "",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        errorMessage?.let { message ->
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Red
+            ServerItem(
+                serverName = vpnServerState.name,
+                serverHost = vpnServerState.host,
+                onForwardIconClick = {
+                    if (!isConnected && !isConnectionLoading) {
+                        onOpenServerDialog()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.disconnect_before_settings),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                },
             )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(modifier = Modifier.fillMaxSize()) {
-            WhiteList(preferencesManager)
+            Box {
+                var requestPermission by remember { mutableStateOf(false) }
+                NotificationPermission(requestPermission) {
+                    onConnectClick(vpnServerState.url)
+                    requestPermission = false
+                }
+                VpnConnectButton(
+                    isConnected = isConnected,
+                    isConnectionLoading = isConnectionLoading,
+                    isEditing = isEditing,
+                    vpnServerState = vpnServerState,
+                    onOpenServerDialog = onOpenServerDialog,
+                    onConnectionLoading = onConnectionLoading,
+                    onDisconnectClick = onDisconnectClick,
+                    onRequestPermission = { requestPermission = true }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = if (isConnected) {
+                    val time = String.format(
+                        Locale.getDefault(),
+                        "%02d:%02d:%02d",
+                        elapsedTime / 3600,
+                        (elapsedTime % 3600) / 60,
+                        elapsedTime % 60
+                    )
+                    context.getString(R.string.elapsed_time).format(time)
+                } else "",
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            errorMessage?.let { message ->
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Red
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(modifier = Modifier.fillMaxSize()) {
+                WhiteList(preferencesManager)
+            }
         }
     }
-
 }
 
 
