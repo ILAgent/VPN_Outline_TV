@@ -259,7 +259,7 @@ fun MainScreenContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = context.getString(R.string.app_name),
+                        text = context.getString(R.string.app_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                         maxLines = 1,
@@ -398,7 +398,7 @@ fun TvScreenContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = context.getString(R.string.app_name),
+                        text = context.getString(R.string.app_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                         maxLines = 1,
