@@ -58,8 +58,8 @@ fun ServerItem(
 
     val viewModel: ServerItemViewModel = viewModel(
         factory = ServerItemViewModel.Factory(
-            serverIconProvider = ServerIconProvider.FlagsApiDotCom(
-                ipCountryCodeProvider = IpCountryCodeProvider.IpApiDotCo(
+            serverIconProvider = ServerIconProvider.createDefault(
+                ipCountryCodeProvider = IpCountryCodeProvider.createDefault(
                     fetch = RemoteJSONFetch.HttpURLConnectionJSONFetch()
                 ),
                 preferencesManager = PreferencesManager(context = context),

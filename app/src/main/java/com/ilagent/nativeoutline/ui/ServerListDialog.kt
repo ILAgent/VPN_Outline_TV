@@ -190,8 +190,8 @@ private fun ServerListItem(
     LaunchedEffect(serverHost) {
         if (flagUrl == null && serverHost.isNotEmpty()) {
             try {
-                val iconProvider = ServerIconProvider.FlagsApiDotCom(
-                    ipCountryCodeProvider = IpCountryCodeProvider.IpApiDotCo(
+                val iconProvider = ServerIconProvider.createDefault(
+                    ipCountryCodeProvider = IpCountryCodeProvider.createDefault(
                         fetch = RemoteJSONFetch.HttpURLConnectionJSONFetch()
                     ),
                     preferencesManager = preferencesManager

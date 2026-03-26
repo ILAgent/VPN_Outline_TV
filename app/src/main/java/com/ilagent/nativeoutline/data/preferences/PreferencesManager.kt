@@ -102,6 +102,10 @@ class PreferencesManager(context: Context) {
         preferences.edit { putString("flag_$ip", flagUrl) }
     }
 
+    fun removeFlagUrl(ip: String) {
+        preferences.edit { remove("flag_$ip") }
+    }
+
     fun getFlagUrl(ip: String): String? {
         return preferences.getString("flag_$ip", null)
     }
