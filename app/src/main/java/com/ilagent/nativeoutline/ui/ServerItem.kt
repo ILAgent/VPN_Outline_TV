@@ -125,7 +125,7 @@ fun ServerItem(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape),
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                 )
             }
 

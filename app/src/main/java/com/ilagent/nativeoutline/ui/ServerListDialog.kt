@@ -229,7 +229,7 @@ private fun ServerListItem(
                     .size(48.dp)
                     .padding(all = 4.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
             )
         } else {
             // Placeholder when no flag
