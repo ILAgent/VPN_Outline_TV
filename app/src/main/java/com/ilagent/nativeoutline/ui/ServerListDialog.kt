@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ilagent.nativeoutline.R
@@ -64,7 +63,6 @@ fun ServerListDialog(
     onAddServerClick: (String?) -> Unit,
     refreshTrigger: Int = 0
 ) {
-    val context = LocalContext.current
     var savedVpnKeys by remember { mutableStateOf(preferencesManager.getVpnKeys()) }
 
     // Refresh server list when refreshTrigger changes
@@ -126,10 +124,11 @@ fun ServerListDialog(
                                     onDismiss()
                                 },
                                 onDelete = {
-                                    val newSelectedServer = preferencesManager.deleteVpnKey(server.name)
+                                    val newSelectedServer =
+                                        preferencesManager.deleteVpnKey(server.name)
                                     CrashlyticsLogger.logServerDeleted(server.name)
                                     savedVpnKeys = preferencesManager.getVpnKeys()
-                                    
+
                                     // Если был выбран удалённый сервер
                                     if (server.name == currentServerName) {
                                         if (newSelectedServer != null) {
