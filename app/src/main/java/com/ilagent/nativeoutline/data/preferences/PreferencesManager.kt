@@ -44,7 +44,13 @@ class PreferencesManager(context: Context) {
     }
 
     fun getSelectedThemeMode(): String {
-        return preferences.getString(KEY_SELECTED_THEME, "system") ?: "system"
+        return try {
+            preferences.getString(KEY_SELECTED_THEME, "system") ?: "system"
+        } catch (_: ClassCastException) {
+            // Если значение хранится как Boolean (из старой версии), удаляем его и возвращаем значение по умолчанию
+            preferences.edit { remove(KEY_SELECTED_THEME) }
+            "system"
+        }
     }
 
     fun addOrUpdateVpnKey(serverName: String, key: String) {
@@ -64,7 +70,7 @@ class PreferencesManager(context: Context) {
         if (index >= 0) {
             existingList.removeAt(index)
             saveVpnKeys(existingList)
-            
+
             // Если удаляемый сервер был выбран, обновляем выбор
             if (selectedServerName == serverName) {
                 if (existingList.isNotEmpty()) {
@@ -157,11 +163,11 @@ class PreferencesManager(context: Context) {
     fun generateDefaultServerName(): String {
         val existingServers = getVpnKeys()
         val serverNumberPattern = Regex("^Server #(\\d+)$")
-        
+
         val maxNumber = existingServers.mapNotNull { server ->
             serverNumberPattern.find(server.name)?.groupValues?.get(1)?.toIntOrNull()
         }.maxOrNull() ?: 0
-        
+
         return "Server #${maxNumber + 1}"
     }
 
